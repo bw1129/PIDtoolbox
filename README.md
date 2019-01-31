@@ -1,6 +1,8 @@
+![](images/PIDtoolboxWide.png)
 # PIDtoolbox
 
 PIDtoolbox is a GUI-based Matlab tool for analyzing Betaflight blackbox log files.
+
 ![](images/PIDtoolboxGUIexample.png)
 
 The motivation behind the development of this tool was to create a user-friendly, objective, method for comparing between flights. This came after a realization of the way we often troubleshoot an issue with flight performance (e.g., vibrations, mid-throttle oscillation, propwash oscillation, etc). A typical scenario goes something like "run test flight 'A', make subjective assessment of performance, tweak parameters, run test flight 'B', make subjective comparison between A and B, re-tweak", and so on. The problem with this approach from a scientific standpoint is that it lacks objectivity and reliability. Subjective bias becomes particularly problematic when the differences between A and B are subtle. PIDtoolbox was designed with this in mind.
