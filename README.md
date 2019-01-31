@@ -11,3 +11,5 @@ Over the past year or so, there has been increasing emphasis on advanced gyro an
 That said, below is everything you need to begin using PIDtoolbox. I hope you find it useful, and I would really appreciate feedback from the FPV community.
 
 Cheers! -Brian White
+
+# Download and run PIDtoolbox
