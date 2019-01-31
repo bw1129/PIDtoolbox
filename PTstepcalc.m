@@ -12,8 +12,7 @@ function [normalizedStepResp, time] = PTstepcalc(RCdata, ERRdata, decelerationTh
 %   an actual step, the gyro relative to the step is essentially the error. Tentatively, I chose to analyze 
 %   only end of manouvers when the set point is brought back close to zero for at least 400ms, because I find this 
 %   to be the most reliable post-step steady-state period. In the future, I may consider the method used in
-%   https://github.com/Plasmatree/PID-Analyzer involving deconvolution, though I am not 
-%   absolutely convinced of its real world efficacy...
+%   https://github.com/Plasmatree/PID-Analyzer involving deconvolution.
 %   -B. White
 
 % ----------------------------------------------------------------------------------
