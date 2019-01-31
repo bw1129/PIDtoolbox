@@ -13,4 +13,41 @@ That said, below is everything you need to begin using PIDtoolbox. I hope you fi
 
 Cheers! -Brian White
 
-# Download and run PIDtoolbox
+# Download
+
+There are a couple of ways you can download PIDtoolbox. 
+
+1) If you have Matlab, you may simply download the repository of mfiles, place them in a folder, and run PIDtoolbox.m from the Matlab command prompt. You will need Signal Processing Toolbox installed for this to work.
+
+2) If you do not have Matlab, you can simply download the standalone Windows version here (Windows Download). The initial download is fairly large because it includes the Matlab runtime program (MATLAB® Compiler Runtime, MCR), which then allows you to run any standalone Matlab program. The actual PIDtoolbox.exe is only ~14Mb.
+
+Steps:
+
+(i) Download the standalone Windows version here (Windows Download), unzip and place entire folder in your preferred location on your computer. 
+
+(ii) If you're running Windows 10, install 'MyAppInstaller_mcr.exe' under 'PIDtoolbox\for_redistribution\'. This will install Matlab runtime on your computer, which is required for running standalone Matlab .exe programs. The good news is this is a one time installation, after which you can run any Matlab standalone.
+
+For other versions of Windows, you can download the appropriote Matlab runtime executable here:
+<a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">google</a>
+
+(iii) Run 'PIDtoolbox.exe', found in folder: 
+'PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe'
+NOTE: PIDtoolbox.exe and other files must remain in this folder.
+
+# How to use:
+
+PIDtoolbox will import .bbl, .bfl, or .csv files, but there are a few things you need to know: 
+
+(i) Optional: If you wish to use .bbl or .bfl files directly, you will need to have a copy of 'blackbox_decode.exe' in the same directory as your .bbl/.bfl files. 'blackbox_decode.exe' is part of Betaflight/cleanflight blackbox-tools, and can be downloaded here:
+https://github.com/cleanflight/blackbox-tools
+https://github.com/betaflight/blackbox-tools
+
+(ii) Recommended: Use .csv files, BUT NOTE, you convert your your .bbl or .bfl file to a .csv file using Betaflight Blackbox-log-viewer. Save as .csv from there please!
+ 
+Betaflight Blackbox-log-viewer can be downloaded here:
+https://github.com/betaflight/blackbox-log-viewer/releases
+
+If you have issues installing Matlab runtime, or running  PIDtoolbox, please drop a post to the Betaflight BlackBox Log Review Facebook group: https://www.facebook.com/groups/291745494678694/?ref=bookmarks  
+
+Now, let's get on with a few examples:
+
