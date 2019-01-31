@@ -23,7 +23,7 @@ There are a couple of ways you can download PIDtoolbox.
 
 Steps:
 
-(i) Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> PIDtoolbox.exe was compiled on Matlab version 2017b on Windows 10, so I would select that version if running Windows 10. Otherwise, try the next most appropiate version for your Windows machine. I have not tested this extensively across multiple versions of Windows, so your feedback here will be very helpful. The good news is this is a one-time installation, after which you can run any Matlab standalone!
+(i) Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows 10 (version 9.3 R2017b). I cannot guarantee this will work on other Windows versions, but you could try the next most appropiate version for your Windows machine, at your own risk. I have not tested this extensively across multiple versions of Windows, so your feedback here will be very helpful. I will try to have other versions available soon. The good news is this is a one-time installation, after which you can run any Matlab standalone!
 
 (ii) Download PIDtoolbox for Windows here:
 <a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(PIDtoolbox.zip)</a> Unzip and place entire folder in your preferred location on your computer. For Mac/Linux/others, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, I'd be great if you upload it here!
@@ -32,7 +32,7 @@ Steps:
 'PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe'
 NOTE: PIDtoolbox.exe and other files must remain in this folder.
 
-If you have issues installing Matlab runtime, or running  PIDtoolbox, please give feedback here:
+If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
 or drop a post to the Betaflight BlackBox Log Review Facebook group: <a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">(Betaflight BlackBox Log Review Facebook group)</a>
 
@@ -43,10 +43,10 @@ PIDtoolbox will import .bbl, .bfl, or .csv files, but there are a few things you
 (i) Optional: If you wish to use .bbl or .bfl files directly, you will need to have a copy of 'blackbox_decode.exe' in the same directory as your .bbl/.bfl files. 'blackbox_decode.exe' is part of Betaflight/cleanflight blackbox-tools, and can be downloaded here:
 <a href="https://www.github.com/betaflight/blackbox-tools" target="blank">(Betaflight Blackbox-tools)</a>
 
-(ii) Recommended: Use .csv files! BUT NOTE, you MUST convert your your .bbl or .bfl file to a .csv file using Betaflight Blackbox-log-viewer. Save as .csv from there please! Betaflight Blackbox-log-viewer can be downloaded here: 
+(ii) Recommended: Use .csv files! BUT NOTE, you MUST convert your .bbl or .bfl file to a .csv file using Betaflight Blackbox-log-viewer. Save as .csv from there please! Betaflight Blackbox-log-viewer can be downloaded here: 
 <a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>
 
-If you have issues installing Matlab runtime, or running  PIDtoolbox, please give feedback here:
+If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
 or drop a post to the Betaflight BlackBox Log Review Facebook group: <a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">(Betaflight BlackBox Log Review Facebook group)</a>
 
