@@ -1,4 +1,4 @@
-![](images/PIDtoolboxWide.png)
+
 # PIDtoolbox
 
 PIDtoolbox is a GUI-based Matlab tool for analyzing Betaflight blackbox log files.
