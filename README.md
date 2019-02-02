@@ -13,8 +13,7 @@ Over the past year or so, there's been a lot of emphasis on gyro filtering in fl
 
 Below is everything you need to begin using PIDtoolbox. I hope you find it useful, and I welcome feedback from the FPV community.
 
-Cheers! 
-  -Brian White
+-Brian
 
 # Download
 
@@ -76,6 +75,6 @@ In this case we are plotting the spectrograms only (Test A left and Test B right
 
 I hope you find PIDtoolbox useful, and I welcome feedback from the FPV community.
 
-Cheers! -Brian White
+Cheers! -Brian
 
 
