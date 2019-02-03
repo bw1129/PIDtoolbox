@@ -1,4 +1,4 @@
-%% PIDtoolbox - main
+%% PIDtoolbox - main  
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -126,7 +126,7 @@ end
 
 %%% user defined colormap, similar to plasmatree, for user familiarity
 a=colormap(parula);
-parulaMod=[a(:,1) a(:,2) a(:,3)*.65];
+parulaMod=[a(:,1) a(:,2) a(:,3)*.6];
 
 
 guiHandles.checkbox0=uicontrol(PTfig,'Style','checkbox','String','Gyro unfilt','fontsize',fontsz,'ForegroundColor',[line.col0],...

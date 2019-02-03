@@ -1155,8 +1155,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo((resp_segments_norm),t);
+           h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
         set(h, 'color',[colorA],'linewidth',2)
     
@@ -1191,8 +1191,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo((resp_segments_norm),t);
+            h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
         set(h, 'color',[colorA],'linewidth',2)
     
@@ -1226,8 +1226,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo((resp_segments_norm),t);
+            h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
 
         set(h, 'color',[colorA],'linewidth',2)
@@ -1275,8 +1275,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo((resp_segments_norm),t);
+            h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
     
         set(h, 'color',[colorB],'linewidth',2)
@@ -1311,8 +1311,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo(nanmean(resp_segments_norm),t);
+            h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
     
         set(h, 'color',[colorB],'linewidth',2)
@@ -1347,8 +1347,8 @@ if guiHandles.PlotSelect.Value==3
             h=plot(t,nanmean(resp_segments_norm));
             stepnfo=stepinfo(nanmean(resp_segments_norm),t);
         else
-            h=plot(t,(resp_segments_norm));
-            stepnfo=stepinfo(nanmean(resp_segments_norm),t);
+            h=plot(t, resp_segments_norm');
+            stepnfo=stepinfo(resp_segments_norm,t);
         end
     
         set(h, 'color',[colorB],'linewidth',2)

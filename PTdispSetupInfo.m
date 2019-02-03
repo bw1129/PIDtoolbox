@@ -1,4 +1,4 @@
-%% PTdispSetupInfo - script to display detailed info about flight controller settings
+%% PTdispSetupInfo - script to 
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):

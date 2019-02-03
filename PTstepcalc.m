@@ -11,8 +11,11 @@ function [normalizedStepResp, time] = PTstepcalc(RCdata, ERRdata, decelerationTh
 %   I use PID error (difference between set point and gyro) to compute these plots, since in 
 %   an actual step, the gyro relative to the step is essentially the error. Tentatively, I chose to analyze 
 %   only end of manouvers when the set point is brought back close to zero for at least 400ms, because I find this 
-%   to be the most reliable post-step steady-state period. In the future, I may consider the method used in
-%   https://github.com/Plasmatree/PID-Analyzer involving deconvolution.
+%   to be the most reliable post-step steady-state period. Also, we can't see overshoot etc
+%   while to copter is in rotation at high rate. It's only at the end of flips/roll where we see 
+%   bounce back, so this is where I focused the "step" calculation. 
+%   In the future, I may consider the method used in https://github.com/Plasmatree/PID-Analyzer 
+%   involving deconvolution.
 %   -B. White
 
 % ----------------------------------------------------------------------------------
