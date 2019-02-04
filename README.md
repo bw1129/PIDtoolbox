@@ -23,12 +23,10 @@ There are a couple of ways you can download PIDtoolbox.
 
 **2)** If you do not have Matlab, you can download a standalone Windows version of PIDtoolbox. You must first install Matlab runtime (MATLAB® Compiler Runtime, MCR), which then allows you to run any standalone Matlab program.
 
-**Steps:**
+- **(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows (64bit only, version 9.3 R2017b). Unfortunately, it will likely not work for Windows 32bit users. I have not tested this across multiple versions of Windows, so your feedback here will be very helpful. I will continue to provide updates in this regard so stay tuned. The good news is this is a one-time installation, after which you can run any Matlab standalone!
 
-**(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows (64bit only, version 9.3 R2017b). Unfortunately, it will likely not work for Windows 32bit users. I have not tested this across multiple versions of Windows, so your feedback here will be very helpful. I will continue to provide updates in this regard so stay tuned. The good news is this is a one-time installation, after which you can run any Matlab standalone!
-
-**(ii)** Download PIDtoolbox for Windows here:
-<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a> Unzip and place entire folder in a preferred location on your computer. PIDtoolbox.exe can be found in 'PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe'. NOTE, PIDtoolbox.exe MUST remain in this folder, so I'd recommend creating a shortcut and placing it on your desktop. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
+- **(ii)** Download PIDtoolbox for Windows here:
+<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a> Unzip and place entire folder in a preferred location on your computer. `PIDtoolbox.exe` can be found in `PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe`. NOTE, `PIDtoolbox.exe` MUST remain in this folder, so I'd recommend creating a shortcut and placing it on your desktop. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
 
 If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
@@ -38,13 +36,11 @@ or drop a post to the Betaflight BlackBox Log Review Facebook group: <a href="ht
 
 PIDtoolbox will support .bbl, .bfl, or .csv files, but there are a few things you need to know: 
 
-**(i)** If you wish to use .bbl or .bfl files directly, you will need to have a copy of 'blackbox_decode.exe' in the same directory as your .bbl/.bfl files. 'blackbox_decode.exe' is part of Betaflight/cleanflight blackbox-tools, and can be downloaded here:
-<a href="https://www.github.com/betaflight/blackbox-tools" target="blank">(Betaflight Blackbox-tools)</a>
+- **(i)** If you wish to use .bbl or .bfl files directly, you will need to have a copy of `blackbox_decode.exe` in the same directory as your .bbl/.bfl files. `blackbox_decode.exe` is part of <a href="https://www.github.com/betaflight/blackbox-tools" target="blank">(Betaflight Blackbox-tools)</a>
 
-**(ii)** My recommendation is use .csv files. BUT NOTE, you MUST convert your .bbl or .bfl file to a .csv file using Betaflight Blackbox-log-viewer. Save as .csv from there please! Betaflight Blackbox-log-viewer can be downloaded here: 
-<a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>
+- **(ii)** My recommendation is use .csv files. BUT, you MUST convert your .bbl or .bfl file to a .csv file using <a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>. Save as .csv from there please!
 
-**(iii)** I would recommend always logging at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. From my experience, I have had some really large log files crash when trying to convert to .csv in Betaflight Blackbox-log-viewer. In addition, PIDtoolbox will run much faster with 2k files. For 32k mode users, I don't know what to say ;-)
+- **(iii)** I would recommend always logging at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. From my experience, I have had some really large log files crash when trying to convert to .csv in Betaflight Blackbox-log-viewer. In addition, PIDtoolbox will run much faster with 2k files. For 32k mode users, I don't know what to say ;-)
 
 If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
