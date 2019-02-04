@@ -6,11 +6,8 @@
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
+executableDir = get_deployed_exec_dir();
 
-
-[status, result] = dos('cd','-echo');
-executableDir=result(1:end-1);
-cd(executableDir)
 
 PTfig = figure(1);
 
@@ -237,6 +234,22 @@ function selection(src,event)
     str{val};
    % disp(['Selection: ' str{val}]);
 end
+
+
+function execDir = get_deployed_exec_dir()
+    % Returns the directory of the currently running executable, if deployed,
+    % an empty string if not deployed (or if unable to determine the directory)
+    execDir = '';
+    if isdeployed
+        [status, execDir] = system('path');
+        if status == 0
+            execDir = char(regexpi(execDir, 'Path=(.*?);', 'tokens', 'once'));
+        end
+    else
+       execDir = pwd;
+    end
+end
+
 
 
 %%%%% to do

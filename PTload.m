@@ -17,6 +17,8 @@ waitbarFid = waitbar(0,'Please wait...');
 pause(.5)
 
 cd(filepath)
+%cd(executableDir)
+
 
 %%%% file A 
 if ~isempty(filenameA),

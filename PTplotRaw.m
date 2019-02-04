@@ -200,7 +200,7 @@ set(guiHandles.checkbox9,'visible','on')
         
         box on
         T=text(5, -maxDegsec*1.5, ['% throttle']);
-        set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])    
+        set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])          
         ylabel('Roll ^o/s');
 
         set(h2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos1]);
@@ -295,7 +295,7 @@ set(guiHandles.checkbox9,'visible','on')
         set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])   
         ylabel('Yaw ^o/s');
         if isempty(filenameB)
-            xlabel('time (s)');
+           xlabel('time (s)');         
         else
             xlabel('');
         end
