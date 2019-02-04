@@ -25,14 +25,10 @@ There are a couple of ways you can download PIDtoolbox.
 
 **Steps:**
 
-**(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows (64bit only, version 9.3 R2017b). Unfortunately, it will likely not work for Windows 32bit users, so use at your own risk. I have not tested this extensively across multiple versions of Windows, so your feedback here will be very helpful. I will continue to provide updates in this regard so stay tuned. The good news is this is a one-time installation, after which you can run any Matlab standalone!
+**(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows (64bit only, version 9.3 R2017b). Unfortunately, it will likely not work for Windows 32bit users. I have not tested this across multiple versions of Windows, so your feedback here will be very helpful. I will continue to provide updates in this regard so stay tuned. The good news is this is a one-time installation, after which you can run any Matlab standalone!
 
 **(ii)** Download PIDtoolbox for Windows here:
-<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a> Unzip and place entire folder in your preferred location on your computer. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
-
-**(iii)** Run 'PIDtoolbox.exe', found in folder: 
-'PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe'
-NOTE: PIDtoolbox.exe and other files must remain in this folder.
+<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a> Unzip and place entire folder in a preferred location on your computer. PIDtoolbox.exe can be found in 'PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe'. NOTE, PIDtoolbox.exe and other files MUST remain in this folder, so I'd recommend creating a shortcut and placing it on your desktop. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
 
 If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
