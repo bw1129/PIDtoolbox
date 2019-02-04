@@ -373,74 +373,42 @@ end
 
 %%
 
-%%%% get estimated phase delay
+%%%% get estimated phase delay from roll (most active axis)
 try 
-clear a b r p sampTime maxlag
+clear sampTime maxlag PhaseDelay_A
 sampTime=(mean(diff(tta)));
 maxlag=int8(round(5000/sampTime)); %~5s delay
-r=finddelay(smooth(DATmainA.GyroRaw(1,:),10),DATmainA.GyroFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(smooth(DATmainA.GyroRaw(2,:),10),DATmainA.GyroFilt(2,:),maxlag) * sampTime / 1000;
-a=[r p];
-b=find(a)<5 & find(a)>.1;
-if length(b)>1
-    PhaseDelay_A=mean(a);
-else
-    PhaseDelay_A=(a(b));
-end
+PhaseDelay_A=finddelay(smooth(DATmainA.GyroRaw(1,:),10),smooth(DATmainA.GyroFilt(1,:),10),maxlag) * sampTime / 1000; % both signals smoothed equally, more reliable estimate
 if PhaseDelay_A<.1, PhaseDelay_A=[]; end % when garbage gets through
 
-clear a b r p 
-r=finddelay(smooth(DATmainA.DtermRaw(1,:),10),DATmainA.DtermFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(smooth(DATmainA.DtermRaw(2,:),10),DATmainA.DtermFilt(2,:),maxlag) * sampTime / 1000;
-a=[r p];
-b=find(a)<5 & find(a)>.1;
-if length(b)>1
-    PhaseDelay2_A=mean(a);
-else
-    PhaseDelay2_A=(a(b));
-end
+clear PhaseDelay2_A 
+PhaseDelay2_A=finddelay(smooth(DATmainA.DtermRaw(1,:),10),smooth(DATmainA.DtermFilt(1,:),10),maxlag) * sampTime / 1000;
 if PhaseDelay2_A<.1, PhaseDelay2_A=[]; end % when garbage gets through
 
 ResponseDelayR_A=finddelay(DATmainA.RCRate(1,:),DATmainA.GyroFilt(1,:),maxlag*4) * sampTime / 1000;
 ResponseDelayP_A=finddelay(DATmainA.RCRate(2,:),DATmainA.GyroFilt(2,:),maxlag*4) * sampTime / 1000;
 ResponseDelayY_A=finddelay(DATmainA.RCRate(3,:),DATmainA.GyroFilt(3,:),maxlag*4) * sampTime / 1000;
-clear a b r p sampTime maxlag
+clear sampTime maxlag
 
 catch
 end
 
 
 try
-clear a b r p sampTime maxlag
+clear sampTime maxlag PhaseDelay_B
 sampTime=(mean(diff(ttb)));
 maxlag=int8(round(5000/sampTime)); %~5s delay
-r=finddelay(smooth(DATmainB.GyroRaw(1,:),10),DATmainB.GyroFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(smooth(DATmainB.GyroRaw(2,:),10),DATmainB.GyroFilt(2,:),maxlag) * sampTime / 1000;
-a=[r p];
-b=find(a)<5 & find(a)>.1;
-if length(b)>1
-    PhaseDelay_B=mean(a);
-else
-    PhaseDelay_B=(a(b));
-end
+PhaseDelay_B=finddelay(smooth(DATmainB.GyroRaw(1,:),10),smooth(DATmainB.GyroFilt(1,:),10),maxlag) * sampTime / 1000;
 if PhaseDelay_B<.1, PhaseDelay_B=[]; end % when garbage gets through
 
-clear a b r p 
-r=finddelay(smooth(DATmainB.DtermRaw(1,:),10),DATmainB.DtermFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(smooth(DATmainB.DtermRaw(2,:),10),DATmainB.DtermFilt(2,:),maxlag) * sampTime / 1000;
-a=[r p];
-b=find(a)<5 & find(a)>.1;
-if length(b)>1
-    PhaseDelay2_B=mean(a);
-else
-    PhaseDelay2_B=(a(b));
-end
+clear PhaseDelay2_B
+PhaseDelay2_B=finddelay(smooth(DATmainB.DtermRaw(1,:),10),smooth(DATmainB.DtermFilt(1,:),10),maxlag) * sampTime / 1000;
 if PhaseDelay2_B<.1, PhaseDelay2_B=[]; end % when garbage gets through
 
 ResponseDelayR_B=finddelay(DATmainB.RCRate(1,:),DATmainB.GyroFilt(1,:),maxlag*4) * sampTime / 1000;
 ResponseDelayP_B=finddelay(DATmainB.RCRate(2,:),DATmainB.GyroFilt(2,:),maxlag*4) * sampTime / 1000;
 ResponseDelayY_B=finddelay(DATmainB.RCRate(3,:),DATmainB.GyroFilt(3,:),maxlag*4) * sampTime / 1000;
-clear a b r p sampTime maxlag
+clear sampTime maxlag
 catch
 end
 
