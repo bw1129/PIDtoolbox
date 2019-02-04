@@ -40,6 +40,8 @@ PIDtoolbox will support `.bbl`, `.bfl`, or `.csv` files, but there are a few thi
 
 - **(iii)** I would recommend always logging at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. From my experience, I have had some really large log files crash when trying to convert to `.csv` in Betaflight Blackbox-log-viewer. In addition, PIDtoolbox will run much faster with 2k files. For 32k mode users, I don't know what to say ;-)
 
+- **(iv)** Always set debug mode to `gyro_scaled` for PIDtoolbox (actually, the same goes for Plasmatree PID-analyzer). This is because the program expects the debug variables to contain the unfiltered gyro data, which is needed to plot the filtered vs unfiltered gyro spectrograms, and compute gyro phase latency online. In time I will write some scripts that read which debug mode is selected, and plot the appropriate data for those interested in examining other debug modes. 
+
 If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
 or drop a post to the Betaflight BlackBox Log Review Facebook group: <a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">(Betaflight BlackBox Log Review Facebook group)</a>
