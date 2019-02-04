@@ -1,5 +1,5 @@
 function [ampMat] = PTthrSpec(X, Y, F)
-% [SpecMat] = PTthrSpec(X, Y, F) 
+% [ampMat] = PTthrSpec(X, Y, F) 
 %   computes fft as function of throttle and generates throttle x freq
 %   matrix. X is throttle data in percent, Y is flight data (gyro, PIDerror, etc), 
 %   F is sample frequency in Hz of the input flight data. The function returns 

@@ -378,8 +378,8 @@ try
 clear a b r p sampTime maxlag
 sampTime=(mean(diff(tta)));
 maxlag=int8(round(5000/sampTime)); %~5s delay
-r=finddelay(DATmainA.GyroRaw(1,:),DATmainA.GyroFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(DATmainA.GyroRaw(2,:),DATmainA.GyroFilt(2,:),maxlag) * sampTime / 1000;
+r=finddelay(smooth(DATmainA.GyroRaw(1,:),10),DATmainA.GyroFilt(1,:),maxlag) * sampTime / 1000;
+p=finddelay(smooth(DATmainA.GyroRaw(2,:),10),DATmainA.GyroFilt(2,:),maxlag) * sampTime / 1000;
 a=[r p];
 b=find(a)<5 & find(a)>.1;
 if length(b)>1
@@ -390,8 +390,8 @@ end
 if PhaseDelay_A<.1, PhaseDelay_A=[]; end % when garbage gets through
 
 clear a b r p 
-r=finddelay(DATmainA.DtermRaw(1,:),DATmainA.DtermFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(DATmainA.DtermRaw(2,:),DATmainA.DtermFilt(2,:),maxlag) * sampTime / 1000;
+r=finddelay(smooth(DATmainA.DtermRaw(1,:),10),DATmainA.DtermFilt(1,:),maxlag) * sampTime / 1000;
+p=finddelay(smooth(DATmainA.DtermRaw(2,:),10),DATmainA.DtermFilt(2,:),maxlag) * sampTime / 1000;
 a=[r p];
 b=find(a)<5 & find(a)>.1;
 if length(b)>1
@@ -414,8 +414,8 @@ try
 clear a b r p sampTime maxlag
 sampTime=(mean(diff(ttb)));
 maxlag=int8(round(5000/sampTime)); %~5s delay
-r=finddelay(DATmainB.GyroRaw(1,:),DATmainB.GyroFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(DATmainB.GyroRaw(2,:),DATmainB.GyroFilt(2,:),maxlag) * sampTime / 1000;
+r=finddelay(smooth(DATmainB.GyroRaw(1,:),10),DATmainB.GyroFilt(1,:),maxlag) * sampTime / 1000;
+p=finddelay(smooth(DATmainB.GyroRaw(2,:),10),DATmainB.GyroFilt(2,:),maxlag) * sampTime / 1000;
 a=[r p];
 b=find(a)<5 & find(a)>.1;
 if length(b)>1
@@ -426,8 +426,8 @@ end
 if PhaseDelay_B<.1, PhaseDelay_B=[]; end % when garbage gets through
 
 clear a b r p 
-r=finddelay(DATmainB.DtermRaw(1,:),DATmainB.DtermFilt(1,:),maxlag) * sampTime / 1000;
-p=finddelay(DATmainB.DtermRaw(2,:),DATmainB.DtermFilt(2,:),maxlag) * sampTime / 1000;
+r=finddelay(smooth(DATmainB.DtermRaw(1,:),10),DATmainB.DtermFilt(1,:),maxlag) * sampTime / 1000;
+p=finddelay(smooth(DATmainB.DtermRaw(2,:),10),DATmainB.DtermFilt(2,:),maxlag) * sampTime / 1000;
 a=[r p];
 b=find(a)<5 & find(a)>.1;
 if length(b)>1
