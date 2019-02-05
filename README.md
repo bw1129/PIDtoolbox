@@ -25,7 +25,7 @@ There are a couple of ways you can download PIDtoolbox.
 
 - **(ii)** Download PIDtoolbox for Windows here <a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a>. Unzip and place entire folder in a preferred location on your computer. `PIDtoolbox.exe` can be found in `PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe`. IMPORTANT, `PIDtoolbox.exe` MUST remain in the original folder, so I'd recommend creating a shortcut and placing it on your desktop. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
 
-PIDtoolbox has been confirmed to run fine on Windows7/8/10 64bit machines, but it has not yet been extensively tested, so your feedback will be helpful. If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here
+PIDtoolbox has been confirmed to run on Windows7/8/10 64bit machines, but it has not yet been extensively tested, so your feedback will be helpful. If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>,
 or drop a post to the Betaflight BlackBox Log Review Facebook group <a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">(Betaflight BlackBox Log Review Facebook group)</a>.
 
