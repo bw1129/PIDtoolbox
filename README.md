@@ -21,7 +21,7 @@ There are a couple of ways you can download PIDtoolbox.
 
 **2)** If you do not have Matlab, you can download a standalone Windows version of PIDtoolbox. You must first install Matlab runtime (MATLAB® Compiler Runtime, MCR), which then allows you to run any standalone Matlab program.
 
-- **(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows **(64bit only, version 9.3 R2017b; it will not work for Windows 32bit users).** Disclaimer: I have not tested this across multiple versions of Windows, so your feedback here will be very helpful. I will continue to provide updates in this regard so stay tuned. The good news is this is a one-time installation, after which you can run any Matlab standalone!
+- **(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows **(64bit only, version 9.3 R2017b**; it will not work on 32bit machines). **Disclaimer**: Although PIDtoolbox has been confirmed to work correctly on Windows7/8/10 64bit machines, it has not yet been extensively tested, so your feedback will be very helpful. The good news is this is a one-time installation, after which you can run any Matlab standalone!
 
 - **(ii)** Download PIDtoolbox for Windows here:
 <a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">(releases)</a> Unzip and place entire folder in a preferred location on your computer. `PIDtoolbox.exe` can be found in `PIDtoolbox\for_redistribution_files_only\PIDtoolbox.exe`. NOTE, `PIDtoolbox.exe` MUST remain in this folder, so I'd recommend creating a shortcut and placing it on your desktop. For Mac/Linux users, if you have a bonafide copy of Matlab and can create your own standalone version of PIDtoolbox, it'd be greatly appreciated if you could share it here!
@@ -32,15 +32,11 @@ or drop a post to the Betaflight BlackBox Log Review Facebook group: <a href="ht
 
 # How to use
 
-PIDtoolbox will support `.bbl`, `.bfl`, or `.csv` files, but there are a few things you need to know: 
+- **(i)** PIDtoolbox will only read `.csv` files exported from <a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>. Open your `.bbl` or `.bfl` log file in <a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>, and export as `.csv`. Do not use `blackbox_decode.exe` (it excludes important header info used by PIDtoolbox).    
 
-- **(i)** If you wish to use `.bbl` or `.bfl` files directly, you will need to have a copy of `blackbox_decode.exe` in the same directory as your `.bbl/.bfl` files. `blackbox_decode.exe` is part of <a href="https://www.github.com/betaflight/blackbox-tools" target="blank">(Betaflight Blackbox-tools)</a>
+- **(ii)** I would recommend always logging at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. From my experience, I have had some really large log files crash when trying to convert to `.csv` in Betaflight Blackbox-log-viewer. In addition, PIDtoolbox will run much faster with 2k files. For 32k mode users, I don't know what to say ;-)
 
-- **(ii)** My recommendation is use `.csv` files. BUT, you MUST convert your `.bbl` or `.bfl` file to a `.csv` file using <a href="https://www.github.com/betaflight/blackbox-log-viewer/releases" target="blank">(Betaflight Blackbox-log-viewer)</a>. Save as `.csv` from there please!
-
-- **(iii)** I would recommend always logging at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. From my experience, I have had some really large log files crash when trying to convert to `.csv` in Betaflight Blackbox-log-viewer. In addition, PIDtoolbox will run much faster with 2k files. For 32k mode users, I don't know what to say ;-)
-
-- **(iv)** Always set debug mode to `gyro_scaled` for PIDtoolbox (actually, the same goes for Plasmatree PID-analyzer). This is because the program expects the debug variables to contain the unfiltered gyro data, which is needed to plot the filtered vs unfiltered gyro spectrograms, and compute gyro phase latency online. In time I will write some scripts that read which debug mode is selected, and plot the appropriate data for those interested in examining other debug modes. 
+- **(iii)** Always set debug mode to `gyro_scaled` for PIDtoolbox (actually, the same goes for Plasmatree PID-analyzer). This is because the program expects the debug variables to contain the unfiltered gyro data, which is needed to plot the filtered vs unfiltered gyro spectrograms, and compute gyro phase latency online. In time I will write some scripts that read which debug mode is selected, and plot the appropriate data for those interested in examining other debug modes. 
 
 If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here:
 <a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>
