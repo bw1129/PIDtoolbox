@@ -195,11 +195,17 @@ if ~isempty(filenameA),
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[2]')))=DATmainA.PIDsum(3,:);
        
     try
-    DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[0]')));
-    DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[1]')));
-    DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[2]')));
-    DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[3]'))); 
-    
+        DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[0]')));
+        DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[1]')));
+        DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[2]')));
+        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[3]'))); 
+    catch
+        DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[0]')));% new naming convention
+        DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[1]')));
+        DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[2]')));
+        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[3]'))); 
+    end
+    try
     DATmainA.PIDerr(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[0]')));
     DATmainA.PIDerr(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[1]')));
     DATmainA.PIDerr(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[2]')));  
@@ -267,14 +273,21 @@ if ~isempty(filenameB),
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisPID[2]')))=DATmainB.PIDsum(3,:);
         
     try
-    DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[0]')));
-    DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[1]')));
-    DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[2]')));
-    DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[3]')));
+        DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[0]')));
+        DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[1]')));
+        DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[2]')));
+        DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[3]')));
+    catch
+        DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[0]')));% new naming convention
+        DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[1]')));
+        DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[2]')));
+        DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[3]')));
+    end
     
-    DATmainB.PIDerr(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[0]')));
-    DATmainB.PIDerr(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[1]')));
-    DATmainB.PIDerr(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[2]')));
+    try
+        DATmainB.PIDerr(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[0]')));
+        DATmainB.PIDerr(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[1]')));
+        DATmainB.PIDerr(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[2]')));
     catch
     end 
 end

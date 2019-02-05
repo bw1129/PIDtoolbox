@@ -29,7 +29,7 @@ if a,
 end
 mainFname=filename;
 if strcmp(filename(end-3:end),'.BFL') | strcmp(filename(end-3:end),'.BBL') | strcmp(filename(end-3:end),'.bfl') | strcmp(filename(end-3:end),'.bbl')          
-    [status,result]=system(['blackbox_decode.exe ' filename]);
+    [status,result]=system(['blackbox_decode.exe --debug ' filename]);
     files=dir([filename(1:end-4) '*.csv']);
     
     % only choose files that don't have .bbl or .bfl extension
@@ -96,16 +96,79 @@ else
 end
 
 if validData
-    %%%% now import csv data
-    [NUM,TXT,RAW]=xlsread(csvFname);
+    %%%% import csv data
    
-    if BBfileFlag, % read header info directly from bbl or bfl if does not exist in csv file   
+    if ~BBfileFlag %csv created from BB explorer
+         fid = fopen(csvFname, 'r');
+         c = fread(fid, 'uint8=>char')';
+         fclose(fid);
+         h1=strfind(c,'loopIteration')-1; %first variable
+         h2=strfind(c,'axisError[2]')+12; %last variable
+         
+         TXT=strsplit(c(h1:h2),',');
+         
+         %get rid of quotes in the strings
+         try
+         a=strfind(TXT,'"'); %find quotes
+         for m=1:size(TXT,2)
+             TXT{m}(a{m})=[]; % delete quotes
+         end
+         catch
+         end
+         
+         hdr=splitlines(c(1:strfind(c,'loopIteration')-3));
+         try
+             a=strfind(hdr,'"'); %find quotes
+             for m=1:length(hdr)
+                 hdr{m}(a{m})=[]; % get rid of quotes
+                 tmp=split(hdr(m),',')';
+                 SetupInfo(m,:)=tmp(1,1:2);
+             end 
+             NUM=csvread(csvFname, length(hdr)+2,0);% use hdr length to determine where main data starts, +1=var names so +2=data 
+         catch
+             SetupInfo=hdr;
+             NUM=csvread(csvFname, 100,0);% start at 100th row will always be after header info
+         end
+         
+    end
+   
+    if BBfileFlag, % read header info directly from bbl or bfl if does not exist in csv file  
+        fid = fopen(csvFname, 'r');
+        c = fread(fid, 'uint8=>char')';
+        fclose(fid);
+        h1=strfind(c,'loopIteration'); %first variable
+        h2=strfind(c,'rxFlightChannelsValid')+22; %last variable
+        TXT=strsplit(c(h1:h2),',');
+        TXT(40:end)=[];% delete last few so I dont have to deal with cumbersome text
+        
+        %no matter how you slice it, this seems to be slow 
+        fid = fopen(csvFname, 'r');
+        c =  textscan( fid,'%s', 'Delimiter',{'\t'} );
+        fclose(fid);
+        c{1}(1:3)=[];
+        
+        % too dam slow
+%         m=1;NUM=[];
+%         while ~isempty((cell2mat(c{1}(m))))           
+%             d=[];
+%             if strcmp(char(string(c{1}(m))), 'S frame: ANGLE_MODE, SMALL_ANGLE, IDLE, 1, 1')
+%                 c{1}(m)=[];
+%             else
+%                 d=(cell2mat(c{1}(m))); 
+%                 NUM(m,:)=str2double(char(string(d)));
+%                 m=m+1;
+%             end
+%         end
+        
+        NUM=xlsread(csvFname);% will only work on some machines
+               
         currentBBlogNum=str2num(csvFname(end-5:end-4));        
         delete(csvFname);% we r done with this-dont wanna leave junk on main directory
         
+        % get header info from .bbl/.bfl file directly
         a=strfind(mainFname,'.');
         fid = fopen(mainFname, 'r');
-        c = fread(fid, 'int8')'; %c2 = native2unicode(c)
+        c = fread(fid, 'uint8=>char')'; %c2 = native2unicode(c)
         fclose(fid);
         if ~ischar(c), c=char(c); end
         setupInfoIndStart=strfind(c,'Firmware revision'); % start of multiple instances of setup info for each log  
@@ -129,16 +192,13 @@ if validData
         Super_rates{2}=SetupInfo{b}(strfind(SetupInfo{b},':')+1:end);     
         %%%% no header info in decoded data  
         VarLabels=TXT(1,:);
-        DataMain=NUM(1:end,:);
+        DataMain=NUM;
     else
-        SetupInfo=RAW(1:size(TXT(1:end-1,1:2),1),1:2);
         rc_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rc_rates')),:));
         rc_expo=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rc_expo')),:));
-        Super_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rates')),:));
-        %%%% header info coded as nans in NUM data
-        a=find(~isnan(NUM(:,1)));
-        VarLabels=TXT(a(1),:);
-        DataMain=NUM(a(1):end,:);
+        Super_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rates')),:));     
+        VarLabels=TXT(1,:);
+        DataMain=NUM;
     end
 
     %%%%%% white space issues in blackbox_decode files

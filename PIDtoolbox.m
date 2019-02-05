@@ -157,10 +157,13 @@ guiHandles.PlotSelect = uicontrol(PTfig,'Style','popupmenu','string',{'1. Main +
     'fontsize',fontsz,'units','normalized','outerposition',[posInfo.PlotSelect],'callback',';@selection; zoom off;PTplotRaw;updateSpec=1; PTplotSpec;');
 
 guiHandles.fileA = uicontrol(PTfig,'string','select file A','fontsize',fontsz,'units','normalized','outerposition',[posInfo.fileA],...
-    'callback','[filenameA, filepath] = uigetfile({''*.csv'' ; ''*.BBL'' ; ''*.BFL'' });filenameAtmp=[];');
+    'callback','[filenameA, filepath] = uigetfile({''*.csv''});filenameAtmp=[];');
+%   'callback','[filenameA, filepath] = uigetfile({''*.csv'' ; ''*.BBL'' ; ''*.BFL'' });filenameAtmp=[];');
 guiHandles.fileA.BackgroundColor=[colorA];
 guiHandles.fileB = uicontrol(PTfig,'string','select file B','fontsize',fontsz,'units','normalized','outerposition',[posInfo.fileB],...
-    'callback','[filenameB, filepath] = uigetfile({''*.csv'' ; ''*.BBL'' ; ''*.BFL'' });filenameBtmp=[];');
+    'callback','[filenameB, filepath] = uigetfile({''*.csv''});filenameBtmp=[];');
+%   'callback','[filenameB, filepath] = uigetfile({''*.csv'' ; ''*.BBL'' ; ''*.BFL'' });filenameBtmp=[];');
+
 guiHandles.fileB.BackgroundColor=[colorB]; 
 guiHandles.runAll = uicontrol(PTfig,'string','load+run','fontsize',fontsz,'units','normalized','outerposition',[posInfo.runAll],...
     'callback','PTload; PTprocess;PTplotRaw;PTplotSpec;'); 

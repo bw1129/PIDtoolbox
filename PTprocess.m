@@ -78,15 +78,22 @@ if ~isempty(filenameA),
     end
     
     try
-    DATtmpA.PIDerr(1,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[0]')));
-    DATtmpA.PIDerr(2,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[1]')));
-    DATtmpA.PIDerr(3,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[2]')));
-    DATtmpA.PIDerrALL=DATtmpA.PIDerr(1,:)+DATtmpA.PIDerr(2,:)+DATtmpA.PIDerr(3,:);
+        DATtmpA.RCRate(1,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[0]')));
+        DATtmpA.RCRate(2,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[1]')));
+        DATtmpA.RCRate(3,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[2]')));
+        DATtmpA.RCRate(4,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[3]')));
+    catch
+        DATtmpA.RCRate(1,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'setpoint[0]')));
+        DATtmpA.RCRate(2,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'setpoint[1]')));
+        DATtmpA.RCRate(3,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'setpoint[2]')));
+        DATtmpA.RCRate(4,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'setpoint[3]')));
+    end
     
-    DATtmpA.RCRate(1,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[0]')));
-    DATtmpA.RCRate(2,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[1]')));
-    DATtmpA.RCRate(3,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[2]')));
-    DATtmpA.RCRate(4,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'rcCommands[3]')));
+    try
+        DATtmpA.PIDerr(1,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[0]')));
+        DATtmpA.PIDerr(2,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[1]')));
+        DATtmpA.PIDerr(3,:)=dat_A(:,find(strcmp(dataA.VarLabels, 'axisError[2]')));
+        DATtmpA.PIDerrALL=DATtmpA.PIDerr(1,:)+DATtmpA.PIDerr(2,:)+DATtmpA.PIDerr(3,:);
     catch
     end
     
@@ -163,11 +170,18 @@ if ~isempty(filenameB),
     end
     
     try
-    DATtmpB.RCRate(1,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[0]')));
-    DATtmpB.RCRate(2,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[1]')));
-    DATtmpB.RCRate(3,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[2]')));
-    DATtmpB.RCRate(4,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[3]')));
+        DATtmpB.RCRate(1,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[0]')));
+        DATtmpB.RCRate(2,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[1]')));
+        DATtmpB.RCRate(3,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[2]')));
+        DATtmpB.RCRate(4,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'rcCommands[3]')));
+    catch
+        DATtmpB.RCRate(1,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'setpoint[0]')));
+        DATtmpB.RCRate(2,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'setpoint[1]')));
+        DATtmpB.RCRate(3,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'setpoint[2]')));
+        DATtmpB.RCRate(4,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'setpoint[3]')));
+    end
     
+    try
     DATtmpB.PIDerr(1,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'axisError[0]')));
     DATtmpB.PIDerr(2,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'axisError[1]')));
     DATtmpB.PIDerr(3,:)=dat_B(:,find(strcmp(dataB.VarLabels, 'axisError[2]')));
