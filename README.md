@@ -62,8 +62,6 @@ This past summer I was asked by Mark Spatz <a href="https://www.youtube.com/chan
 
 In this case we are plotting the spectrograms only (Test A left and Test B right) for sub-100Hz PID error and motor sigs 1 and 2. Test A shows less activity in the 20-90Hz window in both PID error and the motor 1-2 signals (the same was true for motors 3-4, not plotted here). For test B, there is a bigger 'blob' of activity above the red dashed 'commanded motion' line, indicative of more vibration/propwash. Incidentally, it turns out that flight (1) in the video corresponds to Test data A here. It's also worth noting that these spectrograms are normalized such that the amplitude spectrum is unaffected by the length of the file/flight, which makes it more of an apples-to-apples comparison. This shows the novelty and value of being able to plot spectrograms across different kinds of blackbox data (the noise was especially noticeable on the motor outputs). PIDtoolbox gives you the option to easily plot spectrograms for several other variables, change the heatmap scale, and select from a list of color maps.
 
-I hope you find PIDtoolbox useful, and I look forward to feedback from the FPV community.
+I hope you find PIDtoolbox useful, and I welcome feedback from the FPV community.
 
 Cheers! -Brian
-
-
