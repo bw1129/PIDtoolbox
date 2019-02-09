@@ -130,41 +130,30 @@ end
 %% if expanded subplot in figure(1), we want to plot it same here
 if guiHandles.PlotSelect.Value==1
     figure(1)
-    if ~isempty(hc1) | ~isempty(hc2) | ~isempty(hc3) | ~isempty(hc4) | ~isempty(hc5) | ~isempty(hc6) % if expanded
-        expandON=1;        
+    if expandON==1;
         expandaxis=axis; 
     else % otherwise, plot as usual
-        expandON=0; 
         if ~isempty(filenameA)
-            pos1=[0.075 0.8243 0.33 0.11];
-            pos2=[0.075 0.6875 0.33 0.11];
-            pos3=[0.075 0.5450 0.33 0.11];
-            subplot('position',pos1); v1=axis;
-            subplot('position',pos2); v2=axis;
-            subplot('position',pos3); v3=axis;
+            subplot('position',posInfo.linepos1); v1=axis;
+            subplot('position',posInfo.linepos2); v2=axis;
+            subplot('position',posInfo.linepos3); v3=axis;
         end
         if ~isempty(filenameB)
-            pos4=[0.075 0.3887 0.33 0.11];
-            pos5=[0.075 0.2462 0.33 0.11];
-            pos6=[0.075 0.1037 0.33 0.11];
-            subplot('position',pos4); v4=axis;
-            subplot('position',pos5); v5=axis;
-            subplot('position',pos6); v6=axis;
+            subplot('position',posInfo.linepos4); v4=axis;
+            subplot('position',posInfo.linepos5); v5=axis;
+            subplot('position',posInfo.linepos6); v6=axis;
         end
     end    
 end
 
-%% %% main + spec 1 %%%%% !!not identical to PTplotRaw
+% main + spec 1 %%%%% !!not identical to PTplotRaw
 figure(2)
 
 if guiHandles.PlotSelect.Value==1
     if ~expandON
         if ~isempty(filenameA)
-            pos1=[0.075 0.8243 0.33 0.11];
-            pos2=[0.075 0.6875 0.33 0.11];
-            pos3=[0.075 0.5450 0.33 0.11];
         
-            subplot('position',pos1);
+            subplot('position',posInfo.linepos1);
             cla
 
             xmax=max(((tta/1000)/1000)); 
@@ -203,9 +192,9 @@ if guiHandles.PlotSelect.Value==1
            % h=title('raw PID error');
         %    set(h,'fontsize',fontsz)
             ylabel('Roll ^o/s');
-            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos1]);
-
-            subplot('position',pos2)
+            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos1]);
+  
+            subplot('position',posInfo.linepos2)
             cla
             xmax=max(((tta/1000)/1000)); 
 
@@ -238,9 +227,9 @@ if guiHandles.PlotSelect.Value==1
             T=text(5, -maxDegsec*1.5, ['% throttle']);
             set(T, 'FontSize',fontsz,'Color',[.2 .2 .2]) 
             ylabel('Pitch ^o/s');
-            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos2]);
+            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos2]);
 
-            subplot('position',pos3)
+            subplot('position',posInfo.linepos3)
             cla
             xmax=max(((tta/1000)/1000)); 
 
@@ -275,7 +264,7 @@ if guiHandles.PlotSelect.Value==1
             else
                 xlabel('');
             end
-            set(gca,'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[pos3]);
+            set(gca,'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos3]);
             box on
         end
         % T=text(5, maxDegsec*1.4, ['max yaw rate = ' int2str(maxDegsec) ' deg/s ' ]);
@@ -283,7 +272,7 @@ if guiHandles.PlotSelect.Value==1
 
         if ~isempty(filenameB)
 
-            subplot('position',pos4)
+            subplot('position',posInfo.linepos4)
             cla
             xmax=max(((ttb/1000)/1000)); 
             ymax= maxDegsec*2;
@@ -317,10 +306,10 @@ if guiHandles.PlotSelect.Value==1
             % T=text(5, maxDegsec*1.4, ['max roll rate = ' int2str(maxDegsec) ' deg/s ' ]);
             % set(T, 'FontSize',fontsz)
             ylabel('Roll ^o/s');
-            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos4]);
+            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos4]);
             box on
 
-            subplot('position',pos5)
+            subplot('position',posInfo.linepos5)
             cla
             xmax=max(((ttb/1000)/1000)); 
 
@@ -353,9 +342,9 @@ if guiHandles.PlotSelect.Value==1
             set(T, 'FontSize',fontsz,'Color',[.2 .2 .2]) 
             box on
             ylabel('Pitch ^o/s');
-            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos5]);
+            set(gca,'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos5]);
 
-            subplot('position',pos6)
+            subplot('position',posInfo.linepos6)
             cla
             xmax=max(((ttb/1000)/1000)); 
 
@@ -388,12 +377,13 @@ if guiHandles.PlotSelect.Value==1
             %set(T, 'FontSize',fontsz)
             ylabel('Yaw ^o/s');
             xlabel('time (s)');
-            set(gca,'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[pos6]);
+            set(gca,'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos6]);
         end
     else
         %%%%% expandON==1
         subplot('position',expand_sz)
-        if ~isempty(hc1)   
+        if ~isempty(hexpand1)   
+            hold on
             h=fill([t1,t2,t2,t1],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorA ]);
             set(h,'FaceAlpha',0.35,'EdgeColor',[colorA]);
             hold on
@@ -410,9 +400,10 @@ if guiHandles.PlotSelect.Value==1
              h=area(((tta/1000)/1000), ((DATmainA.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand1=[];
         end
         
-        if ~isempty(hc2)   
+        if ~isempty(hexpand2)   
             h=fill([t1,t2,t2,t1],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorA ]);
             set(h,'FaceAlpha',0.35,'EdgeColor',[colorA]);
             hold on
@@ -429,9 +420,10 @@ if guiHandles.PlotSelect.Value==1
              h=area(((tta/1000)/1000), ((DATmainA.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand2=[];
         end
         
-        if ~isempty(hc3)  
+        if ~isempty(hexpand3)  
             h=fill([t1,t2,t2,t1],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorA ]);
             set(h,'FaceAlpha',0.35,'EdgeColor',[colorA]);
             hold on
@@ -446,9 +438,10 @@ if guiHandles.PlotSelect.Value==1
              h=area(((tta/1000)/1000), ((DATmainA.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand3=[];
         end
         
-        if ~isempty(hc4)   
+        if ~isempty(hexpand4)   
             h=fill([t3,t4,t4,t3],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorB]);
             set(h,'FaceAlpha',0.3,'EdgeColor',[colorB]);
             hold on
@@ -465,9 +458,10 @@ if guiHandles.PlotSelect.Value==1
             h=area(((ttb/1000)/1000), ((DATmainB.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand4=[];
         end
         
-        if ~isempty(hc5)   
+        if ~isempty(hexpand5)   
             h=fill([t3,t4,t4,t3],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorB]);
             set(h,'FaceAlpha',0.3,'EdgeColor',[colorB]);
             hold on
@@ -484,9 +478,10 @@ if guiHandles.PlotSelect.Value==1
             h=area(((ttb/1000)/1000), ((DATmainB.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand5=[];
         end
         
-        if ~isempty(hc6)  
+        if ~isempty(hexpand6)  
             h=fill([t3,t4,t4,t3],[-maxDegsec,-maxDegsec,maxDegsec,maxDegsec],[colorB]);
             set(h,'FaceAlpha',0.3,'EdgeColor',[colorB]);
             hold on
@@ -501,6 +496,7 @@ if guiHandles.PlotSelect.Value==1
             h=area(((ttb/1000)/1000), ((DATmainB.RCRate(4,:)/100)*maxDegsec)-(maxDegsec*2));
             h.BaseLine.BaseValue=-(maxDegsec*2);
             set(h,'FaceColor',[.5 .5 .5],'FaceAlpha', .3,'EdgeColor',[.5 .5 .5],'Edgealpha',.3)
+            hexpand6=[];
         end
         
         set(gca,'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[expand_sz]);
@@ -518,13 +514,6 @@ end
 
 if ~isempty(filenameA)  
     try
-    multiplier=.2;
-    sampFreq=A_lograte*1000;
-    climMaxA=inv(A_lograte)*climMultiplier;
-
-     wind=10; 
-     amp_smoothfactor=A_lograte; 
-     thr_smoothfactor=5; 
   
     xticks=[1 size(ampmatR_A,1)/5:size(ampmatR_A,1)/5:size(ampmatR_A,1)];
     
@@ -536,40 +525,50 @@ if ~isempty(filenameA)
     end
     % user defined colormaps
     if guiHandles.ColormapSelect.Value==12, colormap(parulaMod); end
+    % more perceptually linear, gamma corrected
+    if guiHandles.ColormapSelect.Value==13, colormap(linearREDcmap); end 
+    if guiHandles.ColormapSelect.Value==14, colormap(linearGREYcmap); end
+    
     if guiHandles.Sub100HzCheck1.Value
         if A_lograte<2, 
             yticks=[size(ampmatR_A,2)-size(ampmatR_A,2)/5:size(ampmatR_A,2)/25:size(ampmatR_A,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_A,2)-size(ampmatR_A,2)/5 size(ampmatR_A,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
 %         h=text(35,97 ,'commanded motion'); set(h,'color','r')
 %             h=text(35,83 ,'uncommanded motion');set(h,'color','y')
         else
             yticks=[size(ampmatR_A,2)-size(ampmatR_A,2)/10:size(ampmatR_A,2)/50:size(ampmatR_A,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_A,2)-size(ampmatR_A,2)/10 size(ampmatR_A,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')  
+              
 %                h=text(35,197 ,'commanded motion'); set(h,'color','r')
 %             h=text(35,183 ,'uncommanded motion');set(h,'color','y')
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
     else
         yticks=[1:(size(ampmatR_A,2))/10:size(ampmatR_A,2) size(ampmatR_A,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[1 size(ampmatR_A,2)])
         if A_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
     end 
     % xlabel('% throttle')
     
     ylabel('freq Hz')
+     
+    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
+    if guiHandles.Spec1Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
+    if guiHandles.Spec1Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec1Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
-    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
-    if guiHandles.Spec1Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
     
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
     h=title(['A: ' char(guiHandles.Spec1Select.String(guiHandles.Spec1Select.Value))]);
     set(h,'fontsize',fontsz)
 
@@ -586,31 +585,35 @@ if ~isempty(filenameA)
             yticks=[size(ampmatP_A,2)-size(ampmatP_A,2)/5:size(ampmatP_A,2)/25:size(ampmatP_A,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_A,2)-size(ampmatP_A,2)/5 size(ampmatP_A,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
         else
             yticks=[size(ampmatP_A,2)-size(ampmatP_A,2)/10:size(ampmatP_A,2)/50:size(ampmatP_A,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_A,2)-size(ampmatP_A,2)/10 size(ampmatP_A,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
 
    else
         yticks=[1:(size(ampmatP_A,2))/10:size(ampmatP_A,2) size(ampmatP_A,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if A_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
    end
     ylabel('freq Hz')
-    grid on
-    ax = gca;
-    ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec1Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
-    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
-    if guiHandles.Spec1Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
     
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
-
+    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
+    if guiHandles.Spec1Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
+    if guiHandles.Spec1Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
+        set(h,'Color',[1 1 1],'fontsize',fontsz)
+         grid on
+        ax = gca;
+        ax.GridColor = [1 1 1]; 
+        if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+            ax.GridColor = [0 0 0]; % black on white background
+            set(h,'Color',[0 0 0],'fontsize',fontsz)
+        end
+    
     catch
     end
     
@@ -618,7 +621,7 @@ if ~isempty(filenameA)
     
     try
         
-    if guiHandles.Spec1Select.Value~=7 & guiHandles.Spec1Select.Value~=8 & guiHandles.Spec1Select.Value~=9 & guiHandles.Spec1Select.Value~=10
+    if guiHandles.Spec1Select.Value~=8 & guiHandles.Spec1Select.Value~=9 & guiHandles.Spec1Select.Value~=10 & guiHandles.Spec1Select.Value~=11
 
         h1=subplot('position',posInfo.Spec1PosA3);cla
         imagesc(flipud(ampmatY_A'))
@@ -627,18 +630,18 @@ if ~isempty(filenameA)
                 yticks=[size(ampmatY_A,2)-size(ampmatY_A,2)/5:size(ampmatY_A,2)/25:size(ampmatY_A,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_A,2)-size(ampmatY_A,2)/5 size(ampmatY_A,2)]) 
                 hold on;plot([0 100],[97 97],'r--')
-                hold on;plot([0 100],[83 83],'y--')  
+                  
             else
                 yticks=[size(ampmatY_A,2)-size(ampmatY_A,2)/10:size(ampmatY_A,2)/50:size(ampmatY_A,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_A,2)-size(ampmatY_A,2)/10 size(ampmatY_A,2)])  
                 hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
             end  
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
       
        else
            yticks=[1:(size(ampmatY_A,2))/10:size(ampmatY_A,2) size(ampmatY_A,2)];
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
             if A_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
        end  
@@ -650,13 +653,18 @@ if ~isempty(filenameA)
             xlabel('')
         end
         ylabel('freq Hz')
-        grid on
-        ax = gca;
-        ax.GridColor = [1 1 1]; 
+       
         h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
         set(h,'Color',[1 1 1],'fontsize',fontsz) 
+         grid on
+        ax = gca;
+        ax.GridColor = [1 1 1]; 
+        if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+            ax.GridColor = [0 0 0]; % black on white background
+            set(h,'Color',[0 0 0],'fontsize',fontsz)
+        end
     end
-     if guiHandles.Spec1Select.Value==7 | guiHandles.Spec1Select.Value==8 | guiHandles.Spec1Select.Value==9 | guiHandles.Spec1Select.Value==10
+     if guiHandles.Spec1Select.Value==8 | guiHandles.Spec1Select.Value==9 | guiHandles.Spec1Select.Value==10 | guiHandles.Spec1Select.Value==11
         h=subplot('position',Spec1PosA3);
         set(gca,'xticklabels',{})
         xlabel('')
@@ -667,17 +675,17 @@ if ~isempty(filenameA)
      end 
     catch
     end
+     
+     %%%%%%%%%%%%%%%%%%%
+    % color bar for spec1 at the top 
+    subplot('position',posInfo.Spec1PosA1)
+    hCbar1= colorbar('NorthOutside');
+    set(hCbar1,'Position', [hCbar1pos])
+    %%%%%%%%%%%%%%%%%%%
 end
 
 if ~isempty(filenameB)   
     try
-    
-    sampFreq=B_lograte*1000;
-    climMaxB=inv(B_lograte)*climMultiplier;
-    
-    wind=10; 
-    amp_smoothfactor=B_lograte; 
-    thr_smoothfactor=5; 
    
      clear a b AMP FREQS segment_length fftTemp segment_vector GyroRawSegments GyroRawSegmentsFFT Throttle_m fA PA temp ampmat
    
@@ -690,35 +698,41 @@ if ~isempty(filenameB)
             yticks=[size(ampmatR_B,2)-size(ampmatR_B,2)/5:size(ampmatR_B,2)/25:size(ampmatR_B,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_B,2)-size(ampmatR_B,2)/5 size(ampmatR_B,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
 %         h=text(35,97 ,'commanded motion'); set(h,'color','r')
 %             h=text(35,83 ,'uncommanded motion');set(h,'color','y')
         else
             yticks=[size(ampmatR_B,2)-size(ampmatR_B,2)/10:size(ampmatR_B,2)/50:size(ampmatR_B,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_B,2)-size(ampmatR_B,2)/10 size(ampmatR_B,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
 %               h=text(35,197 ,'commanded motion'); set(h,'color','r')
 %             h=text(35,183 ,'uncommanded motion');set(h,'color','y')
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
   
    else
         yticks=[1:(size(ampmatR_B,2))/10:size(ampmatR_B,2) size(ampmatR_B,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if B_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
    end
     %xlabel('% throttle')
     ylabel('freq Hz')
+   
+    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
+    if guiHandles.Spec1Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
+    if guiHandles.Spec1Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec1Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
-    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
-    if guiHandles.Spec1Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
     
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
     h=title(['B: ' char(guiHandles.Spec1Select.String(guiHandles.Spec1Select.Value))]);    
     set(h,'fontsize',fontsz)
 
@@ -736,30 +750,35 @@ if ~isempty(filenameB)
             yticks=[size(ampmatP_B,2)-size(ampmatP_B,2)/5:size(ampmatP_B,2)/25:size(ampmatP_B,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_B,2)-size(ampmatP_B,2)/5 size(ampmatP_B,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
         else
             yticks=[size(ampmatP_B,2)-size(ampmatP_B,2)/10:size(ampmatP_B,2)/50:size(ampmatP_B,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_B,2)-size(ampmatP_B,2)/10 size(ampmatP_B,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
    
    else
         yticks=[1:(size(ampmatP_B,2))/10:size(ampmatP_B,2) size(ampmatP_B,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if B_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
    end
    ylabel('freq Hz')
+  
+    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
+    if guiHandles.Spec1Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
+    if guiHandles.Spec1Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
+    
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec1Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
-    if guiHandles.Spec1Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
-    if guiHandles.Spec1Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
-    
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
 
     catch
     end
@@ -768,7 +787,7 @@ if ~isempty(filenameB)
 
     try
         
-    if guiHandles.Spec1Select.Value~=7 & guiHandles.Spec1Select.Value~=8 & guiHandles.Spec1Select.Value~=9 & guiHandles.Spec1Select.Value~=10 
+    if guiHandles.Spec1Select.Value~=8 & guiHandles.Spec1Select.Value~=9 & guiHandles.Spec1Select.Value~=10 & guiHandles.Spec1Select.Value~=11 
         h1=subplot('position',posInfo.Spec1PosB3);cla
         imagesc(flipud(ampmatY_B'))
        if guiHandles.Sub100HzCheck1.Value
@@ -776,30 +795,36 @@ if ~isempty(filenameB)
                 yticks=[size(ampmatY_B,2)-size(ampmatY_B,2)/5:size(ampmatY_B,2)/25:size(ampmatY_B,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_B,2)-size(ampmatY_B,2)/5 size(ampmatY_B,2)]) 
                 hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
             else
                 yticks=[size(ampmatY_B,2)-size(ampmatY_B,2)/10:size(ampmatY_B,2)/50:size(ampmatY_B,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_B,2)-size(ampmatY_B,2)/10 size(ampmatY_B,2)])  
                 hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
             end  
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
 
        else
             yticks=[1:(size(ampmatY_B,2))/10:size(ampmatY_B,2) size(ampmatY_B,2)];
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
             if B_lograte<2, set(gca,'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}]), end
        end
         xlabel('% throttle')
         ylabel('freq Hz')
+        
+        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
+        set(h,'Color',[1 1 1],'fontsize',fontsz)
         grid on
         ax = gca;
         ax.GridColor = [1 1 1]; 
-        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
-        set(h,'Color',[1 1 1],'fontsize',fontsz)
+        if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+            ax.GridColor = [0 0 0]; % black on white background
+            set(h,'Color',[0 0 0],'fontsize',fontsz)
+        end
+    
     end
-    if guiHandles.Spec1Select.Value==7 | guiHandles.Spec1Select.Value==8 | guiHandles.Spec1Select.Value==9 | guiHandles.Spec1Select.Value==10
+    if guiHandles.Spec1Select.Value==8 | guiHandles.Spec1Select.Value==9 | guiHandles.Spec1Select.Value==10 | guiHandles.Spec1Select.Value==11
         h=subplot('position',Spec1PosB3);
         set(gca,'xticklabels',{})
         xlabel('')
@@ -810,6 +835,12 @@ if ~isempty(filenameB)
     end 
     catch
     end
+    %show color map if in spec only plots
+    if guiHandles.PlotSelect.Value==2
+        subplot('position',posInfo.Spec1PosB1)
+        hCbar3= colorbar('NorthOutside');
+        set(hCbar3,'Position', [hCbar3pos])     
+    end
 end
 
 
@@ -819,14 +850,6 @@ end
 
 if ~isempty(filenameA)   
     try
-    
-    multiplier=.2;
-    sampFreq=A_lograte*1000;
-    climMaxA=inv(A_lograte)*climMultiplier2;
-    
-     wind=10; 
-     amp_smoothfactor=A_lograte; 
-     thr_smoothfactor=5; 
      
     clear a b AMP FREQS segment_length fftTemp segment_vector GyroRawSegments GyroRawSegmentsFFT Throttle_m fA PA temp ampmat
      
@@ -840,38 +863,48 @@ if ~isempty(filenameA)
     end
     % user defined colormaps
     if guiHandles.ColormapSelect.Value==12, colormap(parulaMod); end
+    % more perceptually linear, gamma corrected
+    if guiHandles.ColormapSelect.Value==13, colormap(linearREDcmap); end 
+    if guiHandles.ColormapSelect.Value==14, colormap(linearGREYcmap); end
+    
     if guiHandles.Sub100HzCheck2.Value
         if A_lograte<2, 
             yticks=[size(ampmatR_A2,2)-size(ampmatR_A2,2)/5:size(ampmatR_A2,2)/25:size(ampmatR_A2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_A2,2)-size(ampmatR_A2,2)/5 size(ampmatR_A2,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
            
         else
             yticks=[size(ampmatR_A2,2)-size(ampmatR_A2,2)/10:size(ampmatR_A2,2)/50:size(ampmatR_A2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_A2,2)-size(ampmatR_A2,2)/10 size(ampmatR_A2,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
             
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
 
    else
         yticks=[1:(size(ampmatR_A2,2))/10:size(ampmatR_A2,2) size(ampmatR_A2,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if A_lograte<2, set(gca,'yticklabels',[{}]), end
    end
     %xlabel('% throttle')
   %  ylabel('freq Hz')
+   
+    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
+    if guiHandles.Spec2Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
+    if guiHandles.Spec2Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec2Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
-    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
-    if guiHandles.Spec2Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
     
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
     h=title(['A: ' char(guiHandles.Spec2Select.String(guiHandles.Spec2Select.Value))]);    
     set(h,'fontsize',fontsz)
     
@@ -889,30 +922,35 @@ if ~isempty(filenameA)
             yticks=[size(ampmatP_A2,2)-size(ampmatP_A2,2)/5:size(ampmatP_A2,2)/25:size(ampmatP_A2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_A2,2)-size(ampmatP_A2,2)/5 size(ampmatP_A2,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
         else
             yticks=[size(ampmatP_A2,2)-size(ampmatP_A2,2)/10:size(ampmatP_A2,2)/50:size(ampmatP_A2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_A2,2)-size(ampmatP_A2,2)/10 size(ampmatP_A2,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
     else
         yticks=[1:(size(ampmatP_A2,2))/10:size(ampmatP_A2,2) size(ampmatP_A2,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if A_lograte<2, set(gca,'yticklabels',[{}]), end
    end
 
   %  ylabel('freq Hz')
+  
+    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
+    if guiHandles.Spec2Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
+    if guiHandles.Spec2Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec2Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
-    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
-    if guiHandles.Spec2Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
-
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
+    
     catch
     end
 
@@ -920,7 +958,7 @@ if ~isempty(filenameA)
     
     try
         
-    if guiHandles.Spec2Select.Value~=7 & guiHandles.Spec2Select.Value~=8 & guiHandles.Spec2Select.Value~=9 & guiHandles.Spec2Select.Value~=10
+    if guiHandles.Spec2Select.Value~=8 & guiHandles.Spec2Select.Value~=9 & guiHandles.Spec2Select.Value~=10 & guiHandles.Spec2Select.Value~=11
         h1=subplot('position',posInfo.Spec2PosA3);cla
         imagesc(flipud(ampmatY_A2'))
        if guiHandles.Sub100HzCheck2.Value
@@ -928,17 +966,17 @@ if ~isempty(filenameA)
                 yticks=[size(ampmatY_A2,2)-size(ampmatY_A2,2)/5:size(ampmatY_A2,2)/25:size(ampmatY_A2,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_A2,2)-size(ampmatY_A2,2)/5 size(ampmatY_A2,2)]) 
                 hold on;plot([0 100],[97 97],'r--')
-                hold on;plot([0 100],[83 83],'y--')  
+                  
             else
                 yticks=[size(ampmatY_A2,2)-size(ampmatY_A2,2)/10:size(ampmatY_A2,2)/50:size(ampmatY_A2,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_A2,2)-size(ampmatY_A2,2)/10 size(ampmatY_A2,2)]) 
                 hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
             end  
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
        else
             yticks=[1:(size(ampmatY_A2,2))/10:size(ampmatY_A2,2) size(ampmatY_A2,2)];
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxA],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
             if A_lograte<2, set(gca,'yticklabels',[{}]), end
        end
@@ -950,14 +988,18 @@ if ~isempty(filenameA)
             xlabel('')
         end
         %ylabel('freq Hz')
+     
+        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
+        set(h,'Color',[1 1 1],'fontsize',fontsz)     
         grid on
         ax = gca;
         ax.GridColor = [1 1 1]; 
-        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
-        set(h,'Color',[1 1 1],'fontsize',fontsz)
-
+        if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+            ax.GridColor = [0 0 0]; % black on white background
+            set(h,'Color',[0 0 0],'fontsize',fontsz)
+        end
     end
-    if guiHandles.Spec2Select.Value==7 | guiHandles.Spec2Select.Value==8 | guiHandles.Spec2Select.Value==9 | guiHandles.Spec2Select.Value==10
+    if guiHandles.Spec2Select.Value==8 | guiHandles.Spec2Select.Value==9 | guiHandles.Spec2Select.Value==10 | guiHandles.Spec2Select.Value==11
         h=subplot('position',Spec2PosA3);
         set(gca,'xticklabels',{})
         xlabel('')
@@ -968,17 +1010,17 @@ if ~isempty(filenameA)
     end
     catch
     end
+      %%%%%%%%%%%%%%%%%%%
+    % color bar for spec2 at the top 
+    subplot('position',posInfo.Spec2PosA1)
+    hCbar2= colorbar('NorthOutside');
+    set(hCbar2,'Position', [hCbar2pos])
+    %%%%%%%%%%%%%%%%%%%
+    
 end
 
 if ~isempty(filenameB) 
     try
-
-    sampFreq=B_lograte*1000;
-    climMaxB=inv(B_lograte)*climMultiplier2;
-    
-    wind=10; 
-    amp_smoothfactor=B_lograte; 
-    thr_smoothfactor=5; 
     
     clear a b AMP FREQS segment_length fftTemp segment_vector GyroRawSegments GyroRawSegmentsFFT Throttle_m fA PA temp ampmat
 
@@ -991,30 +1033,35 @@ if ~isempty(filenameB)
             yticks=[size(ampmatR_B2,2)-size(ampmatR_B2,2)/5:size(ampmatR_B2,2)/25:size(ampmatR_B2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_B2,2)-size(ampmatR_B2,2)/5 size(ampmatR_B2,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
         else
             yticks=[size(ampmatR_B2,2)-size(ampmatR_B2,2)/10:size(ampmatR_B2,2)/50:size(ampmatR_B2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatR_B2,2)-size(ampmatR_B2,2)/10 size(ampmatR_B2,2)])  
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
 
    else
        yticks=[1:(size(ampmatR_B2,2))/10:size(ampmatR_B2,2) size(ampmatR_B2,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if B_lograte<2, set(gca,'yticklabels',[{}]), end
    end
     %xlabel('% throttle')
     %ylabel('freq Hz')
+    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
+    if guiHandles.Spec2Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
+    if guiHandles.Spec2Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-    if guiHandles.Spec2Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor1'); end
-    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor3'); end
-    if guiHandles.Spec2Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'roll'); end
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
+    
     h=title(['B: ' char(guiHandles.Spec2Select.String(guiHandles.Spec2Select.Value))]);    
     set(h,'fontsize',fontsz)
 
@@ -1032,29 +1079,34 @@ if ~isempty(filenameB)
             yticks=[size(ampmatP_B2,2)-size(ampmatP_B2,2)/5:size(ampmatP_B2,2)/25:size(ampmatP_B2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_B2,2)-size(ampmatP_B2,2)/5 size(ampmatP_B2,2)]) 
             hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
         else
             yticks=[size(ampmatP_B2,2)-size(ampmatP_B2,2)/10:size(ampmatP_B2,2)/50:size(ampmatP_B2,2)];
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatP_B2,2)-size(ampmatP_B2,2)/10 size(ampmatP_B2,2)]) 
             hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
         end  
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
 
    else
         yticks=[1:(size(ampmatP_B2,2))/10:size(ampmatP_B2,2) size(ampmatP_B2,2)];
-        set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
+        set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{ },'xminortick','on','yminortick','on','tickdir','out');
         set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
         if B_lograte<2, set(gca,'yticklabels',[{}]), end
    end
    % ylabel('freq Hz')
+  
+   if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
+    if guiHandles.Spec2Select.Value==11, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
+    if guiHandles.Spec2Select.Value<10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
+    set(h,'Color',[1 1 1],'fontsize',fontsz)
     grid on
     ax = gca;
     ax.GridColor = [1 1 1]; 
-   if guiHandles.Spec2Select.Value==9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor2'); end
-    if guiHandles.Spec2Select.Value==10, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'motor4'); end
-    if guiHandles.Spec2Select.Value<9, h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'pitch'); end
-    set(h,'Color',[1 1 1],'fontsize',fontsz)
+    if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+        ax.GridColor = [0 0 0]; % black on white background
+        set(h,'Color',[0 0 0],'fontsize',fontsz)
+    end
 
     catch
     end
@@ -1063,7 +1115,7 @@ if ~isempty(filenameB)
 
     try
         
-    if guiHandles.Spec2Select.Value~=7 & guiHandles.Spec2Select.Value~=8 & guiHandles.Spec2Select.Value~=9 & guiHandles.Spec2Select.Value~=10
+    if guiHandles.Spec2Select.Value~=8 & guiHandles.Spec2Select.Value~=9 & guiHandles.Spec2Select.Value~=10 & guiHandles.Spec2Select.Value~=11
          h1=subplot('position',posInfo.Spec2PosB3);cla
         imagesc(flipud(ampmatY_B2'))
        if guiHandles.Sub100HzCheck2.Value
@@ -1071,31 +1123,34 @@ if ~isempty(filenameB)
                 yticks=[size(ampmatY_B2,2)-size(ampmatY_B2,2)/5:size(ampmatY_B2,2)/25:size(ampmatY_B2,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_B2,2)-size(ampmatY_B2,2)/5 size(ampmatY_B2,2)]) 
                 hold on;plot([0 100],[97 97],'r--')
-        hold on;plot([0 100],[83 83],'y--')  
+          
             else
                 yticks=[size(ampmatY_B2,2)-size(ampmatY_B2,2)/10:size(ampmatY_B2,2)/50:size(ampmatY_B2,2)];
                 set(gca,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmatY_B2,2)-size(ampmatY_B2,2)/10 size(ampmatY_B2,2)])  
                 hold on;plot([0 100],[197 197],'r--')
-            hold on;plot([0 100],[183 183],'y--')
+            
             end  
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
  
        else
             yticks=[1:(size(ampmatY_B2,2))/10:size(ampmatY_B2,2) size(ampmatY_B2,2)];
-            set(gca,'fontsize',fontsz,'CLim',[0 climMaxB],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
+            set(gca,'fontsize',fontsz,'CLim',[0 climScale2],'YTick',[yticks],'yticklabels',[{}],'XTick',[xticks],'xticklabels',{'0','20','40','60','80','100' },'xminortick','on','yminortick','on','tickdir','out');
             set(gca,'PlotBoxAspectRatioMode','auto','ylim',[min(yticks) max(yticks)])
             if B_lograte<2, set(gca,'yticklabels',[{}]), end
        end
-        xlabel('% throttle')
-        
-        %ylabel('freq Hz')
+        xlabel('% throttle')      
+        %ylabel('freq Hz') 
+        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
+        set(h,'Color',[1 1 1],'fontsize',fontsz)
         grid on
         ax = gca;
         ax.GridColor = [1 1 1]; 
-        h=text(xticks(1)+1,yticks(1)+(mode(diff(yticks))/2),'yaw');
-        set(h,'Color',[1 1 1],'fontsize',fontsz)
+        if guiHandles.ColormapSelect.Value==13 | guiHandles.ColormapSelect.Value==14
+            ax.GridColor = [0 0 0]; % black on white background
+            set(h,'Color',[0 0 0],'fontsize',fontsz)
+        end    
     end
-    if guiHandles.Spec2Select.Value==7 | guiHandles.Spec2Select.Value==8 | guiHandles.Spec2Select.Value==9 | guiHandles.Spec2Select.Value==10
+    if guiHandles.Spec2Select.Value==8 | guiHandles.Spec2Select.Value==9 | guiHandles.Spec2Select.Value==10 | guiHandles.Spec2Select.Value==11
         h=subplot('position',Spec2PosB3);
         set(gca,'xticklabels',{})
         xlabel('')
@@ -1105,6 +1160,12 @@ if ~isempty(filenameB)
         xlabel('% throttle')
     end
     catch
+    end
+     %show color map if in spec only plots
+    if guiHandles.PlotSelect.Value==2
+        subplot('position',posInfo.Spec2PosB1)
+        hCbar4= colorbar('NorthOutside');
+        set(hCbar4,'Position', [hCbar4pos])     
     end
 end
 

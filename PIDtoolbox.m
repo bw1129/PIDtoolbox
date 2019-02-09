@@ -8,7 +8,29 @@
 % ----------------------------------------------------------------------------------
 executableDir = get_deployed_exec_dir();
 
+%%% define some line colors
+ColorSet=[.6 .6 .6;..., % gray - Gyro raw
+  0   0  0;..., % black - Gyro filt
+  0  .7  0;..., % green - Pterm
+ .8  .65 .1;..., % yellow - I term
+ .3  .7  .9;..., % light blue - Dterm raw
+ .1  .2  .8;..., % dark blue -Dterm Filt
+ .6  .3  .3;..., % brown - Fterm 
+ .8  0  .2;..., % dark red
+ .9  .2  .9;..., % light purple
+ .6 0 1];    % dark purple
+j=[1 2 3 4 5 6 7 8 9 10];
 
+k=1;
+for i=1:10,
+    eval(['line.col' int2str(k-1) '=ColorSet(j(i),:);']);
+    k=k+1;
+end
+
+%%%% run PTcolormap to compute a few more 'linear' colormaps
+PTcolormap;
+
+%%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
 
 if ~exist('filenameA','var'), filenameA=[]; end
@@ -24,12 +46,8 @@ epoch1_A=[];
 epoch2_A=[];
 epoch1_B=[];
 epoch2_B=[];
-climMultiplier=1;
-climMultiplier2=1;
-climMaxA=[];
-climMaxB=[];
-climMaxA2=[];
-climMaxB2=[];
+climScale=1;
+climScale2=1;
 waitbarFid=[];
 updateSpec=0;
 
@@ -88,18 +106,18 @@ posInfo.DispInfoButton=[.9 .41 .085 .04];
 posInfo.AphasedelayText=[.81 .37 .18 .04];
 posInfo.BphasedelayText=[.81 .34 .18 .04];
 
-posInfo.checkbox0=[.12 .965 .1 .025];
-posInfo.checkbox1=[.12 .94 .1 .025];
-posInfo.checkbox2=[.185 .965 .1 .025];
-posInfo.checkbox3=[.185 .94 .1 .025];
-posInfo.checkbox4=[.23 .965 .1 .025];
-posInfo.checkbox5=[.23 .94 .1 .025];
-posInfo.checkbox6=[.3 .965 .1 .025];
-posInfo.checkbox7=[.3 .94 .1 .025];
+posInfo.checkbox0=[.11 .965 .1 .025];
+posInfo.checkbox1=[.11 .94 .1 .025];
+posInfo.checkbox2=[.18 .965 .1 .025];
+posInfo.checkbox3=[.18 .94 .1 .025];
+posInfo.checkbox4=[.225 .965 .1 .025];
+posInfo.checkbox5=[.225 .94 .1 .025];
+posInfo.checkbox6=[.30 .965 .1 .025];
+posInfo.checkbox7=[.30 .94 .1 .025];
 posInfo.checkbox8=[.36 .965 .06 .025];
 posInfo.checkbox9=[.36 .94 .06 .025];
 
-posInfo.PlotSelect=[.01 .96 .1 .025];
+posInfo.PlotSelect=[.009 .96 .1 .025];
 
 % ColorSet=colormap(jet);%hsv jet gray lines colorcube
 % j=[1     8    17    20    23    27   45    50    58    64];
@@ -126,17 +144,17 @@ a=colormap(parula);
 parulaMod=[a(:,1) a(:,2) a(:,3)*.6];
 
 
-guiHandles.checkbox0=uicontrol(PTfig,'Style','checkbox','String','Gyro unfilt','fontsize',fontsz,'ForegroundColor',[line.col0],...
+guiHandles.checkbox0=uicontrol(PTfig,'Style','checkbox','String','Gyro pre-filt','fontsize',fontsz,'ForegroundColor',[line.col0],...
     'units','normalized','outerposition',[posInfo.checkbox0],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
-guiHandles.checkbox1=uicontrol(PTfig,'Style','checkbox','String','Gyro filt','fontsize',fontsz,'ForegroundColor',[line.col1],...
+guiHandles.checkbox1=uicontrol(PTfig,'Style','checkbox','String','Gyro','fontsize',fontsz,'ForegroundColor',[line.col1],...
     'units','normalized','outerposition',[posInfo.checkbox1],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
 guiHandles.checkbox2=uicontrol(PTfig,'Style','checkbox','String','Pterm','fontsize',fontsz,'ForegroundColor',[line.col2],...
     'units','normalized','outerposition',[posInfo.checkbox2],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
 guiHandles.checkbox3=uicontrol(PTfig,'Style','checkbox','String','Iterm','fontsize',fontsz,'ForegroundColor',[line.col3],...
     'units','normalized','outerposition',[posInfo.checkbox3],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
-guiHandles.checkbox4=uicontrol(PTfig,'Style','checkbox','String','Dterm unfilt','fontsize',fontsz,'ForegroundColor',[line.col4],...
+guiHandles.checkbox4=uicontrol(PTfig,'Style','checkbox','String','Dterm pre-filt','fontsize',fontsz,'ForegroundColor',[line.col4],...
     'units','normalized','outerposition',[posInfo.checkbox4],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
-guiHandles.checkbox5=uicontrol(PTfig,'Style','checkbox','String','Dterm filt','fontsize',fontsz,'ForegroundColor',[line.col5],...
+guiHandles.checkbox5=uicontrol(PTfig,'Style','checkbox','String','Dterm','fontsize',fontsz,'ForegroundColor',[line.col5],...
     'units','normalized','outerposition',[posInfo.checkbox5],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
 guiHandles.checkbox6=uicontrol(PTfig,'Style','checkbox','String','Fterm','fontsize',fontsz,'ForegroundColor',[line.col6],...
     'units','normalized','outerposition',[posInfo.checkbox6],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), PTplotRaw; end');
@@ -177,13 +195,13 @@ guiHandles.Sub100HzCheck1 =uicontrol(PTfig,'Style','checkbox','String','<100Hz',
 guiHandles.Sub100HzCheck2 =uicontrol(PTfig,'Style','checkbox','String','<100Hz','fontsize',fontsz,...
     'units','normalized','outerposition',[posInfo.Sub100HzCheck2],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), end;updateSpec=1; PTplotSpec;');
 
-guiHandles.Spec1Select = uicontrol(PTfig,'Style','popupmenu','string',{'Gyro unfiltered','Gyro filtered','PID error','Set point','Error-SetPt spec','Gyro-SetPt spec','Dterm unfiltered','Dterm filtered','Motors 1 2','Motors 3 4'},...
+guiHandles.Spec1Select = uicontrol(PTfig,'Style','popupmenu','string',{'Gyro','Gyro pre-filt','PID error','Set point','Error-SetPt spec','Gyro-SetPt spec','Pterm','Dterm','Dterm pre-filt','Motors 1 2','Motors 3 4'},...
     'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Spec1Select],'callback','@selection;');
-guiHandles.Spec2Select = uicontrol(PTfig,'Style','popupmenu','string',{'Gyro unfiltered','Gyro filtered','PID error','Set point','Error-SetPt spec','Gyro-SetPt spec','Dterm unfiltered','Dterm filtered','Motors 1 2','Motors 3 4'},...
+guiHandles.Spec2Select = uicontrol(PTfig,'Style','popupmenu','string',{'Gyro','Gyro pre-filt','PID error','Set point','Error-SetPt spec','Gyro-SetPt spec','Pterm','Dterm','Dterm pre-filt','Motors 1 2','Motors 3 4'},...
     'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Spec2Select],'callback','@selection;');
-guiHandles.Spec2Select.Value=2;
+guiHandles.Spec1Select.Value=2;
 
-guiHandles.ColormapSelect = uicontrol(PTfig,'Style','popupmenu','string',{'parula','jet','hot','cool','spring','summer','autumn','winter','gray','bone','copper','parulaMod'},...
+guiHandles.ColormapSelect = uicontrol(PTfig,'Style','popupmenu','string',{'parula','jet','hot','cool','spring','summer','autumn','winter','gray','bone','copper','parulaMod','linearREDcmap','linearGREYcmap'},...
     'fontsize',fontsz,'units','normalized','outerposition',[posInfo.ColormapSelect],'callback','@selection;updateSpec=1; PTplotSpec;');
 guiHandles.ColormapSelect.Value=12;% hot parulaMod
 
@@ -192,13 +210,13 @@ guiHandles.BreakoutPlotButton = uicontrol(PTfig,'string','save fig','fontsize',f
 guiHandles.BreakoutPlotButton.BackgroundColor=[ .8 .8 .8];
 
 guiHandles.climMax_text = uicontrol(PTfig,'style','text','string','Hmap1 scale','fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_text]);
-guiHandles.climMax_input = uicontrol(PTfig,'style','edit','string',[num2str(climMultiplier)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_input],...
-     'callback','@textinput_call; climMultiplier=str2num(guiHandles.climMax_input.String);updateSpec=1; PTplotSpec;');
+guiHandles.climMax_input = uicontrol(PTfig,'style','edit','string',[num2str(climScale)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_input],...
+     'callback','@textinput_call; climScale=str2num(guiHandles.climMax_input.String);updateSpec=1; PTplotSpec;');
  
  
 guiHandles.climMax_text2 = uicontrol(PTfig,'style','text','string','Hmap2 scale','fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_text2]);
-guiHandles.climMax_input2 = uicontrol(PTfig,'style','edit','string',[num2str(climMultiplier2)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_input2],...
-     'callback','@textinput_call; climMultiplier2=str2num(guiHandles.climMax_input2.String);updateSpec=1; PTplotSpec;');
+guiHandles.climMax_input2 = uicontrol(PTfig,'style','edit','string',[num2str(climScale2)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.climMax_input2],...
+     'callback','@textinput_call; climScale2=str2num(guiHandles.climMax_input2.String);updateSpec=1; PTplotSpec;');
  
 guiHandles.maxSticktext = uicontrol(PTfig,'style','text','string','max stick deg/s','fontsize',fontsz,'units','normalized','outerposition',[posInfo.maxSticktext]);
 guiHandles.maxStick = uicontrol(PTfig,'style','edit','string',[int2str(maxDegsec)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.maxStick],...

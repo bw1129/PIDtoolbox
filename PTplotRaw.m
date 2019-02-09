@@ -127,7 +127,7 @@ end
 %% main + spec 1
 
 %%%%%%%% PLOT %%%%%%%
-hc1=[];hc2=[];hc3=[];hc4=[];hc5=[];hc6=[];
+hexpand1=[];hexpand2=[];hexpand3=[];hexpand4=[];hexpand5=[];hexpand6=[];
 expand_sz=[0.01 0.027 0.41 0.98];
 
 PTfig(1);
@@ -155,11 +155,11 @@ set(guiHandles.checkbox8,'visible','on')
 set(guiHandles.checkbox9,'visible','on')
  
     if ~isempty(filenameA)
-        pos1=[0.075 0.8243 0.33 0.11];
-        pos2=[0.075 0.6875 0.33 0.11];
-        pos3=[0.075 0.5450 0.33 0.11];
+        posInfo.linepos1=[0.075 0.81 0.33 0.125];
+        posInfo.linepos2=[0.075 0.67 0.33 0.125];
+        posInfo.linepos3=[0.075 0.53 0.33 0.125];
 
-        h2=subplot('position',pos1);
+        hlinepos1=subplot('position',posInfo.linepos1);
         cla
         
         xmax=max(((tta/1000)/1000)); 
@@ -203,14 +203,15 @@ set(guiHandles.checkbox9,'visible','on')
         set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])          
         ylabel('Roll ^o/s');
 
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos1]);
+        set(hlinepos1,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos1]);
 
-        h2=subplot('position',pos1);
-        set(h2,'buttondownfcn', ['h=gca; hc1 = copyobj(h, gcf); set(hc1, ''Units'', ''normal'',' ...
+        hlinepos1=subplot('position',posInfo.linepos1);
+        set(hlinepos1,'buttondownfcn', ['expandON=1;hexpand1 = copyobj(hlinepos1, gcf); set(hexpand1, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand1=[]; '');']);
     
-    h2=subplot('position',pos2);
+    
+    hlinepos2=subplot('position',posInfo.linepos2);
         cla
         xmax=max(((tta/1000)/1000)); 
 
@@ -250,14 +251,14 @@ set(guiHandles.checkbox9,'visible','on')
         T=text(5, -maxDegsec*1.5, ['% throttle']);
         set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])   
         ylabel('Pitch ^o/s');
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos2]);
+        set(hlinepos2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos2]);
 
-         h2=subplot('position',pos2);
-         set(h2, 'buttondownfcn', ['h=gca; hc2 = copyobj(h, gcf);set(hc2, ''Units'', ''normal'',' ...
+         hlinepos2=subplot('position',posInfo.linepos2);
+         set(hlinepos2,'buttondownfcn', ['expandON=1;hexpand2 = copyobj(hlinepos2, gcf); set(hexpand2, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca); expandON=0;hexpand2=[];'');']);
 
-        h2=subplot('position',pos3);
+        hlinepos3=subplot('position',posInfo.linepos3);
         cla
         xmax=max(((tta/1000)/1000)); 
         
@@ -299,24 +300,24 @@ set(guiHandles.checkbox9,'visible','on')
         else
             xlabel('');
         end
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[pos3]);
+        set(hlinepos3,'color',[1 1 1],'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos3]);
         box on
         
-         h2=subplot('position',pos3);
-         set(h2, 'buttondownfcn', ['h=gca; hc3 = copyobj(h, gcf);set(hc3, ''Units'', ''normal'',' ...
+         hlinepos3=subplot('position',posInfo.linepos3);
+         set(hlinepos3, 'buttondownfcn', ['expandON=1;hexpand3 = copyobj(hlinepos3, gcf);set(hexpand3, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand3=[];'');']);
 
     end
     % T=text(5, maxDegsec*1.4, ['max yaw rate = ' int2str(maxDegsec) ' deg/s ' ]);
     % set(T, 'FontSize',fontsz-1)
 
     if ~isempty(filenameB)
-        pos4=[0.075 0.3887 0.33 0.11];
-        pos5=[0.075 0.2462 0.33 0.11];
-        pos6=[0.075 0.1037 0.33 0.11];
+        posInfo.linepos4=[0.075 0.365 0.33 0.125];
+        posInfo.linepos5=[0.075 0.225 0.33 0.125];
+        posInfo.linepos6=[0.075 0.085 0.33 0.125];
 
-        h2=subplot('position',pos4);
+        hlinepos4=subplot('position',posInfo.linepos4);
         cla
         xmax=max(((ttb/1000)/1000)); 
         ymax= maxDegsec*2;
@@ -355,15 +356,15 @@ set(guiHandles.checkbox9,'visible','on')
         % T=text(5, maxDegsec*1.4, ['max roll rate = ' int2str(maxDegsec) ' deg/s ' ]);
         % set(T, 'FontSize',fontsz-1)
         ylabel('Roll ^o/s');
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos4]);
+        set(hlinepos4,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos4]);
         box on
 
-         h2=subplot('position',pos4);
-         set(h2, 'buttondownfcn', ['h=gca; hc4 = copyobj(h, gcf);set(hc4, ''Units'', ''normal'',' ...
+         hlinepos4=subplot('position',posInfo.linepos4);
+         set(hlinepos4,'buttondownfcn', ['expandON=1;hexpand4 = copyobj(hlinepos4, gcf); set(hexpand4, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand4=[];'');']);
     
-        h2=subplot('position',pos5);
+        hlinepos5=subplot('position',posInfo.linepos5);
         cla
         xmax=max(((ttb/1000)/1000)); 
         
@@ -402,14 +403,14 @@ set(guiHandles.checkbox9,'visible','on')
         T=text(5, -maxDegsec*1.5, ['% throttle']);
         set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])   
         ylabel('Pitch ^o/s');
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[pos5]);
+        set(hlinepos5,'color',[1 1 1],'fontsize',fontsz,'xticklabel',{},'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos5]);
 
-         h2=subplot('position',pos5);
-         set(h2, 'buttondownfcn', ['h=gca; hc5 = copyobj(h, gcf);set(hc5, ''Units'', ''normal'',' ...
+         hlinepos5=subplot('position',posInfo.linepos5);
+         set(hlinepos5,'buttondownfcn', ['expandON=1; hexpand5 = copyobj(hlinepos5, gcf); set(hexpand5, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand5=[];'');']);
     
-        h2=subplot('position',pos6);
+        hlinepos6=subplot('position',posInfo.linepos6);
         cla
         xmax=max(((ttb/1000)/1000)); 
         
@@ -447,12 +448,12 @@ set(guiHandles.checkbox9,'visible','on')
         set(T, 'FontSize',fontsz-1,'Color',[.2 .2 .2])   
         ylabel('Yaw ^o/s');
         xlabel('time (s)');
-        set(h2,'color',[1 1 1],'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[pos6]);
+        set(hlinepos6,'color',[1 1 1],'fontsize',fontsz,'tickdir','out','xminortick','on','yminortick','on','position',[posInfo.linepos6]);
        
-        h2=subplot('position',pos6);
-       set(h2, 'buttondownfcn', ['h=gca; hc6 = copyobj(h, gcf);set(hc6, ''Units'', ''normal'',' ...
+        hlinepos6=subplot('position',posInfo.linepos6);
+       set(hlinepos6,'buttondownfcn', ['expandON=1;hexpand6 = copyobj(hlinepos6, gcf); set(hexpand6, ''Units'', ''normal'',' ...
         ' ''Position'', [expand_sz],' ...
-        ' ''buttondownfcn'', ''delete(gca)'');']);
+        ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand6=[];'');']);
     end
 end
 
@@ -891,8 +892,8 @@ end
 
 %% Histogram
 
-pos1=[0.85 0.23 0.1 0.1];
-pos2=[0.85 0.11 0.1 0.1];
+pos1=[0.835 0.22 0.147 0.115];
+pos2=[0.835 0.085 0.147 0.115];
 PTfig(1);
 if ~isempty(filenameA)
     hhist=subplot('position',pos1);

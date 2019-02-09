@@ -45,7 +45,8 @@ if ~strcmp(a,'image') % ugly workaround
         if length(pos) > 2
            output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
         end
-        if strcmp(a,'image')   
+        if strcmp(a,'image')    
+            obj.Parent.YLim(2)*.001
             y=(obj.Parent.YLim(2)-pos(2)) / (.2);
             output_txt = {['%T: ',num2str(pos(1),4)],...
             ['Hz: ',num2str(y,4)]};
