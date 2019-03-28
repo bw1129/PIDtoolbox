@@ -1,7 +1,7 @@
 
 # PIDtoolbox
 
-PIDtoolbox is a Matlab-based GUI for analyzing Betaflight blackbox log files for multirotors.
+PIDtoolbox is a set of Matlab-based tools for analyzing Betaflight blackbox log data for multirotors.
 
 ![](images/PT0.2logviewer.png)
 
@@ -17,7 +17,7 @@ There are a couple of ways you can download PIDtoolbox.
 
 **1)** If you have Matlab, you can simply download the repository of mfiles, place them in a folder, and run `PIDtoolbox.m` from the Matlab command prompt. You will need several toolboxes installed for this to work (control toolbox, signal processing toolbox, image processing toolbox and statistics toolbox). I am also working on converting the code to run in <a href="https://www.gnu.org/software/octave/" target="blank">Octave</a>, a free high-level programming platform that was designed to be largely compatible with Matlab (thanks <a href="https://www.facebook.com/UAVTech1/" target="blank">Mark Spatz</a> for bringing this to my attention!).  
 
-**2)** If you do not have Matlab (or Octave), you can download a standalone Windows version of PIDtoolbox. You must first install Matlab runtime (MATLAB® Compiler Runtime, MCR), which then allows you to run any standalone Matlab program.
+**2)** If you do not have Matlab, you can download a standalone Windows version of PIDtoolbox. You must first install Matlab runtime (MATLAB® Compiler Runtime, MCR), which then allows you to run any standalone Matlab program.
 
 - **(i)** Install Matlab runtime <a href="https://www.mathworks.com/products/compiler/matlab-runtime.html" target="blank">(Matlab-runtime)</a> for Windows **(64bit only, version 9.3 R2017b**; it will not work on 32bit machines). A `runtime install file` is also included in the **<a href="https://github.com/bw1129/PIDtoolbox/releases/tag/v0.2" target="blank">PIDtoolbox_v0.2</a>** package. The good news is this is a one-time installation, after which you can run any Matlab standalone! If you have already been running a previous version of `PIDtoolbox`, you do not need to reinstall runtime, but I would recommend deleting the old version of `PIDtoolbox` and its contents before running the latest version. 
 
@@ -28,7 +28,7 @@ or drop a post to the Betaflight BlackBox Log Review Facebook group <a href="htt
 
 # How to use
 
-For a detailed guide on running and using PIDtoolbox, please visit the <a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">PIDtoolbox Wiki page</a>.
+For a detailed guide to PIDtoolbox, please visit the <a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">PIDtoolbox Wiki page</a>.
 
 For a quick user guide, follow the steps below:
 
