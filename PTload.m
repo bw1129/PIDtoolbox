@@ -8,23 +8,45 @@
 % ----------------------------------------------------------------------------------
 
 
-if ~isempty(filenameA) | ~isempty(filenameB)
+%% betaflight debug_modes
+% https://github.com/betaflight/betaflight/wiki/Debug-Modes?fbclid=IwAR2bKepD_cNZNnRtlAxf7yf3CWjYm2-MbFuwoGn3tUm8wPefp9CCJQR7c9Y
+GYRO_SCALED=6;
+DSHOT_RPM_TELEMETRY=47;
+
+
+if ~isempty(filenameA) || ~isempty(filenameB)
 
 us2sec=1000000;
+maxMotorOutput=2000; 
 
 set(PTfig, 'pointer', 'watch')
-waitbarFid = waitbar(0,'Please wait...');
-pause(.5)
+guiHandles.runAll.FontWeight='Bold';
 
-cd(filepath)
-%cd(executableDir)
+pause(.2)
+
+% this is the catch error when user clicks 'select file' but does not
+% actually make a selection.
+if ~isempty(filenameA)
+    filepath=filepathA;
+end
+if ~isempty(filenameB)
+    filepath=filepathB;
+end
+
+try
+    cd(filepath)
+catch
+    errordlg('please select file then click ''load+run'' ','error - no file selected!');
+    set(PTfig, 'pointer', 'arrow')
+    close(waitbarFid); 
+end
+    
 
 
 %%%% file A 
-if ~isempty(filenameA),
-    if isempty(filenameAtmp),
+if ~isempty(filenameA)
+    if isempty(filenameAtmp)
         filenameAtmp=filenameA;  
-        waitbar(.33,waitbarFid,['importing data from ' filenameA]); 
         clear dataA dat_A
         [dataA] = PTimport(filenameA);
         if ~isempty(dataA)
@@ -37,29 +59,26 @@ if ~isempty(filenameA),
             tta=tta-tta(1);
             
             %%%%%% Lograte and Looptime
-            try
-                A_gyro_sync_denom=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'gyro_sync_denom'),2))));
-                A_pid_process_denom=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'pid_process_denom'),2))));
-                A_looptime=((1000/str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'looptime'),2))))) * 1000) / A_pid_process_denom;
-                A_lograte=round((A_looptime) * (1000/A_looptime/median(diff(tta))));
-            catch
-                clear a b
-                a=char(string(dataA.SetupInfo));
-                for i=1:length(a),
-                    b(i,:)=strsplit(a(i,:),':');   
-                end        
-                A_gyro_sync_denom=str2num(char(string(b(strcmp(b(:,1),'gyro_sync_denom'),2))));
-                A_pid_process_denom=str2num(char(string(b(strcmp(b(:,1),'pid_process_denom'),2))));
-                A_looptime=((1000/str2num(char(string(b(strcmp(b(:,1),'looptime'),2))))) * 1000) / A_pid_process_denom;
-                A_lograte=((round(1000/median(diff(tta)))) / A_looptime) * A_looptime;
-            end   
-            
-            epoch1_A=round(tta(1)/us2sec)+5;
-            epoch2_A=round(tta(end)/us2sec)-5;
+            A_gyro_sync_denom=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'gyro_sync_denom'),2))));
+            A_pid_process_denom=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'pid_process_denom'),2))));
+            A_looptime=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'looptime'),2))));
+            A_lograte=round(1000/median(diff(tta)));
+            if ~isempty(str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'debug_mode'),2)))))
+                A_debugmode=str2num(char(string(dataA.SetupInfo(strcmp(dataA.SetupInfo(:,1),'debug_mode'),2))));
+            end
+            if A_lograte > 4    
+                waitfor(msgbox(['File A lograte = ' num2str(A_lograte) 'kHz. For faster processing, please consider logging @ 2kHz!']));
+            end
+            if A_lograte < 1
+                waitfor(msgbox(['Caution, file A lograte = ' num2str(A_lograte) 'kHz. Spectrograms may be unreliable. Please consider logging @ 2kHz!']));
+            end
+
+            epoch1_A=round(tta(1)/us2sec)+2;
+            epoch2_A=round(tta(end)/us2sec)-2;
             guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string',[int2str(epoch1_A)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Epoch1_A_Input],...
-             'callback','@textinput_call; epoch1_A=str2num(guiHandles.Epoch1_A_Input.String); PTprocess;PTplotRaw;');
+             'callback','@textinput_call; epoch1_A=str2num(guiHandles.Epoch1_A_Input.String); PTprocess;PTplotLogViewer;');
             guiHandles.Epoch2_A_Input = uicontrol(PTfig,'style','edit','string',[int2str(epoch2_A)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Epoch2_A_Input],...
-             'callback','@textinput_call;epoch2_A=str2num(guiHandles.Epoch2_A_Input.String); PTprocess;PTplotRaw;');  
+             'callback','@textinput_call;epoch2_A=str2num(guiHandles.Epoch2_A_Input.String); PTprocess;PTplotLogViewer;');  
         else
             filenameA=[];
         end
@@ -73,10 +92,9 @@ else
 end
 
 %%%% file B
-if ~isempty(filenameB),
-    if isempty(filenameBtmp),
+if ~isempty(filenameB)
+    if isempty(filenameBtmp)
         filenameBtmp=filenameB;   
-        waitbar(.66,waitbarFid,['importing data from ' filenameB]); 
         clear dataB dat_B
         [dataB] = PTimport(filenameB);
         if ~isempty(dataB)
@@ -90,29 +108,25 @@ if ~isempty(filenameB),
             ttb=ttb-ttb(1);
             
             %%%%%% Lograte and Looptime
-            try
-                B_gyro_sync_denom=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'gyro_sync_denom'),2))));
-                B_pid_process_denom=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'pid_process_denom'),2))));
-                B_looptime=((1000/str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'looptime'),2))))) * 1000) / B_gyro_sync_denom;
-                B_lograte=round((B_looptime) * (1000/B_looptime/median(diff(ttb))));
-            catch
-                clear a b
-                a=char(string(dataB.SetupInfo));
-                for i=1:length(a),
-                    b(i,:)=strsplit(a(i,:),':');   
-                end
-                B_gyro_sync_denom=str2num(char(string(b(strcmp(b(:,1),'gyro_sync_denom'),2))));
-                B_pid_process_denom=str2num(char(string(b(strcmp(b(:,1),'pid_process_denom'),2))));
-                B_looptime=((1000/str2num(char(string(b(strcmp(b(:,1),'looptime'),2))))) * 1000) / B_pid_process_denom;
-                B_lograte=((round(1000/median(diff(ttb)))) / B_looptime) * B_looptime;
-            end   
-            
-            epoch1_B=round(ttb(1)/us2sec)+5;
-            epoch2_B=round(ttb(end)/us2sec)-5;
+            B_gyro_sync_denom=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'gyro_sync_denom'),2))));
+            B_pid_process_denom=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'pid_process_denom'),2))));
+            B_looptime=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'looptime'),2))));
+            B_lograte=round(1000/median(diff(ttb)));
+            if ~isempty(str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'debug_mode'),2)))))
+                B_debugmode=str2num(char(string(dataB.SetupInfo(strcmp(dataB.SetupInfo(:,1),'debug_mode'),2))));
+            end
+            if B_lograte > 4
+                waitfor(msgbox(['File B lograte = ' num2str(B_lograte) 'kHz. For faster processing, please consider logging @ 2kHz!']));
+            end
+            if B_lograte < 1
+                waitfor(msgbox(['File B lograte = ' num2str(B_lograte) 'kHz. Caution, spectrograms may be unreliable, please consider logging @ 2kHz!']));
+            end
+            epoch1_B=round(ttb(1)/us2sec)+2;
+            epoch2_B=round(ttb(end)/us2sec)-2;
             guiHandles.Epoch1_B_Input = uicontrol(PTfig,'style','edit','string',[int2str(epoch1_B)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Epoch1_B_Input],...
-            'callback','@textinput_call; epoch1_B=str2num(guiHandles.Epoch1_B_Input.String);PTprocess;PTplotRaw; ');
+            'callback','@textinput_call; epoch1_B=str2num(guiHandles.Epoch1_B_Input.String);PTprocess;PTplotLogViewer; ');
             guiHandles.Epoch2_B_Input = uicontrol(PTfig,'style','edit','string',[int2str(epoch2_B)],'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Epoch2_B_Input],...
-            'callback','@textinput_call; epoch2_B=str2num(guiHandles.Epoch2_B_Input.String);PTprocess;PTplotRaw; '); 
+            'callback','@textinput_call; epoch2_B=str2num(guiHandles.Epoch2_B_Input.String);PTprocess;PTplotLogViewer; '); 
         else
             filenameB=[];
         end
@@ -136,7 +150,7 @@ end
     
 % collect full data here for time plots, and breakout plots
 % where you want full range of data
-if ~isempty(filenameA),
+if ~isempty(filenameA)
     clear DATmainA
  
     DATmainA.RCcommand(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommand[0]')));
@@ -148,15 +162,32 @@ if ~isempty(filenameA),
     DATmainA.GyroFilt(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'gyroADC[1]')));
     DATmainA.GyroFilt(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'gyroADC[2]')));
     
-    try
-    DATmainA.GyroRaw(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[0]'))); 
-    DATmainA.GyroRaw(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[1]')));
-    DATmainA.GyroRaw(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[2]')));
-    catch
-    DATmainA.GyroRaw(1,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
-    DATmainA.GyroRaw(2,:)=zeros(1,length(DATmainA.GyroFilt(2,:)));
-    DATmainA.GyroRaw(3,:)=zeros(1,length(DATmainA.GyroFilt(3,:)));
+    % motors
+    for ii=1:4
+        minM=min(dataA.DataMain(:,find(strcmp(dataA.VarLabels, ['motor[' int2str(ii-1) ']']))));
+        maxM=max(dataA.DataMain(:,find(strcmp(dataA.VarLabels, ['motor[' int2str(ii-1) ']']))));
+        if maxM<maxMotorOutput,
+            MaxM=maxMotorOutput;
+        end
+        DATmainA.Motor(ii,:)=((dataA.DataMain(:,find(strcmp(dataA.VarLabels, ['motor[' int2str(ii-1) ']']))) - minM) / (maxM - minM)) * 100;
     end
+    
+    try 
+        DATmainA.debug(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[0]'))); 
+        DATmainA.debug(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[1]')));
+        DATmainA.debug(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[2]')));        
+    catch % empty      
+        DATmainA.debug(1,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+        DATmainA.debug(2,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+        DATmainA.debug(3,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+    end
+    if A_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
+        DATmainA.debug(1,:)=PTscale2ref( dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[0]'))), DATmainA.Motor(1,:));
+        DATmainA.debug(2,:)=PTscale2ref( dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[1]'))), DATmainA.Motor(2,:));
+        DATmainA.debug(3,:)=PTscale2ref( dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[2]'))), DATmainA.Motor(3,:));
+        DATmainA.debug(4,:)=PTscale2ref( dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[3]'))), DATmainA.Motor(4,:));        
+    end
+    
     DATmainA.Pterm(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisP[0]')));
     DATmainA.Pterm(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisP[1]')));
     DATmainA.Pterm(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisP[2]')));
@@ -170,8 +201,10 @@ if ~isempty(filenameA),
 
     DATmainA.DtermRaw(1,:)=[-(diff(DATmainA.GyroFilt(1,:))) 0]; 
     DATmainA.DtermRaw(2,:)=[-(diff(DATmainA.GyroFilt(2,:))) 0]; 
-    DATmainA.DtermRaw(1,:)=PTscale2ref(DATmainA.DtermRaw(1,:), DATmainA.DtermFilt(1,:));% scaling function
-    DATmainA.DtermRaw(2,:)=PTscale2ref(DATmainA.DtermRaw(2,:), DATmainA.DtermFilt(2,:));
+    absmax=max(abs([max(DATmainA.DtermRaw(1,:)) min(DATmainA.DtermRaw(1,:))]));
+    DATmainA.DtermRaw(1,:)=(DATmainA.DtermRaw(1,:) / absmax) * max(DATmainA.DtermFilt(1,:));
+    absmax=max(abs([max(DATmainA.DtermRaw(2,:))  min(DATmainA.DtermRaw(2,:))]));
+    DATmainA.DtermRaw(2,:)=(DATmainA.DtermRaw(2,:) / absmax) * max(DATmainA.DtermFilt(2,:));
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[0]')))=zeros(size(dataA.DataMain(:,1)));
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[1]')))=zeros(size(dataA.DataMain(:,1)));
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[0]')))=DATmainA.DtermRaw(1,:)';
@@ -194,26 +227,51 @@ if ~isempty(filenameA),
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[1]')))=DATmainA.PIDsum(2,:);
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[2]')))=DATmainA.PIDsum(3,:);
        
-    try
+    if ~isempty(find(strcmp(dataA.VarLabels, 'rcCommands[0]')))% old set point
         DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[0]')));
         DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[1]')));
         DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[2]')));
         DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'rcCommands[3]'))); 
-    catch
-        DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[0]')));% new naming convention
+    elseif ~isempty(find(strcmp(dataA.VarLabels, 'setpoint[0]')))% new set point
+        disp('setpoint for A called')
+        DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[0]')));
         DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[1]')));
         DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[2]')));
-        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[3]'))); 
+        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[3]')))/10;% scale to 100          
+    else % if it doesnt exist
+        disp('PTrc2deg for A called')
+        DATmainA.RCRate(1,:)=PTrc2deg(DATmainA.RCcommand(1,:),dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1));
+        DATmainA.RCRate(2,:)=PTrc2deg(DATmainA.RCcommand(2,:),dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2));
+        DATmainA.RCRate(3,:)=PTrc2deg(DATmainA.RCcommand(3,:),dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3));
+        DATmainA.RCRate(4,:)=PTthrPercent(DATmainA.RCcommand(4,:));
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[0]'};
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[1]'};
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[2]'};
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[3]'};
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(1,:);
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(2,:);
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(3,:);
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(4,:);
     end
+    
     try
     DATmainA.PIDerr(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[0]')));
     DATmainA.PIDerr(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[1]')));
     DATmainA.PIDerr(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisError[2]')));  
     catch
+        DATmainA.PIDerr(1,:)=DATmainA.GyroFilt(1,:)-DATmainA.RCRate(1,:);
+        DATmainA.PIDerr(2,:)=DATmainA.GyroFilt(2,:)-DATmainA.RCRate(2,:);
+        DATmainA.PIDerr(3,:)=DATmainA.GyroFilt(3,:)-DATmainA.RCRate(3,:);
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[0]'};
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[1]'};
+        dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[2]'};
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(1,:);
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(2,:);
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(3,:);
     end
 end
 
-if ~isempty(filenameB),
+if ~isempty(filenameB)
     clear DATmainB
  
     DATmainB.RCcommand(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommand[0]')));
@@ -225,14 +283,30 @@ if ~isempty(filenameB),
     DATmainB.GyroFilt(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'gyroADC[1]')));
     DATmainB.GyroFilt(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'gyroADC[2]')));
     
+    % motors
+    for ii=1:4
+        minM=min(dataB.DataMain(:,find(strcmp(dataB.VarLabels, ['motor[' int2str(ii-1) ']']))));
+        maxM=max(dataB.DataMain(:,find(strcmp(dataB.VarLabels, ['motor[' int2str(ii-1) ']']))));
+        if maxM<maxMotorOutput,
+            MaxM=maxMotorOutput;
+        end
+        DATmainB.Motor(ii,:)=((dataB.DataMain(:,find(strcmp(dataB.VarLabels, ['motor[' int2str(ii-1) ']']))) - minM) / (maxM - minM)) * 100;
+    end
+    
     try
-    DATmainB.GyroRaw(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))); 
-    DATmainB.GyroRaw(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[1]')));
-    DATmainB.GyroRaw(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[2]')));
-    catch
-    DATmainB.GyroRaw(1,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
-    DATmainB.GyroRaw(2,:)=zeros(1,length(DATmainB.GyroFilt(2,:)));
-    DATmainB.GyroRaw(3,:)=zeros(1,length(DATmainB.GyroFilt(3,:)));
+        DATmainB.debug(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))); 
+        DATmainB.debug(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[1]')));
+        DATmainB.debug(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[2]')));
+    catch % empty
+        DATmainB.debug(1,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+        DATmainB.debug(2,:)=zeros(1,length(DATmainB.GyroFilt(2,:)));
+        DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(3,:)));
+    end
+    if B_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
+        DATmainB.debug(1,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))), DATmainB.Motor(1,:));
+        DATmainB.debug(2,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[1]'))), DATmainB.Motor(2,:));
+        DATmainB.debug(3,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[2]'))), DATmainB.Motor(3,:));
+        DATmainB.debug(4,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[3]'))), DATmainB.Motor(4,:));        
     end
     
     DATmainB.Pterm(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisP[0]')));
@@ -248,8 +322,10 @@ if ~isempty(filenameB),
     
     DATmainB.DtermRaw(1,:)=[-(diff(DATmainB.GyroFilt(1,:))) 0]; 
     DATmainB.DtermRaw(2,:)=[-(diff(DATmainB.GyroFilt(2,:))) 0]; 
-    DATmainB.DtermRaw(1,:)=PTscale2ref(DATmainB.DtermRaw(1,:), DATmainB.DtermFilt(1,:));% scaling function
-    DATmainB.DtermRaw(2,:)=PTscale2ref(DATmainB.DtermRaw(2,:), DATmainB.DtermFilt(2,:));
+    absmax=max(abs([max(DATmainB.DtermRaw(1,:)) min(DATmainB.DtermRaw(1,:))]));
+    DATmainB.DtermRaw(1,:)=(DATmainB.DtermRaw(1,:) / absmax) * max(DATmainB.DtermFilt(1,:));
+    absmax=max(abs([max(DATmainB.DtermRaw(2,:))  min(DATmainB.DtermRaw(2,:))]));
+    DATmainB.DtermRaw(2,:)=(DATmainB.DtermRaw(2,:) / absmax) * max(DATmainB.DtermFilt(2,:));
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[0]')))=zeros(size(dataB.DataMain(:,1)));
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[1]')))=zeros(size(dataB.DataMain(:,1)));
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[0]')))=DATmainB.DtermRaw(1,:)';
@@ -272,23 +348,47 @@ if ~isempty(filenameB),
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisPID[1]')))=DATmainB.PIDsum(2,:);
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisPID[2]')))=DATmainB.PIDsum(3,:);
         
-    try
+    if ~isempty(find(strcmp(dataB.VarLabels, 'rcCommands[0]')))% old set point   
         DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[0]')));
         DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[1]')));
         DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[2]')));
         DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'rcCommands[3]')));
-    catch
-        DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[0]')));% new naming convention
+    elseif ~isempty(find(strcmp(dataB.VarLabels, 'setpoint[0]')))% new set point
+        disp('setpoint for B called')
+        DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[0]')));
         DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[1]')));
         DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[2]')));
-        DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[3]')));
-    end
+        DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[3]')))/10;% scale to 100  
+    else
+        disp('PTrc2deg for B called')
+        DATmainB.RCRate(1,:)=PTrc2deg(DATmainB.RCcommand(1,:),dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1));
+        DATmainB.RCRate(2,:)=PTrc2deg(DATmainB.RCcommand(2,:),dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2));
+        DATmainB.RCRate(3,:)=PTrc2deg(DATmainB.RCcommand(3,:),dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3));
+        DATmainB.RCRate(4,:)=PTthrPercent(DATmainB.RCcommand(4,:));
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[0]'};
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[1]'};
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[2]'};
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[3]'};
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(1,:);
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(2,:);
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(3,:);
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(4,:);
+     end
     
     try
         DATmainB.PIDerr(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[0]')));
         DATmainB.PIDerr(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[1]')));
         DATmainB.PIDerr(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisError[2]')));
     catch
+        DATmainB.PIDerr(1,:)=DATmainB.GyroFilt(1,:)-DATmainB.RCRate(1,:);
+        DATmainB.PIDerr(2,:)=DATmainB.GyroFilt(2,:)-DATmainB.RCRate(2,:);
+        DATmainB.PIDerr(3,:)=DATmainB.GyroFilt(3,:)-DATmainB.RCRate(3,:);
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[0]'};
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[1]'};
+        dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[2]'};
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(1,:);
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(2,:);
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(3,:);
     end 
 end
 %%
@@ -300,141 +400,44 @@ infoStr={'Firmware revision';'looptime';'rollPID';'pitchPID';'yawPID'; 'rc_rates
 infoStr2={'Firmware_revision';'looptime';'rollPIDF';'pitchPIDF';'yawPIDF'; 'rc_rates';'rc_expo';'Super_rates';'gyro_lowpass_hz';'gyro_lowpass2_hz';'dterm_lpf_hz';'dterm_lpf2_hz'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~isempty(filenameA)    
-    if  ~dataA.BBfileFlag
-        Firmware_revision_A=char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'Firmware revision')),:));
-        looptime_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'looptime')),:));
-        frameIntervalPDenom_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'frameIntervalPDenom')),:));
-        rollPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rollPID')),:));
-        pitchPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'pitchPID')),:));
-        yawPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'yawPID')),:));
-        rc_rates_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rc_rates')),:));
-        rc_expo_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rc_expo')),:));
-        Super_rates_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rates')),:));
-        gyro_lowpass_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'gyro_lowpass_hz')),:);
-        gyro_lowpass2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
-        dterm_lpf_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf_hz')),:);
-        dterm_lpf2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
-    else
-         for i=1:size(infoStr,1)
-            a=strfind(dataA.SetupInfo,infoStr{i});
-            b=find(cellfun(@(a)~isempty(a)&&a>0,a)); 
-            if i==8, if length(b)>1,b=b(2);end; end
-            eval([infoStr2{i} '_A=dataA.SetupInfo{b}(strfind(dataA.SetupInfo{b},'':'')+1:end);']);  
-        end
-    end
+    Firmware_revision_A=char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'Firmware revision')),:));
+    looptime_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'looptime')),:));
+    frameIntervalPDenom_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'frameIntervalPDenom')),:));
+    rollPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rollPID')),:));
+    pitchPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'pitchPID')),:));
+    yawPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'yawPID')),:));
+    rc_rates_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rc_rates')),:));
+    rc_expo_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rc_expo')),:));
+    Super_rates_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rates')),:));
+    gyro_lowpass_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'gyro_lowpass_hz')),:);
+    gyro_lowpass2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
+    dterm_lpf_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf_hz')),:);
+    dterm_lpf2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
 end
 if ~isempty(filenameB)
-    if ~dataB.BBfileFlag
-        Firmware_revision_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'Firmware revision')),:));
-        looptime_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'looptime')),:);
-        frameIntervalPDenom_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'frameIntervalPDenom')),:);
-        rollPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rollPID')),:));
-        pitchPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'pitchPID')),:));
-        yawPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'yawPID')),:));
-        rc_rates_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rc_rates')),:));
-        rc_expo_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rc_expo')),:));
-        Super_rates_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rates')),:));
-        gyro_lowpass_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'gyro_lowpass_hz')),:);
-        gyro_lowpass2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
-        dterm_lpf_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf_hz')),:);
-        dterm_lpf2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
-    else
-        for i=1:size(infoStr,1)
-            a=strfind(dataB.SetupInfo,infoStr{i}); 
-            b=find(cellfun(@(a)~isempty(a)&&a>0,a)); 
-            if i==8, if length(b)>1,b=b(2);end; end
-            eval([infoStr2{i} '_B=dataB.SetupInfo{b}(strfind(dataB.SetupInfo{b},'':'')+1:end);']);  
-        end
-    end
-end
-
-%%
-if ~isempty(filenameA) & dataA.BBfileFlag % if data imported from BB log using blackbox_decode
-    clear RCratesA RCexpoA RCsuperA 
-    RCratesA=str2num(char(string(dataA.rates(1,2))));
-    RCexpoA=str2num(char(string(dataA.rates(2,2))));
-    RCsuperA=str2num(char(string(dataA.rates(3,2)))); 
-    
-      % compute RCrate
-    clear DATmainA.RCRate DATmainA.PIDerr 
-    DATmainA.RCRate(1,:)=PTrc2deg(DATmainA.RCcommand(1,:),RCratesA(1),RCexpoA(1),RCsuperA(1));
-    DATmainA.RCRate(2,:)=PTrc2deg(DATmainA.RCcommand(2,:),RCratesA(2),RCexpoA(2),RCsuperA(2));
-    DATmainA.RCRate(3,:)=PTrc2deg(DATmainA.RCcommand(3,:),RCratesA(3),RCexpoA(3),RCsuperA(3));
-    DATmainA.RCRate(4,:)=(DATmainA.RCcommand(4,:)-999) / 10;
-    
-    DATmainA.PIDerr(1,:)=DATmainA.GyroFilt(1,:)-DATmainA.RCRate(1,:);
-    DATmainA.PIDerr(2,:)=DATmainA.GyroFilt(2,:)-DATmainA.RCRate(2,:);
-    DATmainA.PIDerr(3,:)=DATmainA.GyroFilt(3,:)-DATmainA.RCRate(3,:);
-end
-
-if  ~isempty(filenameB) & dataB.BBfileFlag % if data imported from BB log using blackbox_decode
-    clear RCratesB RCexpoB RCsuperB   
-    RCratesB=str2num(char(string(dataB.rates(1,2))));
-    RCexpoB=str2num(char(string(dataB.rates(2,2))));
-    RCsuperB=str2num(char(string(dataB.rates(3,2))));
- %   thrMidB=str2num(char(string(dataB.rates(4,2))));
- %   thrExpoB=str2num(char(string(dataB.rates(5,2))));
-    
-    clear DATmainB.RCRate DATmainB.PIDerr
-    DATmainB.RCRate(1,:)=PTrc2deg(DATmainB.RCcommand(1,:),RCratesB(1),RCexpoB(1),RCsuperB(1));
-    DATmainB.RCRate(2,:)=PTrc2deg(DATmainB.RCcommand(2,:),RCratesB(2),RCexpoB(2),RCsuperB(2));
-    DATmainB.RCRate(3,:)=PTrc2deg(DATmainB.RCcommand(3,:),RCratesB(3),RCexpoB(3),RCsuperB(3));
-    DATmainB.RCRate(4,:)=(DATmainB.RCcommand(4,:)-999) / 10;
-
-    DATmainB.PIDerr(1,:)=DATmainB.GyroFilt(1,:)-DATmainB.RCRate(1,:);
-    DATmainB.PIDerr(2,:)=DATmainB.GyroFilt(2,:)-DATmainB.RCRate(2,:);
-    DATmainB.PIDerr(3,:)=DATmainB.GyroFilt(3,:)-DATmainB.RCRate(3,:);
-end
-
-%%
-
-%%%% get estimated phase delay from roll (most active axis)
-try 
-clear sampTime maxlag PhaseDelay_A
-sampTime=(mean(diff(tta)));
-maxlag=int8(round(5000/sampTime)); %~5s delay
-PhaseDelay_A=finddelay(smooth(DATmainA.GyroRaw(1,:),10),smooth(DATmainA.GyroFilt(1,:),10),maxlag) * sampTime / 1000; % both signals smoothed equally, more reliable estimate
-if PhaseDelay_A<.1, PhaseDelay_A=[]; end % when garbage gets through
-
-clear PhaseDelay2_A 
-PhaseDelay2_A=finddelay(smooth(DATmainA.DtermRaw(1,:),10),smooth(DATmainA.DtermFilt(1,:),10),maxlag) * sampTime / 1000;
-if PhaseDelay2_A<.1, PhaseDelay2_A=[]; end % when garbage gets through
-
-ResponseDelayR_A=finddelay(DATmainA.RCRate(1,:),DATmainA.GyroFilt(1,:),maxlag*4) * sampTime / 1000;
-ResponseDelayP_A=finddelay(DATmainA.RCRate(2,:),DATmainA.GyroFilt(2,:),maxlag*4) * sampTime / 1000;
-ResponseDelayY_A=finddelay(DATmainA.RCRate(3,:),DATmainA.GyroFilt(3,:),maxlag*4) * sampTime / 1000;
-clear sampTime maxlag
-
-catch
-end
-
-
-try
-clear sampTime maxlag PhaseDelay_B
-sampTime=(mean(diff(ttb)));
-maxlag=int8(round(5000/sampTime)); %~5s delay
-PhaseDelay_B=finddelay(smooth(DATmainB.GyroRaw(1,:),10),smooth(DATmainB.GyroFilt(1,:),10),maxlag) * sampTime / 1000;
-if PhaseDelay_B<.1, PhaseDelay_B=[]; end % when garbage gets through
-
-clear PhaseDelay2_B
-PhaseDelay2_B=finddelay(smooth(DATmainB.DtermRaw(1,:),10),smooth(DATmainB.DtermFilt(1,:),10),maxlag) * sampTime / 1000;
-if PhaseDelay2_B<.1, PhaseDelay2_B=[]; end % when garbage gets through
-
-ResponseDelayR_B=finddelay(DATmainB.RCRate(1,:),DATmainB.GyroFilt(1,:),maxlag*4) * sampTime / 1000;
-ResponseDelayP_B=finddelay(DATmainB.RCRate(2,:),DATmainB.GyroFilt(2,:),maxlag*4) * sampTime / 1000;
-ResponseDelayY_B=finddelay(DATmainB.RCRate(3,:),DATmainB.GyroFilt(3,:),maxlag*4) * sampTime / 1000;
-clear sampTime maxlag
-catch
+    Firmware_revision_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'Firmware revision')),:));
+    looptime_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'looptime')),:);
+    frameIntervalPDenom_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'frameIntervalPDenom')),:);
+    rollPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rollPID')),:));
+    pitchPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'pitchPID')),:));
+    yawPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'yawPID')),:));
+    rc_rates_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rc_rates')),:));
+    rc_expo_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rc_expo')),:));
+    Super_rates_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rates')),:));
+    gyro_lowpass_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'gyro_lowpass_hz')),:);
+    gyro_lowpass2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
+    dterm_lpf_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf_hz')),:);
+    dterm_lpf2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
 end
 
 %% create saveDirectory
-if ~isempty(filenameA) & ~isempty(filenameB)
+if ~isempty(filenameA) && ~isempty(filenameB)
     saveDirectory=[filenameA(1:end-4) '-' filenameB(1:end-4)];
 end
-if ~isempty(filenameA) & isempty(filenameB)
+if ~isempty(filenameA) && isempty(filenameB)
     saveDirectory=[filenameA(1:end-4)];
 end
-if ~isempty(filenameB) & isempty(filenameA)
+if ~isempty(filenameB) && isempty(filenameA)
     saveDirectory=[filenameB(1:end-4)];
 end
 if ~exist(saveDirectory,'dir')
@@ -467,9 +470,53 @@ end
 
 
 %%
-close(waitbarFid)
 set(PTfig, 'pointer', 'arrow')
 
-else
-    PlotSelect.Value=1;
 end
+
+
+%% some functions used within this script
+function [angleRate] = PTrc2deg(X,rcRate,rcExpo,superrate)
+% raw RCcommand data to RCrate in deg/s, i.e. "set point"
+%  with help from: https://github.com/betaflight/betaflight-configurator/blob/master/src/js/RateCurve.js
+%   X is a vector containing a single axis of RCcommand data scaled from -500 to 500, 
+%   rcRate(0-255),rcExpo(0-100),superrate(0-100)
+
+    expoPower=3;
+    rcRateConstant=200;
+    angleRate=[];
+
+    rcRate=rcRate/100;
+    rcExpo=(rcExpo/100);
+    superrate=superrate/100;
+    
+    maxRC=500;
+    rcCommandf = X / maxRC;
+    rcCommandfAbs = abs(rcCommandf) / 1;%max(abs(rcCommandf)); 
+
+    if (rcRate > 2) 
+        rcRate = rcRate + (rcRate - 2) * 14.54; 
+    end
+    if (rcExpo > 0)
+        disp('rcExpo > 0')
+        rcCommandf =  rcCommandf .* power(rcCommandfAbs, expoPower) * rcExpo + rcCommandf * (1-rcExpo);         
+    end 
+    if (superrate > 0) 
+        disp('superrate > 0')
+        rcFactor = 1 ./ (1 - rcCommandfAbs * superrate); % this creates the super expo curve needed to convert RCcommand to RCrate  
+        angleRate = (rcRateConstant * rcRate * rcCommandf);  
+        angleRate = angleRate .* rcFactor;
+       % disp(['angleRate:' num2str(angleRate) ' rcFactor:' num2str(rcFactor)])
+    else
+        angleRate = (rcRateConstant * rcRate * rcCommandf);
+    end
+end
+
+
+function [throttlePercent] = PTthrPercent(X) 
+% converts raw throttle [RCcommand] to percent    
+    rcCommandf = (X-1000);  
+    throttlePercent = ((rcCommandf-0) / (1000-0)) * 100;
+end
+
+

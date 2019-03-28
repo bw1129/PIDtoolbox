@@ -1,5 +1,5 @@
 function [output_txt] = PTdatatip(obj,event_obj)
-% Display the position of the data cursor
+%% Display the position of the data cursor
 % obj          Currently not used (empty)
 % event_obj    Handle to event object
 % output_txt   Data cursor text string (string or cell array of strings).
@@ -14,24 +14,28 @@ function [output_txt] = PTdatatip(obj,event_obj)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 %
-%
-%
+
 
 try
     a=event_obj.Target.Type;  
+    c=event_obj.Target.Color;
 catch
 end
-
-if ~strcmp(a,'image') % ugly workaround
+c1=[0.9300    0.5000    0.3000];
+c2=[0.3000    0.6500    0.9500]; 
+if ~strcmp(a,'image') % ugly workaround       
         pos = get(event_obj,'Position');
         if pos(1)<100,
             dgts=5;
         else
             dgts=6;
-        end
+        end        
         output_txt = {['sec: ',num2str(pos(1),dgts)],...
             ['deg/s: ',num2str(pos(2),4)]};
-
+        if c==c1 | c==c2
+            output_txt = {['x: ',num2str(pos(1),4)],...
+            ['y: ',num2str(pos(2),4)]};
+        end
         % If there is a Z-coordinate in the position, display it as well
         if length(pos) > 2
             output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
@@ -45,8 +49,12 @@ if ~strcmp(a,'image') % ugly workaround
         if length(pos) > 2
            output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
         end
-        if strcmp(a,'image')   
-            y=(obj.Parent.YLim(2)-pos(2)) / (.2);
+        if strcmp(a,'image')  
+%             pos = get(event_obj,'Position');
+%             output_txt = {['X: ',num2str(pos(1),4)],...
+%             ['Y: ',num2str(pos(2),4)]};
+        
+            y=(obj.Parent.YLim(2)-pos(2)) / (.3);
             output_txt = {['%T: ',num2str(pos(1),4)],...
             ['Hz: ',num2str(y,4)]};
  

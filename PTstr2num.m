@@ -1,6 +1,8 @@
-function [scaledOutput] = PTscale2ref(inputSig,inputRef)
-%% [scaledSig] = PTscale2ref(sig,ref)
-%   Normalizes an input signal [inputSig] relative to a reference signal [inputRef]  
+function data = PTstr2num(str, numCols)
+%% data = PTstr2num(str, numCols)
+% data = PTstr2num(str, numCols)
+% modified from:
+% https://www.mathworks.com/company/newsletters/articles/tips-for-accelerating-matlab-performance.html
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -9,10 +11,12 @@ function [scaledOutput] = PTscale2ref(inputSig,inputRef)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-c=1;% constant, scaling factor, though probably unnecessary
-
-mRef = mean(abs(inputRef)); stdRef = std(abs(inputRef));
-mSig = mean(abs(inputSig)); stdSig = std(abs(inputSig));
-scaledOutput = (((inputSig - mSig)/stdSig) * stdRef + mRef) * c;
+% faster alternative to str2num
+    str = char(str);
+    str(:,end+1) = ' ';
+    data = sscanf(str','%f');
+    if nargin>1 && ~isempty(numCols)
+        data = reshape(data,numCols,[])';
+    end
 end
 

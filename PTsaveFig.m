@@ -1,6 +1,4 @@
-function [scaledOutput] = PTscale2ref(inputSig,inputRef)
-%% [scaledSig] = PTscale2ref(sig,ref)
-%   Normalizes an input signal [inputSig] relative to a reference signal [inputRef]  
+%% PTplotBreakout - script to save main Figs without UI control panel in new window
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -9,10 +7,21 @@ function [scaledOutput] = PTscale2ref(inputSig,inputRef)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-c=1;% constant, scaling factor, though probably unnecessary
-
-mRef = mean(abs(inputRef)); stdRef = std(abs(inputRef));
-mSig = mean(abs(inputSig)); stdSig = std(abs(inputSig));
-scaledOutput = (((inputSig - mSig)/stdSig) * stdRef + mRef) * c;
+%%
+set(gcf, 'pointer', 'watch')
+cd(filepath)
+cd(saveDirectory)
+FigDoesNotExist=1;
+n=0;
+while FigDoesNotExist,
+    n=n+1;
+    FigDoesNotExist=isfile([saveDirectory '-' int2str(n) '.png']);
 end
+figname=[saveDirectory '-' int2str(n)];
+saveas(gcf, [figname '.png'] );
+print(figname,'-dpng','-r200')
+
+set(gcf, 'pointer', 'arrow')
+cd(filepath)
+
 

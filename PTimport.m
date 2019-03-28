@@ -1,10 +1,10 @@
 function [DAT] = PTimport(filename)
-%[mainFname, csvFname, SetupInfo, VarLabels, DataMain, BBfileFlag] = PTimport(filename)
+%% [mainFname, csvFname, SetupInfo, VarLabels, DataMain, BBfileFlag] = PTimport(filename)
 %   Imports log data in multiple formats. Default is .csv, but if using .bbl or .bfl files, 
 % a version of blackbox_decode.exe must be in the log file folder
 % blackbox_decode.exe is part of "blackbox_tools", which can be found here:
-% https://github.com/cleanflight/blackbox-tools
 % https://github.com/betaflight/blackbox-tools
+% https://github.com/cleanflight/blackbox-tools
  
 
 % ----------------------------------------------------------------------------------
@@ -15,32 +15,49 @@ function [DAT] = PTimport(filename)
 % ----------------------------------------------------------------------------------
 
 
+%%
+waitbarFid = waitbar(0,'Please wait...');
+pause(.5)
+
 BBfileFlag=0;
 validData=1;
-a=strfind(filename, ' ');% had to fill white space with underscore for system func below - grrr!
-filename2=filename;
-if a,
-    for k=1:length(a),
-        filename2(a)='_';
-    end
-    movefile(filename,filename2);% rename old file with new underscore version - grrr!
-    delete(filename);% delete old file
-    filename=filename2;
+a=strfind(filename, ' ');% had to remove white space  to run in bb decode
+a=fliplr(a);
+if ~isempty((find(isspace(filename))))
+    filename2=filename(find(~isspace(filename)));% have to get rid of spaces to run blackbox_decode using 'system' function
+    movefile(filename,filename2);%rename file without spaces
+    filename=filename2; 
+    clear filename2
 end
+if size(filename,2)>20
+     f=[filename(1:17) '...'];
+ else
+     f=filename;
+end
+ 
 mainFname=filename;
-if strcmp(filename(end-3:end),'.BFL') | strcmp(filename(end-3:end),'.BBL') | strcmp(filename(end-3:end),'.bfl') | strcmp(filename(end-3:end),'.bbl')          
-    [status,result]=system(['blackbox_decode.exe --debug ' filename]);
+if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl')          
+    waitbar(.25,waitbarFid,['converting ' f ' to csv using BB-tools']);  
+    [status,result]=system(['blackbox_decode.exe ' filename]);  
     files=dir([filename(1:end-4) '*.csv']);
     
     % only choose files that don't have .bbl or .bfl extension
     clear f2;m=1;
     for k=1:length(files)
-        if ~contains(files(k).name,'.bbl','IgnoreCase',true) & ~contains(files(k).name,'.bfl','IgnoreCase',true) 
+        if ~contains(files(k).name,'.bbl','IgnoreCase',true) & ~contains(files(k).name,'.bfl','IgnoreCase',true)  
             f2(m)=files(k);
             m=m+1;
         end
     end
-    files=f2;clear f2;
+    % report to user, the most common loading error
+    try 
+        files=f2;clear f2;
+    catch % report blackbox_decode error to user
+        set(gcf, 'pointer', 'arrow')
+        close(waitbarFid)
+        errordlg('Please ensure your log files are in the ''main'' folder along with blackbox_decode.exe and PIDtoolbox.exe! ', 'blackbox_decode error');
+    end
+    
     % get rid of all event files and gps.gpx files 
     fevt=dir([filename(1:end-4) '*.event']);
     for k=1:size(fevt,1)
@@ -56,22 +73,34 @@ if strcmp(filename(end-3:end),'.BFL') | strcmp(filename(end-3:end),'.BBL') | str
         x=length(files);
         m=1;
         for k=1:x,            
-            if ((files(k).bytes)/1000000) < .5 % delete if < half MB
+            if ((files(k).bytes)) < 500000 % delete if < 500kb
                 delete(files(k).name)
             else
                 f2(m)=files(k);
                 m=m+1;
             end
         end 
-        files=f2;clear f2
+        files=f2;clear f2   
+%         for m=1:size(files,2)
+%             fileNums(m)=str2num(char(files(m).name(end-5:end-4)));
+%         end
+        a=strfind(result,'duration');
+        logDurStr='SELECT LOG NUMBER:    ';
+        for d=2:length(a)+1
+            if d<11,
+                logDurStr(d,:)=[' ' int2str(d-1) ') ' result(a(d-1):a(d-1)+17)];
+            else
+                logDurStr(d,:)=[int2str(d-1) ') ' result(a(d-1):a(d-1)+17)];
+            end
+        end
         
-        if length(files)>0            
+       if length(files)>0            
         x=length(files); 
             if x>1 % if multiple logs exist in BB file
                 y=0;
-                while y <= 0 | y > x   
-                    y=str2num(char(inputdlg([filename(1:end-4) ' - select from log 1-' int2str(x) ':'])));
-                    if y <= 0 | y > x,
+                while y <= 0 || y > x   
+                    y=PTstr2num(char(inputdlg([logDurStr])));
+                    if y <= 0 || y > x,
                     errordlg('invalid selection. try again.');    
                     end
                 end  
@@ -94,11 +123,11 @@ if strcmp(filename(end-3:end),'.BFL') | strcmp(filename(end-3:end),'.BBL') | str
 else
     csvFname=filename; 
 end
-
+%%
 if validData
-    %%%% import csv data
-   
+    %%%% import csv data   
     if ~BBfileFlag %csv created from BB explorer
+        waitbar(.5,waitbarFid,['getting header info for ' f]);
          fid = fopen(csvFname, 'r');
          c = fread(fid, 'uint8=>char')';
          fclose(fid);
@@ -121,9 +150,12 @@ if validData
              a=strfind(hdr,'"'); %find quotes
              for m=1:length(hdr)
                  hdr{m}(a{m})=[]; % get rid of quotes
-                 tmp=split(hdr(m),',')';
-                 SetupInfo(m,:)=tmp(1,1:2);
-             end 
+                 a2=strfind(hdr{m},',');
+                  a3=char(string(hdr{m}));
+                  SetupInfo(m,:)=[{a3(1:a2-1)} {a3(a2+1:end)}];
+             end
+                        
+             waitbar(.8,waitbarFid,['importing csv for ' f]); 
              NUM=csvread(csvFname, length(hdr)+2,0);% use hdr length to determine where main data starts, +1=var names so +2=data 
          catch
              SetupInfo=hdr;
@@ -132,71 +164,98 @@ if validData
          
     end
    
-    if BBfileFlag, % read header info directly from bbl or bfl if does not exist in csv file  
+    if BBfileFlag % read header info directly from bbl or bfl if does not exist in csv file 
+        waitbar(.5,waitbarFid,['importing csv for ' f]);
         fid = fopen(csvFname, 'r');
-        c = fread(fid, 'uint8=>char')';
+        C = textscan(fid, '%s', 'Delimiter',',','CollectOutput',1);
+        ncol=mode(diff(find(not(cellfun('isempty',strfind(C{1}(:),'ANGLE_MODE'))))));% # columns
+        TXT=C{1}(1:ncol)';% contains column headers
         fclose(fid);
-        h1=strfind(c,'loopIteration'); %first variable
-        h2=strfind(c,'rxFlightChannelsValid')+22; %last variable
-        TXT=strsplit(c(h1:h2),',');
-        TXT(40:end)=[];% delete last few so I dont have to deal with cumbersome text
-        
-        %no matter how you slice it, this seems to be slow 
-        fid = fopen(csvFname, 'r');
-        c =  textscan( fid,'%s', 'Delimiter',{'\t'} );
+
+        waitbar(.75,waitbarFid,['importing csv for ' f]);
+        fmt=[repmat('%s',1,ncol) '\n'];
+        fid = fopen(csvFname);          
+        C = textscan(fid, fmt, 'Delimiter',',','Headerlines',1,'CollectOutput',1);
         fclose(fid);
-        c{1}(1:3)=[];
         
-        % too dam slow
-%         m=1;NUM=[];
-%         while ~isempty((cell2mat(c{1}(m))))           
-%             d=[];
-%             if strcmp(char(string(c{1}(m))), 'S frame: ANGLE_MODE, SMALL_ANGLE, IDLE, 1, 1')
-%                 c{1}(m)=[];
-%             else
-%                 d=(cell2mat(c{1}(m))); 
-%                 NUM(m,:)=str2double(char(string(d)));
-%                 m=m+1;
-%             end
-%         end
-        
-        NUM=xlsread(csvFname);% will only work on some machines
-               
+        %flength=length(char(C{1}(:,1)));
+            
+        for m=1:ncol % width of matrix 
+            waitbar(m/ncol,waitbarFid,['converting csv numerical data for ' f]); 
+            if  ~strcmp(TXT(m), 'vbatLatest (V)') && ~strcmp(TXT(m), 'amperageLatest (A)')...,
+                && ~strcmp(TXT(m), 'energyCumulative (mAh)') && ~strcmp(TXT(m), 'flightModeFlags (flags)')...,
+                && ~strcmp(TXT(m), 'stateFlags (flags)') && ~strcmp(TXT(m), 'failsafePhase (flags)')...,
+                && ~strcmp(TXT(m), 'rxSignalReceived') && ~strcmp(TXT(m), 'rxFlightChannelsValid')
+                 
+                NUM(:,m)=PTstr2num(char(C{1}(:,m)));
+            else
+                NUM(:,m)=zeros(length(PTstr2num(char(C{1}(:,1)))),1);
+            end
+        end         
+             
         currentBBlogNum=str2num(csvFname(end-5:end-4));        
         delete(csvFname);% we r done with this-dont wanna leave junk on main directory
         
         % get header info from .bbl/.bfl file directly
         a=strfind(mainFname,'.');
         fid = fopen(mainFname, 'r');
-        c = fread(fid, 'uint8=>char')'; %c2 = native2unicode(c)
+        c = textscan(fid, '%s', 'Delimiter','\n','CollectOutput',1); %c2 = native2unicode(c)
         fclose(fid);
-        if ~ischar(c), c=char(c); end
-        setupInfoIndStart=strfind(c,'Firmware revision'); % start of multiple instances of setup info for each log  
-        relevantSetupinfoStart=setupInfoIndStart(currentBBlogNum); % relevant start point for selected log
-        c=c(relevantSetupinfoStart:end);
-        fwareVersion=c(strfind(c,'Firmware revision'):strfind(c,'Firmware date')-4);
+        a=strfind(c{1},'Firmware revision');
+        logStartPoints=find(cellfun(@(a)~isempty(a)&&a>0,a));      
+        endStr={'debug_mode' ; 'motor_pwm_rate' ; 'motor_pwm_protocol' ; 'use_unsynced_pwm' };% strings not in all revisions, try a few 
+        m=1; a=strfind(c{1},endStr{m});
+        while isempty(find(cellfun(@(a)~isempty(a)&&a>0,a)))         
+            m=m+1;
+            a=strfind(c{1},endStr{m});
+        end
+        logEndPoints=find(cellfun(@(a)~isempty(a)&&a>0,a));
         
-        SetupInfo=[fwareVersion c(strfind(c,'Craft name')-3:strfind(c,'acc_hardware')+11)]; % dont ask...
-        SetupInfo=strsplit(SetupInfo,'H')'; 
+        relevantLogNum=str2num(csvFname(end-5:end-4));
+        s=c{1}(logStartPoints(relevantLogNum):logEndPoints(relevantLogNum));
+        n=1;
+        for m=1:size(s,1)
+            waitbar(m/size(s,1),waitbarFid,['extracting setup info from ' f]);
+            if size(strsplit(char(s(m)),':'),2)==2
+                SetupInfo(n,:)=(strsplit(char(s(m)),':'));
+                a=char(SetupInfo(n,1));
+                if strcmp(a(1:2),'H ')
+                    SetupInfo(n,1)={a(3:end)};
+                end
+                n=n+1;
+            end
+        end
 
         a=strfind(SetupInfo,'rc_rates');
         b=find(cellfun(@(a)~isempty(a)&&a>0,a));
-        rc_rates{2}=SetupInfo{b}(strfind(SetupInfo{b},':')+1:end); 
+        rc_rates=str2num(char(SetupInfo(b,2)));
 
         a=strfind(SetupInfo,'rc_expo');
         b=find(cellfun(@(a)~isempty(a)&&a>0,a));
-        rc_expo{2}=SetupInfo{b}(strfind(SetupInfo{b},':')+1:end);  
-
+        rc_expo=str2num(char(SetupInfo(b,2)));
+        
         a=strfind(SetupInfo,'rates');
         b=find(cellfun(@(a)~isempty(a)&&a>0,a));if length(b)>1,b=b(2);end
-        Super_rates{2}=SetupInfo{b}(strfind(SetupInfo{b},':')+1:end);     
+        Super_rates=str2num(char(SetupInfo(b,2))); 
+        
+         a=strfind(SetupInfo,'thr_mid');
+        b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+        thr_mid=str2num(char(SetupInfo(b,2)));
+        
+         a=strfind(SetupInfo,'thr_expo');
+        b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+        thr_expo=str2num(char(SetupInfo(b,2)));
+
         %%%% no header info in decoded data  
         VarLabels=TXT(1,:);
         DataMain=NUM;
     else
         rc_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rc_rates')),:));
         rc_expo=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rc_expo')),:));
-        Super_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rates')),:));     
+        Super_rates=(SetupInfo(find(strcmp(SetupInfo(:,1), 'rates')),:));
+        thr_mid=(SetupInfo(find(strcmp(SetupInfo(:,1), 'thr_mid')),:));
+        thr_expo=(SetupInfo(find(strcmp(SetupInfo(:,1), 'thr_expo')),:));
+
         VarLabels=TXT(1,:);
         DataMain=NUM;
     end
@@ -217,12 +276,16 @@ if validData
     DAT.SetupInfo=SetupInfo;
     DAT.VarLabels=VarLabels;
     DAT.rates=[rc_rates; rc_expo; Super_rates];
+    DAT.throttle=[thr_mid; thr_expo];
     DAT.BBfileFlag=BBfileFlag;
     try
     DAT.blackbox_decode_results=result;
     catch
     end
+    close(waitbarFid)
 else
     DAT=[];
 end
+
+
 

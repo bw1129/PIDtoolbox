@@ -1,9 +1,10 @@
-function [ampMat] = PTthrSpec(X, Y, F)
-% [ampMat] = PTthrSpec(X, Y, F) 
-%   computes fft as function of throttle and generates throttle x freq
-%   matrix. X is throttle data in percent, Y is flight data (gyro, PIDerror, etc), 
+function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms)
+%% [freq ampMat] = PTthrSpec(X, Y, F) 
+%   computes fft as function of throttle(or motor output, optional) and generates throttle/motor x freq
+%   matrix. X is throttle/motor output data in percent, Y is flight data (gyro, PIDerror, etc), 
 %   F is sample frequency in Hz of the input flight data. The function returns 
-%   a throttle x freq matrix/spectrogram [ampMat] of input data X and Y.  
+%   a throttle/motor output x freq matrix/spectrogram [ampMat] of input data X and Y.  
+%   counter and numspectrograms are used for the waitbar
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -12,54 +13,62 @@ function [ampMat] = PTthrSpec(X, Y, F)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
+hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowstyle', 'modal'); 
+
      X=X';
      Y=Y';
 
     Tr=100;% throttle range
-    multiplier=.2; % results in 200ms segments
-    wnd=6; % moving window size 
-    segment_length=F*multiplier; % 200ms segments, in samples   
-    amp_smoothfactor=segment_length/100; % smoothing dependent on segment length 
-    thr_smoothfactor=8; % a little more smoothing here because we have less precision in throttle domain
+    multiplier=.3; % results in 300ms segments (must be same in datatip for accurate reading)
+    wnd=1; % window size 
+    segment_length=(F*1000)*multiplier; % 300ms segments (~= plasmatree pid analyzer)
+ %   freq_smoothfactor=4*(F/1000);
+ %   thr_smoothfactor=15 ; % more smoothing in throttle domain
+    
+    subsampleFactor=4;% larger=smoother but slower
 
-    segment_vector=1:segment_length:length(Y);
-    for i=1:length(segment_vector)-1   
-        Tm(i)=nanmean(X(segment_vector(i):segment_vector(i+1)));    
+    segment_vector=1:segment_length/subsampleFactor:length(Y);
+    for i=1:length(segment_vector)-subsampleFactor 
+        Tm(i)=nanmean(X(segment_vector(i):segment_vector(i)+segment_length));  
+        Yseg(i,:)=Y(segment_vector(i):segment_vector(i)+segment_length); 
     end
-    ampMat=zeros(Tr,(segment_length/2)+1);
-    freq=zeros(Tr,(segment_length/2)+1);
-
+    Tm(find(Tm<0))=0;
+    [Thr_sort Thr_sortInd]=sort(Tm');
+    Yseg_sort=Yseg(Thr_sortInd,:);% sorted Y according to X (throttle or motor output) 
+    
      for i=1:Tr
+        waitbar(i/Tr,hw,['computing fft for spectrogram ' int2str(counter) ],'windowstyle', 'modal');  
         clear tmp
-        if ~isempty(find(Tm>i-wnd & Tm<=i+wnd))
-            ind=find(Tm>i-wnd & Tm<=i+wnd);
+        if ~isempty(find(Thr_sort>i-wnd & Thr_sort<=i+wnd))
+            ind=find(Thr_sort>i-wnd & Thr_sort<=i+wnd);
             for j=1:length(ind)
                 try
-                Ytmp=Y(segment_vector(ind(j)):segment_vector(ind(j)+1));
+                clear Ytmp Ytmp2 YA LA PA
+                
+                Ytmp=Yseg_sort(ind(j),:)';                
                 Ytmp2 = Ytmp.*hann(length(Ytmp));% hann taper seems best / others: hamming blackman barthannwin bartlett parzenwin nuttallwin
-                YA=fft(Ytmp2);
+                pad = 1024 - rem(length(Ytmp2), 1024) +1;
+                YA=fft(Ytmp2);%,pad);% YA=fft(Ytmp2,2000);%padding
                 LA=length(YA);
-                PA = abs(YA/LA);
-                tmp(j,:) = PA(1:(LA/2)+1);
+                PA = abs(YA/LA); % normalization -> plasmatree -> sqrt(LA)
+                tmp(j,:) = PA(1:(LA/2)+1);                
                 warning off
-                fA = F*(0:(LA/2))/LA;
+                fA = (F*1000)*(0:(LA/2))/LA;
                 catch
                 end
             end 
             a=nanmean(tmp,1);
             ampMat(i,:)=a;
             freq(i,:) = fA;
+         %   dat(i,:)=abs(Ytmp);
         end
-    end
-
-    h = fspecial('average',[thr_smoothfactor amp_smoothfactor]);%('disk',3);%('gaussian',[100 200],1);%
-    clear tmp
-    tmp = filter2(h, ampMat);
+     end
+   clear tmp
+   tmp = ampMat;
     clear ampMat
-    if (F/1000)>2, 
-        ampMat=tmp(:,1:200);
-    else
-        ampMat=tmp;
-    end
+    if F==8, ampMat=tmp(:,1:floor(size(tmp,2)*.25)); end
+    if F==4, ampMat=tmp(:,1:floor(size(tmp,2)*.5)); end
+    if F<4, ampMat=tmp; end
+    close(hw)
 end
-
+            

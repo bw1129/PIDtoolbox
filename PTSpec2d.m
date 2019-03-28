@@ -1,6 +1,6 @@
-function [scaledOutput] = PTscale2ref(inputSig,inputRef)
-%% [scaledSig] = PTscale2ref(sig,ref)
-%   Normalizes an input signal [inputSig] relative to a reference signal [inputRef]  
+function [freq amp2d] = PTSpec2d(Y, F)
+%% [freq amp2d] = PTSpec2d(Y, F) 
+%   computes standard fft on input data Y. F is sample frequency in Hz.  
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -9,10 +9,12 @@ function [scaledOutput] = PTscale2ref(inputSig,inputRef)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-c=1;% constant, scaling factor, though probably unnecessary
+Y2 = fft(Y);
+L=length(Y);
+P2 = abs(Y2/L); % 'normalize' amplitude spectrum by length of signal
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+freq = (F*1000)*(0:(L/2))/L;
+amp2d=P1;
 
-mRef = mean(abs(inputRef)); stdRef = std(abs(inputRef));
-mSig = mean(abs(inputSig)); stdSig = std(abs(inputSig));
-scaledOutput = (((inputSig - mSig)/stdSig) * stdRef + mRef) * c;
 end
-
