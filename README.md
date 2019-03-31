@@ -1,7 +1,7 @@
 
 # PIDtoolbox
 
-PIDtoolbox is a set of graphical tools for analyzing Betaflight blackbox log data for multirotors. It is available as a standalone program for both Windows and Mac. Although PIDtoolbox is designed for the person who likes to tinker and get the best performance possible out of their miniquad, it should be relatively straightforward for those new to the hobby as well, and there is a detailed **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">Wiki page</a>.** to help.
+PIDtoolbox is a set of graphical tools for analyzing Betaflight blackbox log data for multirotors. It is available as a standalone program for both Windows and Mac. Although PIDtoolbox is designed for the person who likes to tinker and get the best performance possible out of their miniquad, it should be relatively straightforward for those new to the hobby as well, and there is a detailed **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">Wiki page</a>** to help.
 
 ![](images/PIDtoolbox_v0.2.png)
 
