@@ -19,7 +19,7 @@ The motivation for the development of this tool was to create a user-friendly GU
 
 * PIDtoolbox has been confirmed to run on Windows7/8/10 64bit machines, and Mac 10.11 (El capitan) and 10.13 (Sierra). If you have issues installing Matlab runtime, or running PIDtoolbox, please give feedback here **<a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">(issues)</a>**, or drop a post to the **<a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">Betaflight BlackBox Log Review Facebook group</a>**.
 
-# How to use
+# Quick Guide
 
 For a detailed guide to PIDtoolbox, please visit the **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">PIDtoolbox Wiki page</a>**.
 
