@@ -32,6 +32,9 @@ hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowst
         Tm(i)=nanmean(X(segment_vector(i):segment_vector(i)+segment_length));  
         Yseg(i,:)=Y(segment_vector(i):segment_vector(i)+segment_length); 
     end
+    ampMat=zeros(Tr,(segment_length/2)+1);
+    freq=zeros(Tr,(segment_length/2)+1);
+    
     Tm(find(Tm<0))=0;
     [Thr_sort Thr_sortInd]=sort(Tm');
     Yseg_sort=Yseg(Thr_sortInd,:);% sorted Y according to X (throttle or motor output) 
