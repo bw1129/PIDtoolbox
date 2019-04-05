@@ -39,6 +39,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     guiHandles.TuningButton.FontSize=fontsz;
     guiHandles.DispInfoButton.FontSize=fontsz;
     guiHandles.saveFig.FontSize=fontsz;
+    guiHandles.wiki.FontSize=fontsz;
     guiHandles.checkbox0.FontSize=fontsz;
     guiHandles.checkbox1.FontSize=fontsz;
     guiHandles.checkbox2.FontSize=fontsz;

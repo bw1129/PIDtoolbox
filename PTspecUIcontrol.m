@@ -159,7 +159,7 @@ guiHandlesSpec.ColormapSelect.Value=3;% hot 3 viridis 12
 
 %% get estimate of phase delay (computed on roll axis only since it's typically the most active)
 % note, this is an estimate, given the many dynamic filter options in BF4.0+
-% the reliability of the estimate depende to some degree on the amplitude modulation of the signals 
+% the reliability of the estimate depend to some degree on the amplitude modulation of the signals 
 % (i.e., when there is stick input).
 clear sampTime maxlag PhaseDelay_A PhaseDelay2_A 
 if A_debugmode==GYRO_SCALED

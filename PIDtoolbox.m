@@ -20,6 +20,8 @@ PTfig.InvertHardcopy='off';
 bgcolor=[.95 .95 .95];
 set(PTfig,'color',bgcolor);
 
+wikipage='https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
+
 if ~exist('filenameA','var'), filenameA=[]; end
 if ~exist('filenameB','var'), filenameB=[]; end
 
@@ -92,6 +94,8 @@ posInfo.PIDerrButton=[.9 .51 .085 .04];
 posInfo.TuningButton=[.9 .465 .085 .04];
 posInfo.DispInfoButton=[.9 .420 .085 .04];
 posInfo.saveFig=[.9 .375 .085 .04];
+posInfo.wiki=[.9 .025 .085 .04];
+
 
 % posInfo.AlooptimeText  = [.8 .43 .18 .04];
 % posInfo.BlooptimeText = [.8 .4 .18 .04];
@@ -132,10 +136,6 @@ guiHandles.runAll = uicontrol(PTfig,'string','load+run','fontsize',fontsz,'units
     'callback','guiHandles.runAll.FontWeight=''bold'';PTload;PTprocess;PTviewerUIcontrol; PTplotLogViewer;guiHandles.runAll.FontWeight=''normal'';'); 
 guiHandles.runAll.BackgroundColor=[.3 .9 .3];
  
-guiHandles.saveFig = uicontrol(PTfig,'string','save fig','fontsize',fontsz,'units','normalized','outerposition',[posInfo.saveFig],...
-    'callback','guiHandles.saveFig.FontWeight=''bold'';PTsaveFig; guiHandles.saveFig.FontWeight=''normal'';'); 
-guiHandles.saveFig.BackgroundColor=[ .8 .8 .8];
-
 guiHandles.Epoch1_A_text = uicontrol(PTfig,'style','text','string','[A] st(s)','fontsize',fontsz,'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_A_text]);
 guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string',int2str(epoch1_A),'fontsize',fontsz,'units','normalized','outerposition',[posInfo.Epoch1_A_Input],...
      'callback','@textinput_call; epoch1_A=str2num(guiHandles.Epoch1_A_Input.String);PTprocess;PTplotLogViewer; ');
@@ -161,6 +161,14 @@ guiHandles.TuningButton.BackgroundColor=[ .8 .8 .8];
 guiHandles.DispInfoButton = uicontrol(PTfig,'string','setup info','fontsize',fontsz,'units','normalized','outerposition',[posInfo.DispInfoButton],...
     'callback','PTdispSetupInfo;');
 guiHandles.DispInfoButton.BackgroundColor=[ .8 .8 .8];
+
+guiHandles.saveFig = uicontrol(PTfig,'string','save fig','fontsize',fontsz,'units','normalized','outerposition',[posInfo.saveFig],...
+    'callback','guiHandles.saveFig.FontWeight=''bold'';PTsaveFig; guiHandles.saveFig.FontWeight=''normal'';'); 
+guiHandles.saveFig.BackgroundColor=[ .8 .8 .8];
+
+guiHandles.wiki = uicontrol(PTfig,'string','Wiki','fontsize',fontsz,'units','normalized','outerposition',[posInfo.wiki],...
+    'callback','try, system([''start chrome '' wikipage]), catch, web(wikipage), end'); 
+guiHandles.wiki.BackgroundColor=[1 1 .2];
 
 
 %% functions

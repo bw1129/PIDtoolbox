@@ -111,11 +111,12 @@ if updateSpec==0
 end
 
 if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
+    figure(PTspecfig);
     %%%%% plot spec mattrices
     c1=[1 1 1 2 2 2 3 3 3 4 4 4];
     c2=[1 2 3 1 2 3 1 2 3 1 2 3];
     ftr = fspecial('gaussian',[guiHandlesSpec.smoothFactor_select.Value*5 guiHandlesSpec.smoothFactor_select.Value],4);
-    for p=1:size(ampmat,2)
+    for p=1:size(ampmat,2)   
         delete(subplot('position',posInfo.SpecPos(p,:)));      
         if ~isempty(ampmat{p})
             delete(subplot('position',posInfo.SpecPos(p,:)));
@@ -124,7 +125,7 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
             imagesc(flipud((filter2(ftr, ampmat{p}))')) 
             hold on
 
-            if strfind(smat{p},'DATtmpA'), 
+            if strfind(smat{p},'DATtmpA')
                 lograte=A_lograte;
             else
                 lograte=B_lograte;
@@ -282,6 +283,7 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
 end
 
 if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
+    figure(PTspecfig);
     try
     delete(hCbar1);delete(hCbar2);delete(hCbar3);delete(hCbar4)
     catch

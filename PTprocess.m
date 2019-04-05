@@ -9,6 +9,8 @@
 
 
 if ~isempty(filenameA) || ~isempty(filenameB)
+
+downsampleMultiplier=5;% 5 times less resolution for faster plotting, display only
     
 set(PTfig, 'pointer', 'watch')
     if ~isempty(filenameA)
@@ -41,7 +43,7 @@ set(PTfig, 'pointer', 'watch')
         DATtmpA.PIDerr=DATmainA.PIDerr(:,x2);
         DATtmpA.Motor=DATmainA.Motor(:,x2);
         
-        dnsampleFactor=A_lograte*10;
+        dnsampleFactor=A_lograte*downsampleMultiplier;% 5 times less resolution for faster plotting, display only
         DATdnsmplA.tta=downsample(((tta-tta(1))/us2sec), dnsampleFactor)';
         DATdnsmplA.GyroFilt=downsample(DATmainA.GyroFilt', dnsampleFactor)';
         DATdnsmplA.debug=downsample(DATmainA.debug', dnsampleFactor)';
@@ -87,7 +89,7 @@ set(PTfig, 'pointer', 'watch')
         DATtmpB.PIDerr=DATmainB.PIDerr(:,x2);
         DATtmpB.Motor=DATmainB.Motor(:,x2);
         
-        dnsampleFactor=B_lograte*10;
+        dnsampleFactor=B_lograte*downsampleMultiplier;% 5 times less resolution for faster plotting, display only
         DATdnsmplB.ttb=downsample(((ttb-ttb(1))/us2sec), dnsampleFactor)';
         DATdnsmplB.GyroFilt=downsample(DATmainB.GyroFilt', dnsampleFactor)';
         DATdnsmplB.debug=downsample(DATmainB.debug', dnsampleFactor)';

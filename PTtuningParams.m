@@ -29,12 +29,13 @@ if ~isempty(filenameA)
     for p=1:3         
         try
             if ~updateStep            
-                [stepresp_A{p} tA rateHigh_A{p}] = PTstepcalc(DATtmpA.RCRate(p,:), DATtmpA.GyroFilt(p,:), A_lograte); 
+                [stepresp_A{p} tA rateHigh_A{p}] = PTstepcalc(DATtmpA.RCRate(p,:), DATtmpA.GyroFilt(p,:), A_lograte);
             end
         catch
             stepresp_A{p}=[];
             rateHigh_A{p}=[];
         end
+        figure(PTtunefig)
         h1=subplot('position',posInfo.TparamsPos(p,:)); cla
         hold on
         if guiHandlesSpec.checkboxrateHigh.Value==1, 
@@ -51,9 +52,9 @@ if ~isempty(filenameA)
             h3=plot(tA,m+sd,'--'); set(h3, 'color',[colorA],'linewidth',.5)
             stepnfo=stepinfo(nanmean(stepresp_A{p}(rA,:)),tA,1);
             
-            eval(['PIDF=' ylab2{p} 'PIDF_A;'])
+            eval(['PID=' ylab2{p} 'PIDF_A;'])
             h=text(320, .8, ['N=' int2str(size(stepresp_A{p}(rA,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['PIDF: ' char(string(PIDF(:,2)))]);set(h,'fontsize',fontsz4) 
+            h=text(320, .7, ['PID: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4) 
             h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
             h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
             h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 
@@ -68,10 +69,10 @@ if ~isempty(filenameA)
         if p==3
             set(gca,'fontsize',fontsz4,'xminortick','on','yminortick','on','xtick',[0 100 200 300 400 500],'xticklabel',{'0' '100' '200' '300' '400' '500'},'ytick',[0 .2 .4 .6 .8 1 1.2 1.4 1.6],'tickdir','out')
         else
-            set(gca,'fontsize',fontsz4,'xminortick','on','yminortick','on','xtick',[0 100 200 300 400 500],'xticklabel',{'' '' '' '' '' ''},'ytick',[0 .2 .4 .6 .8 1 1.2 1.4 1.6],'tickdir','out')
+            set(gca,'fontsize',fontsz4,'xminortick','on','yminortick','on','xtick',[0 100 200 300 400 500],'xticklabel',{'' '' '' '' '' ''},'ytick',[0 .2 .4 .6 .8 1 1.2 1.4 1.6],'tickdir','out','ygrid','on')
         end
         box off
-        h=ylabel({'mean response (+/-sd)'}, 'fontweight','bold');
+        h=ylabel({'mean response {\pm}sd'}, 'fontweight','bold');
         set(h,'fontsize',fontsz4)
         if p==3, xlabel('time (ms)', 'fontweight','bold');end
         if p==1, title('Step response [A]');end
@@ -80,6 +81,7 @@ if ~isempty(filenameA)
          h=plot([0 500],[1 1],'k--');
         set(h,'linewidth',.5)
         axis([0 500 0 1.6])
+        grid on
     end
 end
 
@@ -94,6 +96,7 @@ if ~isempty(filenameB)
             stepresp_B{p}=[];
             rateHigh_B{p}=[];
         end
+       figure(PTtunefig)
        h1=subplot('position',posInfo.TparamsPos(p+3,:)); cla 
        hold on
        if guiHandlesSpec.checkboxrateHigh.Value==1, 
@@ -109,9 +112,9 @@ if ~isempty(filenameB)
             h6=plot(tB,m+sd,'--'); set(h6, 'color',[colorB],'linewidth',.5)
             stepnfo=stepinfo(nanmean(stepresp_B{p}(rB,:)),tB,1);   
             
-            eval(['PIDF=' ylab2{p} 'PIDF_B;'])
+            eval(['PID=' ylab2{p} 'PIDF_B;'])
             h=text(320, .8, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['PIDF: ' char(string(PIDF(:,2)))]);set(h,'fontsize',fontsz4)
+            h=text(320, .7, ['PID: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4)
             h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
             h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
             h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 
@@ -130,7 +133,7 @@ if ~isempty(filenameB)
         end
         
         box off
-        h=ylabel({'mean response (+/-sd)'}, 'fontweight','bold');
+        h=ylabel({'mean response {\pm}sd'}, 'fontweight','bold');
         set(h,'fontsize',fontsz4)
         if p==3, xlabel('time (ms)', 'fontweight','bold');end
         if p==1, title('Step response [B]');end
@@ -139,6 +142,7 @@ if ~isempty(filenameB)
         h=plot([0 500],[1 1],'k--');
         set(h,'linewidth',.5)
         axis([0 500 0 1.6])
+       grid on
     end
 end
 

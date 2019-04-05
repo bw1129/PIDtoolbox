@@ -21,15 +21,15 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     guiHandlesPIDerr.saveFig3.FontSize=fontsz3;
  
     
-      %% PID error distributions
-    figure(3);    
+      %% PID error distributions 
     ylab2={'roll';'pitch';'yaw'};
-    for p=1:3
+    figure(PTerrfig);  
+    for p=1:3        
         delete(subplot('position',posInfo.PIDerrAnalysis(p,:)))
         h1=subplot('position',posInfo.PIDerrAnalysis(p,:)); cla
         hold on    
 
-         if ~isempty(filenameA)
+         if ~isempty(filenameA)            
             RCRateALL_Thresh_A=abs(DATtmpA.RCRate(1,:)) < maxDegsec & abs(DATtmpA.RCRate(2,:)) < maxDegsec & abs(DATtmpA.RCRate(3,:)) < maxDegsec;
             [yA xA]=hist(DATtmpA.PIDerr(p,RCRateALL_Thresh_A),-1000:1:1000); %<maxDegsec),-maxDegsec:1:maxDegsec);
             yA=yA/max(yA);
@@ -51,7 +51,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             set(h,'fontsize',fontsz3,'color',colorA,'fontweight','bold')
          end
  
-        if ~isempty(filenameB)
+        if ~isempty(filenameB)            
              RCRateALL_Thresh_B=abs(DATtmpB.RCRate(1,:)) < maxDegsec & abs(DATtmpB.RCRate(2,:)) < maxDegsec & abs(DATtmpB.RCRate(3,:)) < maxDegsec;
             [yB xB]=hist(DATtmpB.PIDerr(p,RCRateALL_Thresh_B),-1000:1:1000);
             yB=yB/max(yB);
@@ -90,7 +90,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     if ~updateErr
           t=[.1 .2 .3 .4 .5 .6 .7 .8 .9 1];
          
-          cutoff=50;
+          cutoff=40; % ignore less frequent error at the extremes, outliers
         if ~isempty(filenameA)
             for i=1:length(t)    
                 clear RCRateALL_Thresh_A
@@ -139,7 +139,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             set(h1,'tickdir','out','xminortick','off','yminortick','on');
             set(h1,'fontsize',fontsz3);
             ylabel(['mean |' ylab(p) ' error| ^o/s'], 'fontweight','bold')
-            set(h1,'xtick',[0:2:10], 'xticklabel',{''});
+            set(h1,'xtick',[0:2:10], 'xticklabel',{''},'ygrid','on');
              axis([0 11 minyA maxyA])
             box off
         if p==3
@@ -160,7 +160,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             set(h1,'tickdir','out','xminortick','off','yminortick','on');
             set(h1,'fontsize',fontsz3);
             ylabel(['mean |' ylab(p) ' error| ^o/s'], 'fontweight','bold')
-            set(h1,'xtick',[0:2:10], 'xticklabel',{''}); 
+            set(h1,'xtick',[0:2:10], 'xticklabel',{''},'ygrid','on'); 
              axis([0 11 min([minyA minyB]) max([maxyA maxyB])])
             box off
             if p==3
