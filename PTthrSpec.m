@@ -69,9 +69,8 @@ hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowst
    clear tmp
    tmp = ampMat;
     clear ampMat
-    if F==8, ampMat=tmp(:,1:floor(size(tmp,2)*.25)); end
-    if F==4, ampMat=tmp(:,1:floor(size(tmp,2)*.5)); end
-    if F<4, ampMat=tmp; end
+    if F>2, ampMat=tmp(:,1:floor(size(tmp,2)*(1/F)*2)); end 
+    if F<=2, ampMat=tmp; end
     close(hw)
 end
             
