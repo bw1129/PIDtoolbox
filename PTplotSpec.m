@@ -20,6 +20,7 @@ guiHandlesSpec.checkbox2d.FontSize=fontsz2;
 guiHandlesSpec.percentMotor.FontSize=fontsz2;
 guiHandlesSpec.ColormapSelect.FontSize=fontsz2;
 guiHandlesSpec.smoothFactor_select.FontSize=fontsz2;
+guiHandlesSpec.subsampleFactor.FontSize=fontsz2;
 guiHandlesSpec.AphasedelayText.FontSize=fontsz2;
 guiHandlesSpec.BphasedelayText.FontSize=fontsz2;
 guiHandlesSpec.saveFig2.FontSize=fontsz2;
@@ -102,7 +103,7 @@ if updateSpec==0
                 end
                 p=p+1;
                 smat{p}=s;
-                [freq{p} ampmat{p}]=PTthrSpec(T,dat{k}(a,:),sampFreq, p, 12); % compute matrices
+                [freq{p} ampmat{p}]=PTthrSpec(T,dat{k}(a,:),sampFreq, p, 12, guiHandlesSpec.subsampleFactor.Value); % compute matrices
                 [freq2d{p} amp2d{p}]=PTSpec2d(dat{k}(a,:),sampFreq); %compute 2d amp spec at same time
             end
         end 

@@ -156,7 +156,7 @@ guiHandles.PIDerrButton = uicontrol(PTfig,'string','PID error','fontsize',fontsz
      'callback','PTerrUIcontrol;PTplotPIDerror'); 
 guiHandles.PIDerrButton.BackgroundColor=[ .8 .8 .8];
 guiHandles.TuningButton = uicontrol(PTfig,'string','step resp','fontsize',fontsz,'units','normalized','outerposition',[posInfo.TuningButton],...
-    'callback','PTtuneUIcontrol;PTtuningParams');
+    'callback','PTtuneUIcontrol');
 guiHandles.TuningButton.BackgroundColor=[ .8 .8 .8];
 guiHandles.DispInfoButton = uicontrol(PTfig,'string','setup info','fontsize',fontsz,'units','normalized','outerposition',[posInfo.DispInfoButton],...
     'callback','PTdispSetupInfo;');

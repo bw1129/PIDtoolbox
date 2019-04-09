@@ -69,11 +69,11 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
     end
     % if more than one file
     if length(files) > 1
-        % delete files with < 300kb - may need better work-around eventually
+        % delete files with < 100kb - may need better work-around eventually
         x=length(files);
         m=1;
         for k=1:x,            
-            if ((files(k).bytes)) < 300000 % delete if < 300kb
+            if ((files(k).bytes)) < 100000 % delete if < 100kb
                 delete(files(k).name)
             else
                 f2(m)=files(k);

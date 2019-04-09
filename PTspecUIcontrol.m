@@ -34,8 +34,9 @@ posInfo.saveFig2=[.02 .91 .06 .04];
 posInfo.percentMotor=[.09 .955 .06 .04];
 posInfo.ColormapSelect=[.16 .955 .06 .04];
 posInfo.smooth_select =[.23 .955 .06 .04];
+posInfo.subsampleFactor=[.30 .955 .06 .04];
+posInfo.checkbox2d=[.37 .955 .06 .04];
 
-posInfo.checkbox2d=[.30 .955 .06 .04];
 
 posInfo.AphasedelayText=[.65 .976 .32 .022];
 posInfo.BphasedelayText=[.65 .954 .32 .022];
@@ -91,6 +92,10 @@ guiHandlesSpec.checkbox2d =uicontrol(PTspecfig,'Style','checkbox','String','2-D'
 
 guiHandlesSpec.percentMotor = uicontrol(PTspecfig,'Style','popupmenu','string',{'%throttle'; '%motor'},...
     'fontsize',fontsz2,'units','normalized','outerposition', [posInfo.percentMotor],'callback','@selection2;');
+
+guiHandlesSpec.subsampleFactor = uicontrol(PTspecfig,'Style','popupmenu','string',{'subsampling low'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high'; 'subsampling high'},...
+    'fontsize',fontsz2,'units','normalized','outerposition', [posInfo.subsampleFactor],'callback','@selection2;');
+guiHandlesSpec.subsampleFactor.Value=3;
 
 guiHandlesSpec.saveFig2 = uicontrol(PTspecfig,'string','save fig','fontsize',fontsz2,'units','normalized','BackgroundColor',[.8 .8 .8],'outerposition',[posInfo.saveFig2],...
     'callback','guiHandlesSpec.saveFig2.FontWeight=''bold'';PTsaveFig;guiHandlesSpec.saveFig2.FontWeight=''normal'';'); 

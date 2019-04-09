@@ -3,7 +3,7 @@
 if ~isempty(filenameA) || ~isempty(filenameB)
     
 PTerrfig=figure(3);
-set(PTerrfig, 'units','normalized','outerposition',[.1 .1 .5 .8])
+set(PTerrfig, 'units','normalized','outerposition',[.1 .1 .75 .8])
 PTerrfig.NumberTitle='off';
 PTerrfig.Name= 'PIDtoolbox PID error analysis';
 PTerrfig.InvertHardcopy='off';

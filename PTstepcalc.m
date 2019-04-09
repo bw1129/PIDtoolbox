@@ -1,5 +1,5 @@
-function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte)
-%% [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte)
+function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp)
+%% [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp)
 % estimate of step response function using Wiener filter/deconvolution method
 % X = set point (input), Y = filtered gyro (output)
 % returns matrix/stack of etimated stepresponse functions, time [t] in ms, and  
@@ -22,7 +22,7 @@ segment_length=(lograte*2000); % 2 sec segments
 wnd=(lograte*1000) * .5; % 500ms step response function, length will depend on lograte  
 StepRespDuration_ms=500; % max dur of step resp in ms for plotting
 rateHighThreshold=500; % degs/s
-subsampleFactor=15;
+subsampleFactor=subsamp;
 
 segment_vector=1:round(segment_length/subsampleFactor):length(X);
 NSegs=max(find((segment_vector+segment_length) < segment_vector(end)));

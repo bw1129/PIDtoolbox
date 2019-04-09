@@ -1,10 +1,10 @@
-function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms)
-%% [freq ampMat] = PTthrSpec(X, Y, F) 
+function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
+%% [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
 %   computes fft as function of throttle(or motor output, optional) and generates throttle/motor x freq
 %   matrix. X is throttle/motor output data in percent, Y is flight data (gyro, PIDerror, etc), 
-%   F is sample frequency in Hz of the input flight data. The function returns 
-%   a throttle/motor output x freq matrix/spectrogram [ampMat] of input data X and Y.  
-%   counter and numspectrograms are used for the waitbar
+%   F is sample frequency in Hz of the input flight data. Counter and numspectrograms are 
+%   used for the waitbar, and subsamp is an factor that specifies degree of subsampling (higher, more subsampling, but slower
+%   The function returns a throttle/motor output x freq matrix/spectrogram [ampMat] of input data X and Y.  %   
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -25,7 +25,7 @@ hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowst
  %   freq_smoothfactor=4*(F/1000);
  %   thr_smoothfactor=15 ; % more smoothing in throttle domain
     
-    subsampleFactor=4;% larger=smoother but slower
+    subsampleFactor=subsamp;% larger=smoother but slower
 
     segment_vector=1:segment_length/subsampleFactor:length(Y);
     for i=1:length(segment_vector)-subsampleFactor 

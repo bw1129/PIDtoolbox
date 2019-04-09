@@ -17,7 +17,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
 
     prop_max_screen=(max([PTdisp.Position(3) PTdisp.Position(4)]));
     fontsz5=14;
-    columnWidth=600;
+    columnWidth=800*prop_max_screen;
 
     if ~isempty(filenameA)
         if size(dataA.SetupInfo,2)>1

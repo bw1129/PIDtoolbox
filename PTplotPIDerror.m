@@ -34,7 +34,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             [yA xA]=hist(DATtmpA.PIDerr(p,RCRateALL_Thresh_A),-1000:1:1000); %<maxDegsec),-maxDegsec:1:maxDegsec);
             yA=yA/max(yA);
             h=plot(xA, yA);
-            set(h, 'color',[colorA], 'Linewidth',1.5);
+            set(h, 'color',[colorA], 'Linewidth',2);
             if p==3
                 set(h1,'xtick',[-40:10:40],'ytick',[0:.25:1],'tickdir','out','xminortick','on','yminortick','on','fontsize',fontsz3);
                 xlabel('PID error (deg/s)' ,'fontweight','bold');
@@ -56,7 +56,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             [yB xB]=hist(DATtmpB.PIDerr(p,RCRateALL_Thresh_B),-1000:1:1000);
             yB=yB/max(yB);
             h=plot(xB, yB);
-            set(h, 'color',[colorB], 'Linewidth',1.5);
+            set(h, 'color',[colorB], 'Linewidth',2);
             if p==3
                 set(h1,'xtick',[-40:10:40],'ytick',[0:.25:1],'tickdir','out','xminortick','on','yminortick','on','fontsize',fontsz3);
                 xlabel('PID error (deg/s)' ,'fontweight','bold');

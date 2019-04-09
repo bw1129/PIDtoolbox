@@ -10,7 +10,7 @@
 if ~isempty(filenameA) || ~isempty(filenameB)
     
 PTtunefig=figure(4);
-set(PTtunefig, 'units','normalized','outerposition',[.1 .1 .5 .8])
+set(PTtunefig, 'units','normalized','outerposition',[.1 .1 .75 .8])
 PTtunefig.NumberTitle='off';
 PTtunefig.Name= 'PIDtoolbox Step Response';
 PTtunefig.InvertHardcopy='off';
@@ -32,23 +32,29 @@ for c=1:2
     end
 end
 
-posInfo.refresh4=[.09 .94 .06 .04];
+posInfo.run4=[.09 .94 .06 .04];
 posInfo.saveFig4=[.16 .94 .06 .04];
-posInfo.checkboxrateHigh=[.23 .94 .1 .04];
+posInfo.subsampFactor=[.23 .94 .06 .04];
+posInfo.checkboxrateHigh=[.30 .94 .08 .04];
+
 
 tuneCrtlpanel = uipanel('Title','','FontSize',fontsz4,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.085 .93 .25 .06]);
+              'Position',[.085 .93 .31 .06]);
           
-guiHandlesTune.refresh4 = uicontrol(PTtunefig,'string','refresh','fontsize',fontsz4,'units','normalized','outerposition',[posInfo.refresh4],...
-    'callback','updateStep=1;PTtuningParams;');
-guiHandlesTune.refresh4.BackgroundColor=[1 1 .2];
+guiHandlesTune.run4 = uicontrol(PTtunefig,'string','run','fontsize',fontsz4,'units','normalized','outerposition',[posInfo.run4],...
+    'callback','PTtuningParams;');
+guiHandlesTune.run4.BackgroundColor=[.3 .9 .3];
 
 guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','save fig','fontsize',fontsz4,'units','normalized','outerposition',[posInfo.saveFig4],...
     'callback','guiHandlesTune.saveFig4.FontWeight=''bold'';PTsaveFig; guiHandlesTune.saveFig4.FontWeight=''normal'';'); 
 guiHandlesTune.saveFig4.BackgroundColor=[ .8 .8 .8];
 
-guiHandlesSpec.checkboxrateHigh =uicontrol(PTtunefig,'Style','checkbox','String','>500deg/s','fontsize',fontsz4,...
+guiHandlesTune.subsampFactor = uicontrol(PTtunefig,'Style','popupmenu','string',{'subsampling low'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high';  'subsampling high';},...
+    'fontsize',fontsz4,'units','normalized','outerposition', [posInfo.subsampFactor],'callback','@selection2;');
+guiHandlesTune.subsampFactor.Value=3;
+
+guiHandlesTune.checkboxrateHigh =uicontrol(PTtunefig,'Style','checkbox','String','>500deg/s','fontsize',fontsz4,...
     'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.checkboxrateHigh],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), end; updateStep=1;PTtuningParams;');
 
 
@@ -66,3 +72,10 @@ str=get(src,'String');
     end
 end
 
+% functions
+function selection2(src,event)
+    val = c.Value;
+    str = c.String;
+    str{val};
+   % disp(['Selection: ' str{val}]);
+end
