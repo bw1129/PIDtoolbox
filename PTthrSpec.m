@@ -13,7 +13,7 @@ function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowstyle', 'modal'); 
+hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ]); 
 
      X=X';
      Y=Y';
@@ -40,7 +40,7 @@ hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ],'windowst
     Yseg_sort=Yseg(Thr_sortInd,:);% sorted Y according to X (throttle or motor output) 
     
      for i=1:Tr
-        waitbar(i/Tr,hw,['computing fft for spectrogram ' int2str(counter) ],'windowstyle', 'modal');  
+        waitbar(i/Tr,hw,['computing fft for spectrogram ' int2str(counter) ]);  
         clear tmp
         if ~isempty(find(Thr_sort>i-wnd & Thr_sort<=i+wnd))
             ind=find(Thr_sort>i-wnd & Thr_sort<=i+wnd);

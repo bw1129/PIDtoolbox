@@ -16,6 +16,7 @@ DSHOT_RPM_TELEMETRY=47;
 
 if ~isempty(filenameA) || ~isempty(filenameB)
 
+
 us2sec=1000000;
 maxMotorOutput=2000; 
 
@@ -27,12 +28,19 @@ pause(.2)
 % this is the catch error when user clicks 'select file' but does not
 % actually make a selection.
 if ~isempty(filenameA)
-    filepath=filepathA;
+    filepath=filepathA; 
 end
 if ~isempty(filenameB)
     filepath=filepathB;
 end
 
+% make 'logfileDir.txt' so logfiles open in same as previously selected directory  
+cd(executableDir)
+pause(.2)
+fid = fopen('logfileDir.txt','w');
+fprintf(fid,'%s\n',filepath);
+fclose(fid);
+    
 try
     cd(filepath)
 catch
@@ -41,7 +49,6 @@ catch
     close(waitbarFid); 
 end
     
-
 
 %%%% file A 
 if ~isempty(filenameA)
@@ -88,7 +95,6 @@ else
      A_lograte=nan;
      A_looptime=nan;
     tta=0;
-    dataA.BBfileFlag=0;
 end
 
 %%%% file B
@@ -136,7 +142,6 @@ else
     B_lograte=nan;
     B_looptime=nan;
     ttb=0;
-    dataB.BBfileFlag=0;
 end
 
 %%%% if there is no data worth analyzing
@@ -198,13 +203,13 @@ if ~isempty(filenameA)
     
     DATmainA.DtermFilt(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[0]')));
     DATmainA.DtermFilt(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[1]'))); 
-
+   
     DATmainA.DtermRaw(1,:)=[-(diff(DATmainA.GyroFilt(1,:))) 0]; 
     DATmainA.DtermRaw(2,:)=[-(diff(DATmainA.GyroFilt(2,:))) 0]; 
-    absmax=max(abs([max(DATmainA.DtermRaw(1,:)) min(DATmainA.DtermRaw(1,:))]));
-    DATmainA.DtermRaw(1,:)=(DATmainA.DtermRaw(1,:) / absmax) * max(DATmainA.DtermFilt(1,:));
-    absmax=max(abs([max(DATmainA.DtermRaw(2,:))  min(DATmainA.DtermRaw(2,:))]));
-    DATmainA.DtermRaw(2,:)=(DATmainA.DtermRaw(2,:) / absmax) * max(DATmainA.DtermFilt(2,:));
+    
+    DATmainA.DtermRaw(1,:)=PTscale2ref(DATmainA.DtermRaw(1,:),DATmainA.DtermFilt(1,:));
+    DATmainA.DtermRaw(2,:)=PTscale2ref(DATmainA.DtermRaw(2,:),DATmainA.DtermFilt(2,:));
+    
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[0]')))=zeros(size(dataA.DataMain(:,1)));
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[1]')))=zeros(size(dataA.DataMain(:,1)));
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisDuf[0]')))=DATmainA.DtermRaw(1,:)';
@@ -224,7 +229,7 @@ if ~isempty(filenameA)
     DATmainA.PIDsum(2,:)=DATmainA.Pterm(2,:)+DATmainA.Iterm(2,:)+DATmainA.DtermFilt(2,:)+DATmainA.Fterm(2,:);
     DATmainA.PIDsum(3,:)=DATmainA.Pterm(3,:)+DATmainA.Iterm(3,:)+DATmainA.Fterm(3,:);
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[0]')))=DATmainA.PIDsum(1,:);
-    dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[1]')))=DATmainA.PIDsum(2,:);
+    dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[1]')))=DATmainA.PIDsum(2,:); 
     dataA.DataMain(:,find(strcmp(dataA.VarLabels,'axisPID[2]')))=DATmainA.PIDsum(3,:);
        
     if ~isempty(find(strcmp(dataA.VarLabels, 'rcCommands[0]')))% old set point
@@ -322,10 +327,9 @@ if ~isempty(filenameB)
     
     DATmainB.DtermRaw(1,:)=[-(diff(DATmainB.GyroFilt(1,:))) 0]; 
     DATmainB.DtermRaw(2,:)=[-(diff(DATmainB.GyroFilt(2,:))) 0]; 
-    absmax=max(abs([max(DATmainB.DtermRaw(1,:)) min(DATmainB.DtermRaw(1,:))]));
-    DATmainB.DtermRaw(1,:)=(DATmainB.DtermRaw(1,:) / absmax) * max(DATmainB.DtermFilt(1,:));
-    absmax=max(abs([max(DATmainB.DtermRaw(2,:))  min(DATmainB.DtermRaw(2,:))]));
-    DATmainB.DtermRaw(2,:)=(DATmainB.DtermRaw(2,:) / absmax) * max(DATmainB.DtermFilt(2,:));
+    DATmainB.DtermRaw(1,:)=PTscale2ref(DATmainB.DtermRaw(1,:),DATmainB.DtermFilt(1,:));
+    DATmainB.DtermRaw(2,:)=PTscale2ref(DATmainB.DtermRaw(2,:),DATmainB.DtermFilt(2,:));
+    
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[0]')))=zeros(size(dataB.DataMain(:,1)));
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[1]')))=zeros(size(dataB.DataMain(:,1)));
     dataB.DataMain(:,find(strcmp(dataB.VarLabels,'axisDuf[0]')))=DATmainB.DtermRaw(1,:)';
@@ -413,6 +417,13 @@ if ~isempty(filenameA)
     gyro_lowpass2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
     dterm_lpf_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf_hz')),:);
     dterm_lpf2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
+    try
+        FF_A=str2num(char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'feedforward_weight')),2)));
+        Rtmp=num2str([str2num(rollPIDF_A{2}) FF_A(1)]); rollPIDF_A{2}=Rtmp;
+        Ptmp=num2str([str2num(pitchPIDF_A{2}) FF_A(2)]); pitchPIDF_A{2}=Ptmp;
+        Ytmp=num2str([str2num(yawPIDF_A{2}) FF_A(3)]); yawPIDF_A{2}=Ytmp;
+    catch
+    end
 end
 if ~isempty(filenameB)
     Firmware_revision_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'Firmware revision')),:));
@@ -428,44 +439,13 @@ if ~isempty(filenameB)
     gyro_lowpass2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'gyro_lowpass2_hz')),:);
     dterm_lpf_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf_hz')),:);
     dterm_lpf2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
-end
-
-%% create saveDirectory
-if ~isempty(filenameA) && ~isempty(filenameB)
-    saveDirectory=[filenameA(1:end-4) '-' filenameB(1:end-4)];
-end
-if ~isempty(filenameA) && isempty(filenameB)
-    saveDirectory=[filenameA(1:end-4)];
-end
-if ~isempty(filenameB) && isempty(filenameA)
-    saveDirectory=[filenameB(1:end-4)];
-end
-if ~exist(saveDirectory,'dir')
-    if ~isempty(strfind(saveDirectory,'.bbl')) 
-        s=strfind(saveDirectory,'.bbl');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
+    try
+        FF_B=str2num(char(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'feedforward_weight')),2)));
+        Rtmp=num2str([str2num(rollPIDF_B{2}) FF_B(1)]); rollPIDF_B{2}=Rtmp;
+        Ptmp=num2str([str2num(pitchPIDF_B{2}) FF_B(2)]); pitchPIDF_B{2}=Ptmp;
+        Ytmp=num2str([str2num(yawPIDF_B{2}) FF_B(3)]); yawPIDF_B{2}=Ytmp;
+    catch
     end
-     if ~isempty(strfind(saveDirectory,'.bfl')) 
-        s=strfind(saveDirectory,'.bfl');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-     end
-    if ~isempty(strfind(saveDirectory,'.BBL'))  
-        s=strfind(saveDirectory,'.BBL');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-    end
-     if ~isempty(strfind(saveDirectory,'.BFL'))
-        s=strfind(saveDirectory,'.BFL');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-    end
-   mkdir(saveDirectory)
 end
 
 
@@ -476,43 +456,6 @@ end
 
 
 %% some functions used within this script
-function [angleRate] = PTrc2deg(X,rcRate,rcExpo,superrate)
-% raw RCcommand data to RCrate in deg/s, i.e. "set point"
-%  with help from: https://github.com/betaflight/betaflight-configurator/blob/master/src/js/RateCurve.js
-%   X is a vector containing a single axis of RCcommand data scaled from -500 to 500, 
-%   rcRate(0-255),rcExpo(0-100),superrate(0-100)
-
-    expoPower=3;
-    rcRateConstant=200;
-    angleRate=[];
-
-    rcRate=rcRate/100;
-    rcExpo=(rcExpo/100);
-    superrate=superrate/100;
-    
-    maxRC=500;
-    rcCommandf = X / maxRC;
-    rcCommandfAbs = abs(rcCommandf) / 1;%max(abs(rcCommandf)); 
-
-    if (rcRate > 2) 
-        rcRate = rcRate + (rcRate - 2) * 14.54; 
-    end
-    if (rcExpo > 0)
-        disp('rcExpo > 0')
-        rcCommandf =  rcCommandf .* power(rcCommandfAbs, expoPower) * rcExpo + rcCommandf * (1-rcExpo);         
-    end 
-    if (superrate > 0) 
-        disp('superrate > 0')
-        rcFactor = 1 ./ (1 - rcCommandfAbs * superrate); % this creates the super expo curve needed to convert RCcommand to RCrate  
-        angleRate = (rcRateConstant * rcRate * rcCommandf);  
-        angleRate = angleRate .* rcFactor;
-       % disp(['angleRate:' num2str(angleRate) ' rcFactor:' num2str(rcFactor)])
-    else
-        angleRate = (rcRateConstant * rcRate * rcCommandf);
-    end
-end
-
-
 function [throttlePercent] = PTthrPercent(X) 
 % converts raw throttle [RCcommand] to percent    
     rcCommandf = (X-1000);  

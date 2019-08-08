@@ -24,6 +24,7 @@ guiHandlesSpec.subsampleFactor.FontSize=fontsz2;
 guiHandlesSpec.AphasedelayText.FontSize=fontsz2;
 guiHandlesSpec.BphasedelayText.FontSize=fontsz2;
 guiHandlesSpec.saveFig2.FontSize=fontsz2;
+guiHandlesSpec.specPresets.FontSize=fontsz2;
 
 guiHandlesSpec.climMax_text.FontSize=fontsz2;
 guiHandlesSpec.climMax_input.FontSize=fontsz2;
@@ -45,16 +46,10 @@ guiHandlesSpec.Sub100HzCheck{4}.FontSize=fontsz2;
 
 
 %%
-if A_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
-    s1={'';'DATtmpA.GyroFilt';'DATtmpA.PIDerr';'DATtmpA.RCRate';'DATtmpA.Pterm';'DATtmpA.DtermFilt';'DATtmpA.DtermRaw';'DATtmpA.Motor';'DATtmpA.Motor';'DATtmpA.debug';'DATtmpA.debug'};
-else
-    s1={'';'DATtmpA.GyroFilt';'DATtmpA.debug';'DATtmpA.PIDerr';'DATtmpA.RCRate';'DATtmpA.Pterm';'DATtmpA.DtermFilt';'DATtmpA.DtermRaw';'DATtmpA.Motor';'DATtmpA.Motor'};
-end
-if B_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
-    s2={'DATtmpB.GyroFilt';'DATtmpB.PIDerr';'DATtmpB.RCRate';'DATtmpB.Pterm';'DATtmpB.DtermFilt';'DATtmpB.DtermRaw';'DATtmpB.Motor';'DATtmpB.Motor';'DATtmpB.debug';'DATtmpB.debug'};  
-else
-    s2={'DATtmpB.GyroFilt';'DATtmpB.debug';'DATtmpB.PIDerr';'DATtmpB.RCRate';'DATtmpB.Pterm';'DATtmpB.DtermFilt';'DATtmpB.DtermRaw';'DATtmpB.Motor';'DATtmpB.Motor'};
-end
+
+s1={'';'DATtmpA.GyroFilt';'DATtmpA.debug';'DATtmpA.PIDerr';'DATtmpA.RCRate';'DATtmpA.Pterm';'DATtmpA.DtermFilt';'DATtmpA.DtermRaw';'DATtmpA.Fterm';'DATtmpA.PIDsum';'DATtmpA.Motor';'DATtmpA.Motor'};
+s2={'DATtmpB.GyroFilt';'DATtmpB.debug';'DATtmpB.PIDerr';'DATtmpB.RCRate';'DATtmpB.Pterm';'DATtmpB.DtermFilt';'DATtmpB.DtermRaw';'DATtmpB.Fterm';'DATtmpB.PIDsum';'DATtmpB.Motor';'DATtmpB.Motor'};
+
 datSelectionString=[s1; s2];
 
 set(PTspecfig, 'pointer', 'watch')
@@ -76,7 +71,7 @@ if updateSpec==0
     for k=1:length(vars)       
         s=char(datSelectionString(vars(k)));
         for a=1:3,
-            if  ((~isempty(strfind(s,'Dterm')) | ~isempty(strfind(s,'Motor')) | (~isempty(strfind(s,'DATtmpA.debug')) & A_debugmode==DSHOT_RPM_TELEMETRY) | (~isempty(strfind(s,'DATtmpB.debug')) & B_debugmode==DSHOT_RPM_TELEMETRY) ) & a==3) | isempty(s)
+            if  ((~isempty(strfind(s,'Dterm')) | ~isempty(strfind(s,'Motor'))) & a==3) | isempty(s)
                 p=p+1;
                 smat{p}=[];%string
                 ampmat{p}=[];%spec matrix

@@ -8,6 +8,45 @@
 % ----------------------------------------------------------------------------------
 
 %%
+%% create saveDirectory
+if ~isempty(filenameA) && ~isempty(filenameB)
+    saveDirectory=[filenameA(1:end-4) '-' filenameB(1:end-4)];
+end
+if ~isempty(filenameA) && isempty(filenameB)
+    saveDirectory=[filenameA(1:end-4)];
+end
+if ~isempty(filenameB) && isempty(filenameA)
+    saveDirectory=[filenameB(1:end-4)];
+end
+if ~exist(saveDirectory,'dir')
+    if ~isempty(strfind(saveDirectory,'.bbl')) 
+        s=strfind(saveDirectory,'.bbl');
+        for i=length(s):-1:1
+            saveDirectory(s(i):s(i)+3)=[];
+        end       
+    end
+     if ~isempty(strfind(saveDirectory,'.bfl')) 
+        s=strfind(saveDirectory,'.bfl');
+        for i=length(s):-1:1
+            saveDirectory(s(i):s(i)+3)=[];
+        end       
+     end
+    if ~isempty(strfind(saveDirectory,'.BBL'))  
+        s=strfind(saveDirectory,'.BBL');
+        for i=length(s):-1:1
+            saveDirectory(s(i):s(i)+3)=[];
+        end       
+    end
+     if ~isempty(strfind(saveDirectory,'.BFL'))
+        s=strfind(saveDirectory,'.BFL');
+        for i=length(s):-1:1
+            saveDirectory(s(i):s(i)+3)=[];
+        end       
+    end
+   mkdir(saveDirectory)
+end
+
+%%
 set(gcf, 'pointer', 'watch')
 cd(filepath)
 cd(saveDirectory)

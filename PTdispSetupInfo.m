@@ -12,7 +12,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     screensz = get(0,'ScreenSize');
     set(PTdisp, 'units','normalized','outerposition',[.1 .1 .75 .8])
     PTdisp.NumberTitle='off';
-    PTdisp.Name= 'PIDtoolbox Setup Info';
+    PTdisp.Name= ['PIDtoolbox (' PtbVersion ') -  Setup Info'];
     set(PTdisp,'color',bgcolor)
 
     prop_max_screen=(max([PTdisp.Position(3) PTdisp.Position(4)]));

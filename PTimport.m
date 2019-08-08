@@ -1,6 +1,6 @@
 function [DAT] = PTimport(filename)
 %% [mainFname, csvFname, SetupInfo, VarLabels, DataMain, BBfileFlag] = PTimport(filename)
-%   Imports log data in multiple formats. Default is .csv, but if using .bbl or .bfl files, 
+%  Imports log data in multiple formats. Default is .csv, but if using .bbl or .bfl files, 
 % a version of blackbox_decode.exe must be in the log file folder
 % blackbox_decode.exe is part of "blackbox_tools", which can be found here:
 % https://github.com/betaflight/blackbox-tools
@@ -73,7 +73,7 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
         x=length(files);
         m=1;
         for k=1:x,            
-            if ((files(k).bytes)) < 100000 % delete if < 100kb
+            if ((files(k).bytes)) < 500 % delete if < 500bytes
                 delete(files(k).name)
             else
                 f2(m)=files(k);
@@ -169,6 +169,9 @@ if validData
         fid = fopen(csvFname, 'r');
         C = textscan(fid, '%s', 'Delimiter',',','CollectOutput',1);
         ncol=mode(diff(find(not(cellfun('isempty',strfind(C{1}(:),'ANGLE_MODE'))))));% # columns
+        if isnan(ncol)
+            ncol=find(not(cellfun('isempty',strfind(C{1}(:),'rxFlightChannelsValid'))));% # columns            
+        end
         TXT=C{1}(1:ncol)';% contains column headers
         fclose(fid);
 
@@ -203,7 +206,7 @@ if validData
         fclose(fid);
         a=strfind(c{1},'Firmware revision');
         logStartPoints=find(cellfun(@(a)~isempty(a)&&a>0,a));      
-        endStr={'debug_mode' ; 'motor_pwm_rate' ; 'motor_pwm_protocol' ; 'use_unsynced_pwm' };% strings not in all revisions, try a few 
+        endStr={'debug_mode' ; 'motor_pwm_rate' ; 'motor_pwm_protocol' ; 'use_unsynced_pwm' ; 'gyro_32khz_hardware_lpf' ; 'gyro_hardware_lpf' ; 'yaw_deadband' ; 'deadband' ; 'pidsum_limit_yaw' ; 'pidsum_limit' };% strings not in all revisions, try a few 
         m=1; a=strfind(c{1},endStr{m});
         while isempty(find(cellfun(@(a)~isempty(a)&&a>0,a)))         
             m=m+1;

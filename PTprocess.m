@@ -10,7 +10,7 @@
 
 if ~isempty(filenameA) || ~isempty(filenameB)
 
-downsampleMultiplier=5;% 5 times less resolution for faster plotting, display only
+downsampleMultiplier=5;% 5th of the resolution for faster plotting, display only
     
 set(PTfig, 'pointer', 'watch')
     if ~isempty(filenameA)
@@ -39,6 +39,7 @@ set(PTfig, 'pointer', 'watch')
         DATtmpA.DtermRaw=DATmainA.DtermRaw(:,x2);
         DATtmpA.DtermFilt=DATmainA.DtermFilt(:,x2);
         DATtmpA.Fterm=DATmainA.Fterm(:,x2);
+        DATtmpA.PIDsum=DATmainA.PIDsum(:,x2);
         DATtmpA.RCRate=DATmainA.RCRate(:,x2);
         DATtmpA.PIDerr=DATmainA.PIDerr(:,x2);
         DATtmpA.Motor=DATmainA.Motor(:,x2);
@@ -85,6 +86,7 @@ set(PTfig, 'pointer', 'watch')
         DATtmpB.DtermRaw=DATmainB.DtermRaw(:,x2);
         DATtmpB.DtermFilt=DATmainB.DtermFilt(:,x2);
         DATtmpB.Fterm=DATmainB.Fterm(:,x2);
+        DATtmpB.PIDsum=DATmainB.PIDsum(:,x2);
         DATtmpB.RCRate=DATmainB.RCRate(:,x2);
         DATtmpB.PIDerr=DATmainB.PIDerr(:,x2);
         DATtmpB.Motor=DATmainB.Motor(:,x2);

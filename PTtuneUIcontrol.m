@@ -12,7 +12,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
 PTtunefig=figure(4);
 set(PTtunefig, 'units','normalized','outerposition',[.1 .1 .75 .8])
 PTtunefig.NumberTitle='off';
-PTtunefig.Name= 'PIDtoolbox Step Response';
+PTtunefig.Name= ['PIDtoolbox (' PtbVersion ') - Step Response Tool'];
 PTtunefig.InvertHardcopy='off';
 set(PTtunefig,'color',bgcolor)
 
@@ -20,6 +20,18 @@ prop_max_screen=(max([PTtunefig.Position(3) PTtunefig.Position(4)]));
 fontsz4=round(screensz_multiplier*prop_max_screen);
 
 updateStep=0;
+minDegMove=20;
+
+TooltipString_steprun=['Runs step response analysis.',...
+    newline, 'Warning: Set subsampling dropdown @ or < medium for faster processing.'];
+TooltipString_minRate=['Selects the minimum rate of rotation for analysis.',...
+    newline, 'This essentially sets the lower bound of the rotation rate used to derive the sub-500deg/s step response.',...
+    newline, 'Excessively low values yield more noisy contributions to the data, whereas higher values limit the total available data.',...
+    newline, 'The default of 40deg/s should be sufficient in most cases'];
+TooltipString_FastStepResp=['Select to plot step response for snap maneuvers > 500deg/s.',...
+    newline, 'Note: this requires that the log contains maneuvers > 500deg/s, else the plot is left blank']; 
+TooltipString_subsample=['Choose degree of subsampling. Warning: this is designed to deal with small data sets,',...
+    newline, 'for example, if you chose a short time window, select higher subsampling, but be aware that higher=slower processing'];
 
 clear posInfo.TparamsPos
 cols=[0.1 0.55];
@@ -34,29 +46,34 @@ end
 
 posInfo.run4=[.09 .94 .06 .04];
 posInfo.saveFig4=[.16 .94 .06 .04];
-posInfo.subsampFactor=[.23 .94 .06 .04];
-posInfo.checkboxrateHigh=[.30 .94 .08 .04];
+posInfo.minDegMove=[.23 .94 .06 .04];
+posInfo.subsampFactor=[.30 .94 .06 .04];
+posInfo.checkboxrateHigh=[.37 .94 .07 .04];
 
-
+ 
 tuneCrtlpanel = uipanel('Title','','FontSize',fontsz4,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.085 .93 .31 .06]);
+              'Position',[.085 .93 .36 .06]);
           
-guiHandlesTune.run4 = uicontrol(PTtunefig,'string','run','fontsize',fontsz4,'units','normalized','outerposition',[posInfo.run4],...
-    'callback','PTtuningParams;');
+guiHandlesTune.run4 = uicontrol(PTtunefig,'string','Run','fontsize',fontsz4,'TooltipString',[TooltipString_steprun],'units','normalized','outerposition',[posInfo.run4],...
+    'callback','PTtuningParams;'); 
 guiHandlesTune.run4.BackgroundColor=[.3 .9 .3];
 
-guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','save fig','fontsize',fontsz4,'units','normalized','outerposition',[posInfo.saveFig4],...
+guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','Save Fig','fontsize',fontsz4,'TooltipString',[TooltipString_saveFig],'units','normalized','outerposition',[posInfo.saveFig4],...
     'callback','guiHandlesTune.saveFig4.FontWeight=''bold'';PTsaveFig; guiHandlesTune.saveFig4.FontWeight=''normal'';'); 
 guiHandlesTune.saveFig4.BackgroundColor=[ .8 .8 .8];
 
-guiHandlesTune.subsampFactor = uicontrol(PTtunefig,'Style','popupmenu','string',{'subsampling low'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high';  'subsampling high';},...
-    'fontsize',fontsz4,'units','normalized','outerposition', [posInfo.subsampFactor],'callback','@selection2;');
+guiHandlesTune.subsampFactor = uicontrol(PTtunefig,'Style','popupmenu','string',{'subsampling low (fastest | less reliable)'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high';  'subsampling high (slowest | most reliable)';},...
+    'fontsize',fontsz4,'TooltipString', [TooltipString_subsample],'units','normalized','outerposition', [posInfo.subsampFactor],'callback','@selection2;');
 guiHandlesTune.subsampFactor.Value=3;
 
-guiHandlesTune.checkboxrateHigh =uicontrol(PTtunefig,'Style','checkbox','String','>500deg/s','fontsize',fontsz4,...
+guiHandlesTune.checkboxrateHigh =uicontrol(PTtunefig,'Style','checkbox','String','>500deg/s','fontsize',fontsz4,'TooltipString', [TooltipString_FastStepResp],...
     'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.checkboxrateHigh],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), end; updateStep=1;PTtuningParams;');
 
+guiHandlesTune.minDegMove = uicontrol(PTtunefig,'Style','popupmenu','string',{'min rate 20deg/s'; 'min rate 40deg/s'; 'min rate 60deg/s'; 'min rate 80deg/s';  'min rate 100deg/s';},...
+    'fontsize',fontsz4,'TooltipString', [TooltipString_minRate],'units','normalized','outerposition', [posInfo.minDegMove],'callback','@selection2;');
+guiHandlesTune.minDegMove.Value=2;
+ 
 
 else
     errordlg('Please select file(s) then click ''load+run''', 'Error, no data');

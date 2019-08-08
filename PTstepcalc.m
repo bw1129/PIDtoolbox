@@ -1,5 +1,5 @@
-function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp)
-%% [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp)
+function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp, minInput)
+%% [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp, minInput))
 % estimate of step response function using Wiener filter/deconvolution method
 % X = set point (input), Y = filtered gyro (output)
 % returns matrix/stack of etimated stepresponse functions, time [t] in ms, and  
@@ -15,9 +15,9 @@ function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp)
 
 
 
-hw = waitbar(0,['generating stack of input-output segments... '],'windowstyle', 'modal'); 
+hw = waitbar(0,['generating stack of input-output segments... ']); 
 
-minInput=20;% degs/s 
+%minInput=20;% degs/s, default 
 segment_length=(lograte*2000); % 2 sec segments
 wnd=(lograte*1000) * .5; % 500ms step response function, length will depend on lograte  
 StepRespDuration_ms=500; % max dur of step resp in ms for plotting
@@ -30,7 +30,7 @@ if NSegs>0
     clear Xseg Yseg
     j=0;
     for i=1:NSegs
-        waitbar(i/length(segment_vector),hw,['generating stack of input-output segments... '],'windowstyle', 'modal');
+        waitbar(i/length(segment_vector),hw,['generating stack of input-output segments... ']);
         if max(abs(X(segment_vector(i):segment_vector(i)+segment_length))) >= minInput 
             j=j+1;
             Xseg(j,:)=X(segment_vector(i):segment_vector(i)+segment_length);  
@@ -41,7 +41,7 @@ if NSegs>0
     clear resp resp2 G H Hcon imp impf a b
     j=0; rateHigh=0;
     for i=1:size(Xseg,1)
-        waitbar(i/size(Xseg,1),hw,['computing step response functions... '],'windowstyle', 'modal'); 
+        waitbar(i/size(Xseg,1),hw,['computing step response functions... ']); 
         a=fft(Yseg(i,:).*hamming(length(Yseg(i,:)))');% output, using hann or hamming taper
         b=fft(Xseg(i,:).*hamming(length(Xseg(i,:)))');% input, using hann or hamming taper
         G=a/length(a);

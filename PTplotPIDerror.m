@@ -30,7 +30,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
         hold on    
 
          if ~isempty(filenameA)            
-            RCRateALL_Thresh_A=abs(DATtmpA.RCRate(1,:)) < maxDegsec & abs(DATtmpA.RCRate(2,:)) < maxDegsec & abs(DATtmpA.RCRate(3,:)) < maxDegsec;
+            RCRateALL_Thresh_A=abs(DATtmpA.RCRate(1,:)) < maxDegsec & abs(DATtmpA.RCRate(2,:)) < maxDegsec & abs(DATtmpA.RCRate(3,:)) < maxDegsec & abs(DATtmpA.PIDerr(1,:)) < maxDegsec & abs(DATtmpA.PIDerr(2,:)) < maxDegsec & abs(DATtmpA.PIDerr(3,:)) < maxDegsec;
             [yA xA]=hist(DATtmpA.PIDerr(p,RCRateALL_Thresh_A),-1000:1:1000); %<maxDegsec),-maxDegsec:1:maxDegsec);
             yA=yA/max(yA);
             h=plot(xA, yA);
@@ -52,7 +52,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
          end
  
         if ~isempty(filenameB)            
-             RCRateALL_Thresh_B=abs(DATtmpB.RCRate(1,:)) < maxDegsec & abs(DATtmpB.RCRate(2,:)) < maxDegsec & abs(DATtmpB.RCRate(3,:)) < maxDegsec;
+             RCRateALL_Thresh_B=abs(DATtmpB.RCRate(1,:)) < maxDegsec & abs(DATtmpB.RCRate(2,:)) < maxDegsec & abs(DATtmpB.RCRate(3,:)) < maxDegsec & abs(DATtmpB.PIDerr(1,:)) < maxDegsec & abs(DATtmpB.PIDerr(2,:)) < maxDegsec & abs(DATtmpB.PIDerr(3,:)) < maxDegsec;
             [yB xB]=hist(DATtmpB.PIDerr(p,RCRateALL_Thresh_B),-1000:1:1000);
             yB=yB/max(yB);
             h=plot(xB, yB);
@@ -90,15 +90,15 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     if ~updateErr
           t=[.1 .2 .3 .4 .5 .6 .7 .8 .9 1];
          
-          cutoff=40; % ignore less frequent error at the extremes, outliers
+         % cutoff=100; % ignore less frequent error at the extremes, outliers
         if ~isempty(filenameA)
             for i=1:length(t)    
                 clear RCRateALL_Thresh_A
                 m=max(max(abs(DATtmpA.RCRate))) * (t(i));
-                RCRateALL_Thresh_A=abs(DATtmpA.RCRate(1,:)) < m & abs(DATtmpA.RCRate(2,:)) < m & abs(DATtmpA.RCRate(3,:)) < m;
+                RCRateALL_Thresh_A=abs(DATtmpA.RCRate(1,:)) < m & abs(DATtmpA.RCRate(2,:)) < m & abs(DATtmpA.RCRate(3,:)) < m & abs(DATtmpA.PIDerr(1,:)) < m & abs(DATtmpA.PIDerr(2,:)) < m & abs(DATtmpA.PIDerr(3,:)) < m;
                 for j=1:3 
                      perr_a=[]; 
-                    perr_a=DATtmpA.PIDerr(j,abs(DATtmpA.PIDerr(j,:)) < cutoff & RCRateALL_Thresh_A); 
+                    perr_a=DATtmpA.PIDerr(j, RCRateALL_Thresh_A); 
                     Perr_a_m(j,i)=nanmean(abs(perr_a));
                     Perr_a_se(j,i)=nanstd(abs(perr_a)) / sqrt(length(perr_a));
                 end
@@ -110,10 +110,10 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             for i=1:length(t)  
                 clear RCRateALL_Thresh_B 
                m=max(max(abs(DATtmpB.RCRate))) * (t(i));
-                 RCRateALL_Thresh_B=abs(DATtmpB.RCRate(1,:)) < m & abs(DATtmpB.RCRate(2,:)) < m & abs(DATtmpB.RCRate(3,:)) < m;      
+                 RCRateALL_Thresh_B=abs(DATtmpB.RCRate(1,:)) < m & abs(DATtmpB.RCRate(2,:)) < m & abs(DATtmpB.RCRate(3,:)) < m & abs(DATtmpB.PIDerr(1,:)) < m & abs(DATtmpB.PIDerr(2,:)) < m & abs(DATtmpB.PIDerr(3,:)) < m;      
                 for j=1:3 
                     perr_b=[];
-                    perr_b=DATtmpB.PIDerr(j,abs(DATtmpB.PIDerr(j,:)) < cutoff & RCRateALL_Thresh_B); 
+                    perr_b=DATtmpB.PIDerr(j, RCRateALL_Thresh_B); 
                     Perr_b_m(j,i)=nanmean(abs(perr_b));
                     Perr_b_se(j,i)=nanstd(abs(perr_b)) / sqrt(length(perr_b));
                 end
@@ -144,7 +144,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             box off
         if p==3
             set(h1,'xtick',[0:1:10], 'xticklabel',{'0', '', '20','','40','', '60','', '80','', '100'});
-            xlabel('max stick deflection (%)', 'fontweight','bold')
+            xlabel('stick deflection (% of max)', 'fontweight','bold')
          else
                 set(h1,'xtick',[0:1:10], 'xticklabel',{'', '', '','','','', '','', '','', ''});
         end
@@ -165,7 +165,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
             box off
             if p==3
             set(h1,'xtick',[0:1:10], 'xticklabel',{'0', '', '20','','40','', '60','', '80','', '100'});
-                xlabel('max stick deflection (%)', 'fontweight','bold')
+                xlabel('stick deflection (% of max)', 'fontweight','bold')
             else
                 set(h1,'xtick',[0:1:10], 'xticklabel',{'', '', '','','','', '','', '','', ''});
             end

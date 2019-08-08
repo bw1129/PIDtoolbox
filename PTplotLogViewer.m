@@ -38,6 +38,7 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     guiHandles.PIDerrButton.FontSize=fontsz;
     guiHandles.TuningButton.FontSize=fontsz;
     guiHandles.DispInfoButton.FontSize=fontsz;
+    guiHandles.flightStats.FontSize=fontsz;
     guiHandles.saveFig.FontSize=fontsz;
     guiHandles.wiki.FontSize=fontsz;
     guiHandles.checkbox0.FontSize=fontsz;
@@ -329,42 +330,6 @@ if ~isempty(filenameA) || ~isempty(filenameB)
                 ' ''buttondownfcn'', ''delete(gca);expandON=0;hexpand6=[]; '');']);            
             end  
         end
-    end
-
-    %% Histogram % throttle 
-
-    pos1=[0.905 0.25 0.08 0.1];
-    pos2=[0.905 0.135 0.08 0.1];
-    PTfig(1);
-    if ~isempty(filenameA)
-        hhist=subplot('position',pos1);
-        cla
-        h=histogram(DATtmpA.RCRate(4,:),'Normalization','probability','BinWidth',1);
-        set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)
-        grid on
-
-        if isempty(filenameB)
-             set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'xticklabels',{0 20 40 60 80 100},'ylim',[0 .1],'ytick',[0 .05 .1],'yticklabels',{0 5 10},'fontsize',fontsz, 'Position',[pos1]);
-            xlabel('% throttle')
-            ylabel('% of flight')
-        else
-            set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{},'yticklabels',{0 5 10},'fontsize',fontsz, 'Position',[pos1]);
-            xlabel('');
-        end
-        axis([1 99 0 .1])
-    end
-
-
-    if ~isempty(filenameB)
-        hhist=subplot('position',pos2);
-        cla
-        h=histogram(DATtmpB.RCRate(4,:),'Normalization','probability','BinWidth',1);
-        set(h,'FaceColor',[colorB],'FaceAlpha',.9,'edgecolor',[colorB],'EdgeAlpha',.7)
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'xticklabels',{0 20 40 60 80 100},'ylim',[0 .1],'ytick',[0 .05 .1],'yticklabels',{0 5 10},'fontsize',fontsz,'position',[pos2]);
-        axis([1 99 0 .1])
-        grid on
-        xlabel('% throttle')
-        ylabel('                    % of flight')
     end
 
     set(PTfig, 'pointer', 'arrow')
