@@ -42,7 +42,10 @@ set(PTfig, 'pointer', 'watch')
         DATtmpA.PIDsum=DATmainA.PIDsum(:,x2);
         DATtmpA.RCRate=DATmainA.RCRate(:,x2);
         DATtmpA.PIDerr=DATmainA.PIDerr(:,x2);
-        DATtmpA.Motor=DATmainA.Motor(:,x2);
+        DATtmpA.Motor12=DATmainA.Motor(1:2,x2);
+        DATtmpA.Motor34=DATmainA.Motor(3:4,x2);
+        DATtmpA.debug12=DATmainA.debug(1:2,x2);
+        DATtmpA.debug34=DATmainA.debug(3:4,x2);
         
         dnsampleFactor=A_lograte*downsampleMultiplier;% 5 times less resolution for faster plotting, display only
         DATdnsmplA.tta=downsample(((tta-tta(1))/us2sec), dnsampleFactor)';
@@ -89,7 +92,11 @@ set(PTfig, 'pointer', 'watch')
         DATtmpB.PIDsum=DATmainB.PIDsum(:,x2);
         DATtmpB.RCRate=DATmainB.RCRate(:,x2);
         DATtmpB.PIDerr=DATmainB.PIDerr(:,x2);
-        DATtmpB.Motor=DATmainB.Motor(:,x2);
+        DATtmpB.Motor12=DATmainB.Motor(1:2,x2);
+        DATtmpB.Motor34=DATmainB.Motor(3:4,x2);
+        DATtmpB.debug12=DATmainB.debug(1:2,x2);
+        DATtmpB.debug34=DATmainB.debug(3:4,x2);
+
         
         dnsampleFactor=B_lograte*downsampleMultiplier;% 5 times less resolution for faster plotting, display only
         DATdnsmplB.ttb=downsample(((ttb-ttb(1))/us2sec), dnsampleFactor)';

@@ -47,8 +47,8 @@ guiHandlesSpec.Sub100HzCheck{4}.FontSize=fontsz2;
 
 %%
 
-s1={'';'DATtmpA.GyroFilt';'DATtmpA.debug';'DATtmpA.PIDerr';'DATtmpA.RCRate';'DATtmpA.Pterm';'DATtmpA.DtermFilt';'DATtmpA.DtermRaw';'DATtmpA.Fterm';'DATtmpA.PIDsum';'DATtmpA.Motor';'DATtmpA.Motor'};
-s2={'DATtmpB.GyroFilt';'DATtmpB.debug';'DATtmpB.PIDerr';'DATtmpB.RCRate';'DATtmpB.Pterm';'DATtmpB.DtermFilt';'DATtmpB.DtermRaw';'DATtmpB.Fterm';'DATtmpB.PIDsum';'DATtmpB.Motor';'DATtmpB.Motor'};
+s1={'';'DATtmpA.GyroFilt';'DATtmpA.debug';'DATtmpA.PIDerr';'DATtmpA.RCRate';'DATtmpA.Pterm';'DATtmpA.DtermFilt';'DATtmpA.DtermRaw';'DATtmpA.Fterm';'DATtmpA.PIDsum';'DATtmpA.Motor12';'DATtmpA.Motor34';'DATtmpA.debug12';'DATtmpA.debug34'};
+s2={'DATtmpB.GyroFilt';'DATtmpB.debug';'DATtmpB.PIDerr';'DATtmpB.RCRate';'DATtmpB.Pterm';'DATtmpB.DtermFilt';'DATtmpB.DtermRaw';'DATtmpB.Fterm';'DATtmpB.PIDsum';'DATtmpB.Motor12';'DATtmpB.Motor34';'DATtmpB.debug12';'DATtmpB.debug34';};
 
 datSelectionString=[s1; s2];
 
@@ -71,7 +71,7 @@ if updateSpec==0
     for k=1:length(vars)       
         s=char(datSelectionString(vars(k)));
         for a=1:3,
-            if  ((~isempty(strfind(s,'Dterm')) | ~isempty(strfind(s,'Motor'))) & a==3) | isempty(s)
+            if  ((~isempty(strfind(s,'Dterm')) | ~isempty(strfind(s,'Motor12')) | ~isempty(strfind(s,'Motor34')) | ~isempty(strfind(s,'debug12')) | ~isempty(strfind(s,'debug34'))) & a==3) | isempty(s)
                 p=p+1;
                 smat{p}=[];%string
                 ampmat{p}=[];%spec matrix
@@ -132,6 +132,8 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
             if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Motors 3'), axLabel={'Motor 3';'Motor 4'}; end
             if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'RPM 1'), axLabel={'Motor 1';'Motor 2'}; end
             if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'RPM 3'), axLabel={'Motor 3';'Motor 4'}; end
+            if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Debug 1'), axLabel={'Debug 1';'Debug 2'}; end
+            if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Debug 3'), axLabel={'Debug 3';'Debug 4'}; end
             
             if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
             hold on;h=plot([0 100],[size(ampmat{p},2)-6 size(ampmat{p},2)-6],'y--');set(h,'linewidth',2)            
@@ -292,6 +294,8 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
          if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Motors 3'), axLabel={'Motor 3';'Motor 4'};end
          if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'RPM 1'), axLabel={'Motor 1';'Motor 2'}; end
          if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'RPM 3'), axLabel={'Motor 3';'Motor 4'}; end
+         if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Debug 1'), axLabel={'Debug 1';'Debug 2'};end
+         if strfind(char(guiHandlesSpec.SpecSelect{c1(p)}.String(vars(c1(p)))), 'Debug 3'), axLabel={'Debug 3';'Debug 4'};end
 
         delete(subplot('position',posInfo.SpecPos(p,:)));
         if ~isempty(amp2d{p})

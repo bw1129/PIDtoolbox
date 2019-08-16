@@ -43,9 +43,9 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
     
     % only choose files that don't have .bbl or .bfl extension
     clear f2;m=1;
-    for k=1:length(files)
+    for k=1:size(files,1)
         if ~contains(files(k).name,'.bbl','IgnoreCase',true) & ~contains(files(k).name,'.bfl','IgnoreCase',true)  
-            f2(m)=files(k);
+            f2(m,:)=files(k);
             m=m+1;
         end
     end
@@ -68,20 +68,20 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
         delete([fevt(k).name]);
     end
     % if more than one file
-    if length(files) > 1
-        % delete files with < 100kb - may need better work-around eventually
-        x=length(files);
+    if size(files,1) > 1
+        % delete files with < 500kb - may need better work-around eventually
+        x=size(files,1);
         m=1;
         for k=1:x,            
-            if ((files(k).bytes)) < 500 % delete if < 500bytes
+            if ((files(k).bytes)) < 600 % delete if < 500bytes
                 delete(files(k).name)
             else
-                f2(m)=files(k);
+                f2(m,:)=files(k);
                 m=m+1;
             end
         end 
         files=f2;clear f2   
-%         for m=1:size(files,2)
+%         for m=1:size(files,1)
 %             fileNums(m)=str2num(char(files(m).name(end-5:end-4)));
 %         end
         a=strfind(result,'duration');
@@ -94,8 +94,8 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
             end
         end
         
-       if length(files)>0            
-        x=length(files); 
+       if size(files,1)>0            
+        x=size(files,1); 
             if x>1 % if multiple logs exist in BB file
                 y=0;
                 while y <= 0 || y > x   

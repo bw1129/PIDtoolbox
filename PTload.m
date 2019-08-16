@@ -180,11 +180,13 @@ if ~isempty(filenameA)
     try 
         DATmainA.debug(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[0]'))); 
         DATmainA.debug(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[1]')));
-        DATmainA.debug(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[2]')));        
+        DATmainA.debug(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[2]')));  
+        DATmainA.debug(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[3]')));
     catch % empty      
         DATmainA.debug(1,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
         DATmainA.debug(2,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
         DATmainA.debug(3,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+        DATmainA.debug(4,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
     end
     if A_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
         DATmainA.debug(1,:)=PTscale2ref( dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'debug[0]'))), DATmainA.Motor(1,:));
@@ -302,10 +304,12 @@ if ~isempty(filenameB)
         DATmainB.debug(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))); 
         DATmainB.debug(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[1]')));
         DATmainB.debug(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[2]')));
+        DATmainB.debug(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[3]')));
     catch % empty
         DATmainB.debug(1,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
-        DATmainB.debug(2,:)=zeros(1,length(DATmainB.GyroFilt(2,:)));
-        DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(3,:)));
+        DATmainB.debug(2,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+        DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+        DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
     end
     if B_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
         DATmainB.debug(1,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))), DATmainB.Motor(1,:));
