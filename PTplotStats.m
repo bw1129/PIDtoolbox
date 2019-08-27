@@ -6,8 +6,7 @@
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
-
-
+    
 if ~isempty(filenameA) || ~isempty(filenameB)
     %% update fonts
 
@@ -293,7 +292,6 @@ if ~isempty(filenameB)
     set(hhist,'ycolor',[colorB],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(8,:)]);  
     axis([1 99 0 .1])
 end
-
 
 end
 

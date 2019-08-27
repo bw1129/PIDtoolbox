@@ -6,6 +6,7 @@
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
+
 if ~isempty(filenameA) || ~isempty(filenameB)
 
     PTdisp=figure(5);
@@ -71,4 +72,5 @@ else
     errordlg('Please select file(s) then click ''load+run''', 'Error, no data');
     pause(2);
 end
+
     

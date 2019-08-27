@@ -12,8 +12,9 @@
 % https://github.com/betaflight/betaflight/wiki/Debug-Modes?fbclid=IwAR2bKepD_cNZNnRtlAxf7yf3CWjYm2-MbFuwoGn3tUm8wPefp9CCJQR7c9Y
 GYRO_SCALED=6;
 DSHOT_RPM_TELEMETRY=47;
-
-
+    
+try
+    
 if ~isempty(filenameA) || ~isempty(filenameB)
 
 
@@ -55,7 +56,11 @@ if ~isempty(filenameA)
     if isempty(filenameAtmp)
         filenameAtmp=filenameA;  
         clear dataA dat_A
+        try
         [dataA] = PTimport(filenameA);
+        catch ME
+            errmsg.PTimport=PTerrorMessages('PTimport', ME);
+        end
         if ~isempty(dataA)
             dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisDuf[0]'};% to be computed below
             dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisDuf[1]'};
@@ -102,7 +107,11 @@ if ~isempty(filenameB)
     if isempty(filenameBtmp)
         filenameBtmp=filenameB;   
         clear dataB dat_B
+        try
         [dataB] = PTimport(filenameB);
+        catch ME
+            errmsg.PTimport=PTerrorMessages('PTimport', ME);
+        end
         if ~isempty(dataB)
             dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisDuf[0]'};% to be computed below
             dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisDuf[1]'};
@@ -203,8 +212,13 @@ if ~isempty(filenameA)
     DATmainA.Iterm(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisI[1]')));
     DATmainA.Iterm(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisI[2]')));
     
-    DATmainA.DtermFilt(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[0]')));
-    DATmainA.DtermFilt(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[1]'))); 
+    try %dterm is only PID term that if set to 0 will not generate axisD variable at all
+        DATmainA.DtermFilt(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[0]')));
+        DATmainA.DtermFilt(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisD[1]'))); 
+    catch
+        DATmainA.DtermFilt(1,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+        DATmainA.DtermFilt(2,:)=zeros(1,length(DATmainA.GyroFilt(1,:)));
+    end    
    
     DATmainA.DtermRaw(1,:)=[-(diff(DATmainA.GyroFilt(1,:))) 0]; 
     DATmainA.DtermRaw(2,:)=[-(diff(DATmainA.GyroFilt(2,:))) 0]; 
@@ -326,8 +340,14 @@ if ~isempty(filenameB)
     DATmainB.Iterm(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisI[1]')));
     DATmainB.Iterm(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisI[2]')));
       
-    DATmainB.DtermFilt(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisD[0]')));
-    DATmainB.DtermFilt(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisD[1]')));
+     try %dterm is only PID term that if set to 0 will not generate axisD variable at all
+        DATmainB.DtermFilt(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisD[0]')));
+        DATmainB.DtermFilt(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisD[1]')));
+    catch
+        DATmainB.DtermFilt(1,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+        DATmainB.DtermFilt(2,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+    end    
+    
     
     DATmainB.DtermRaw(1,:)=[-(diff(DATmainB.GyroFilt(1,:))) 0]; 
     DATmainB.DtermRaw(2,:)=[-(diff(DATmainB.GyroFilt(2,:))) 0]; 
@@ -458,6 +478,9 @@ set(PTfig, 'pointer', 'arrow')
 
 end
 
+catch ME
+    errmsg.PTload=PTerrorMessages('PTload', ME); 
+end
 
 %% some functions used within this script
 function [throttlePercent] = PTthrPercent(X) 

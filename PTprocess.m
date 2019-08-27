@@ -7,9 +7,10 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-
+try
+    
 if ~isempty(filenameA) || ~isempty(filenameB)
-
+    
 downsampleMultiplier=5;% 5th of the resolution for faster plotting, display only
     
 set(PTfig, 'pointer', 'watch')
@@ -116,4 +117,6 @@ set(PTfig, 'pointer', 'watch')
 set(PTfig, 'pointer', 'arrow')
 end
     
-    
+catch ME
+    errmsg.PTprocess=PTerrorMessages('PTprocess', ME);
+end

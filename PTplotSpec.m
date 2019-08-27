@@ -8,7 +8,6 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-
 if ~isempty(filenameA) || ~isempty(filenameB)
    
 %% update fonts 

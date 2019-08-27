@@ -1,5 +1,15 @@
-%% PTviewerUIcontrol
+%% PTviewerUIcontrol 
 
+
+% ----------------------------------------------------------------------------------
+% "THE BEER-WARE LICENSE" (Revision 42):
+% <brian.white@queensu.ca> wrote this file. As long as you retain this notice you
+% can do whatever you want with this stuff. If we meet some day, and you think
+% this stuff is worth it, you can buy me a beer in return. -Brian White
+% ----------------------------------------------------------------------------------  
+    
+try
+    
 posInfo.checkbox0=[.1 .965 .1 .025];
 posInfo.checkbox1=[.1 .94 .1 .025];
 posInfo.checkbox2=[.2 .965 .1 .025];
@@ -64,4 +74,8 @@ guiHandles.checkbox15=uicontrol(PTfig,'Style','checkbox','String','All','fontsiz
 
 guiHandles.linewidth = uicontrol(PTfig,'Style','popupmenu','string',{'line width 1','line width 2','line width 3','line width 4','line width 5'},...
     'fontsize',fontsz,'units','normalized','outerposition', [posInfo.linewidth],'callback','@selection; if (~isempty(filenameA) | ~isempty(filenameB)), PTplotLogViewer; end');
-    
+  
+
+catch
+    close
+end

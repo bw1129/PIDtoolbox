@@ -14,8 +14,8 @@ function [DAT] = PTimport(filename)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-
 %%
+    
 waitbarFid = waitbar(0,'Please wait...');
 pause(.5)
 
@@ -289,6 +289,4 @@ if validData
 else
     DAT=[];
 end
-
-
 

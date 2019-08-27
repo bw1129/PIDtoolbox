@@ -7,7 +7,6 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-%%
 %% create saveDirectory
 if ~isempty(filenameA) && ~isempty(filenameB)
     saveDirectory=[filenameA(1:end-4) '-' filenameB(1:end-4)];

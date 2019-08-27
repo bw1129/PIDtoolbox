@@ -8,6 +8,9 @@
 % ----------------------------------------------------------------------------------
 
 % tic
+
+try
+    
 if ~isempty(filenameA) || ~isempty(filenameB) 
 
     set(PTfig, 'pointer', 'watch')
@@ -336,6 +339,10 @@ if ~isempty(filenameA) || ~isempty(filenameB)
 else 
     errordlg('Please select file(s) then click ''load+run''', 'Error, no data');
     pause(2);
+end
+
+catch
+    close
 end
 
 %toc

@@ -7,6 +7,8 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
+try
+    
 set(PTerrfig, 'pointer', 'watch')
 
 if ~isempty(filenameA) || ~isempty(filenameB)
@@ -177,12 +179,14 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     end
 
 
-%     
-   
-  
-   
+%      
 end
 
 set(PTerrfig, 'pointer', 'arrow')
+
+
+catch err
+    msgPTplotPIDerror=PTerrorMessages('PTplotPIDerror', err);
+end
 
     

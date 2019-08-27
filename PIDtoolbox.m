@@ -7,17 +7,18 @@
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
-
+    
+PtbVersion='v0.32';
+    
 executableDir = pwd;
 addpath(executableDir)
 
 try
-    if exist('logfileDir.txt') %if this exists, change directory accordingly
-        fid = fopen('logfileDir.txt');
-        logfileDir = fscanf(fid,'%s');
-        fclose(fid);   
-    end
+    fid = fopen('logfileDir.txt');
+    logfileDir = fscanf(fid,'%s');
+    fclose(fid);   
 catch
+    logfileDir=[];
 end
 
 %%%% assign main figure handle and define some UI variables 
@@ -40,8 +41,8 @@ epoch2_A=[];
 epoch1_B=[];
 epoch2_B=[];
 updateSpec=0;
-A_debugmode=6;%default to gyro_scaled
-B_debugmode=6;
+A_debugmode=0;%default to gyro_scaled
+B_debugmode=0;
 filepathA=[];
 filepathB=[];
 filenameA=[];
@@ -54,12 +55,13 @@ hexpand4=[];
 hexpand5=[];
 hexpand6=[];
 
+errmsg=[];
+
 plotall_flag=-1;
 
 colorA=[.93 .5 .3];
 colorB=[.3 .65 .95];
 
-PtbVersion='v0.30';
 %use_phsCorrErr=0;
 flightSpec=0;
 screensz = get(0,'ScreenSize');
@@ -156,11 +158,11 @@ TooltipString_wiki=['Link to the PIDtoolbox wiki in Github'];
 TooltipString_refresh=['Refreshes fonts and button sizes after change in window size'];
 %%%
 guiHandles.fileA = uicontrol(PTfig,'string','Select File [A]','fontsize',fontsz,'TooltipString', [TooltipString_files], 'units','normalized','outerposition',[posInfo.fileA],...
-     'callback','cd(logfileDir);[filenameA, filepathA] = uigetfile({''*.BBL;*.BFL'' }); if filepathA==0, filepathA=[]; filenameA=[]; end, filenameAtmp=[];'); 
+     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL'' }); if filepathA==0, filepathA=[]; filenameA=[]; end, filenameAtmp=[];'); 
 guiHandles.fileA.BackgroundColor=colorA;
 
 guiHandles.fileB = uicontrol(PTfig,'string','Select File [B]','fontsize',fontsz,'TooltipString', [TooltipString_files],'units','normalized','outerposition',[posInfo.fileB],...
-     'callback','cd(logfileDir);[filenameB, filepathB] = uigetfile({''*.BBL;*.BFL'' }); if filepathB==0, filepathB=[]; filenameB=[]; end, filenameBtmp=[];'); 
+     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end;[filenameB, filepathB] = uigetfile({''*.BBL;*.BFL'' }); if filepathB==0, filepathB=[]; filenameB=[]; end, filenameBtmp=[];'); 
 guiHandles.fileB.BackgroundColor=colorB; 
 guiHandles.runAll = uicontrol(PTfig,'string','Load+Run','fontsize',fontsz,'TooltipString', [TooltipString_loadRun],'units','normalized','outerposition',[posInfo.runAll],...
     'callback','guiHandles.runAll.FontWeight=''bold'';PTload;PTprocess;PTviewerUIcontrol; PTplotLogViewer; guiHandles.runAll.FontWeight=''normal'';'); 
