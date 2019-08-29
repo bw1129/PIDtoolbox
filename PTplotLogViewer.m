@@ -165,6 +165,10 @@ if ~isempty(filenameA) || ~isempty(filenameB)
                     if guiHandles.checkbox11.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(tta/us2sec, (DATmainA.debug(2,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox12.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(tta/us2sec, (DATmainA.debug(3,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox13.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(tta/us2sec, (DATmainA.debug(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox10.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(tta/us2sec, DATmainA.debug(1,:));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox11.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(tta/us2sec, DATmainA.debug(2,:));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox12.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(tta/us2sec, DATmainA.debug(3,:));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox13.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(tta/us2sec, DATmainA.debug(4,:));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox14.Value, h=plot(tta/us2sec, (DATmainA.RCRate(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value); end
                 else % downsampled for faster plotting performance
                     if guiHandles.checkbox0.Value, h=plot(DATdnsmplA.tta, DATdnsmplA.debug(ii,:));hold on;set(h,'color', [linec.col0],'LineWidth',guiHandles.linewidth.Value), end
@@ -185,6 +189,10 @@ if ~isempty(filenameA) || ~isempty(filenameB)
                     if guiHandles.checkbox11.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplA.tta, (DATdnsmplA.debug(2,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox12.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplA.tta, (DATdnsmplA.debug(3,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox13.Value && A_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplA.tta, (DATdnsmplA.debug(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox10.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(DATdnsmplA.tta, DATdnsmplA.debug(1,:));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox11.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(DATdnsmplA.tta, DATdnsmplA.debug(2,:));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox12.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(DATdnsmplA.tta, DATdnsmplA.debug(3,:));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox13.Value && A_debugmode~=DSHOT_RPM_TELEMETRY && A_debugmode~=GYRO_SCALED && A_debugmode~=0, h=plot(DATdnsmplA.tta, DATdnsmplA.debug(4,:));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox14.Value, h=plot(DATdnsmplA.tta, (DATdnsmplA.RCRate(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value); end
                 end
                 
@@ -268,7 +276,11 @@ if ~isempty(filenameA) || ~isempty(filenameB)
                     if guiHandles.checkbox10.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(ttb/us2sec, (DATmainB.debug(1,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value), end
                     if guiHandles.checkbox11.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(ttb/us2sec, (DATmainB.debug(2,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value), end
                     if guiHandles.checkbox12.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(ttb/us2sec, (DATmainB.debug(3,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox13.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(ttb/us2sec, (DATmainB.debug(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox13.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(ttb/us2sec, (DATmainB.debug(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value), end    
+                    if guiHandles.checkbox10.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(ttb/us2sec, DATmainB.debug(1,:));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox11.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(ttb/us2sec, DATmainB.debug(2,:));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox12.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(ttb/us2sec, DATmainB.debug(3,:));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox13.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(ttb/us2sec, DATmainB.debug(4,:));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox14.Value, h=plot(ttb/us2sec, (DATmainB.RCRate(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value), end
                 else % downsampled for faster plotting performance
                     if guiHandles.checkbox0.Value, h=plot(DATdnsmplB.ttb, DATdnsmplB.debug(ii,:));hold on;set(h,'color', [linec.col0],'LineWidth',guiHandles.linewidth.Value), end
@@ -289,6 +301,10 @@ if ~isempty(filenameA) || ~isempty(filenameB)
                     if guiHandles.checkbox11.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplB.ttb, (DATdnsmplB.debug(2,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox12.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplB.ttb, (DATdnsmplB.debug(3,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox13.Value && B_debugmode==DSHOT_RPM_TELEMETRY, h=plot(DATdnsmplB.ttb, (DATdnsmplB.debug(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', 'k','LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox10.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(DATdnsmplB.ttb, DATdnsmplB.debug(1,:));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox11.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(DATdnsmplB.ttb, DATdnsmplB.debug(2,:));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox12.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(DATdnsmplB.ttb, DATdnsmplB.debug(3,:));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value); end
+                    if guiHandles.checkbox13.Value && B_debugmode~=DSHOT_RPM_TELEMETRY && B_debugmode~=GYRO_SCALED && B_debugmode~=0, h=plot(DATdnsmplB.ttb, DATdnsmplB.debug(4,:));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value); end
                     if guiHandles.checkbox14.Value, h=plot(DATdnsmplB.ttb, (DATdnsmplB.RCRate(4,:)*(maxY/100))-(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value); end
                 end
                 

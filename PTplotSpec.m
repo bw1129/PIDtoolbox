@@ -81,7 +81,7 @@ if updateSpec==0
                 if ~isempty(strfind(s,'DATtmpA'))
                     eval(['dat{k}(a,:)=' char(datSelectionString(vars(k))) '(a,:);';])
                     if guiHandlesSpec.percentMotor.Value==2  
-                        T=mean(DATtmpA.Motor);% motor output
+                        T=mean([DATtmpA.Motor12; DATtmpA.Motor34]);% motor output
                     else
                         T=DATtmpA.RCRate(4,:);% throttle
                     end
@@ -89,7 +89,7 @@ if updateSpec==0
                 else
                     eval(['dat{k}(a,:)=' char(datSelectionString(vars(k))) '(a,:);';])
                     if guiHandlesSpec.percentMotor.Value==2
-                        T=mean(DATtmpB.Motor); % motor output
+                        T=mean([DATtmpB.Motor12; DATtmpB.Motor34]); % motor output
                     else
                         T=DATtmpB.RCRate(4,:); % throttle
                     end

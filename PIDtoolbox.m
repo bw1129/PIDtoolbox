@@ -8,7 +8,7 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
     
-PtbVersion='v0.32';
+PtbVersion='v0.33';
     
 executableDir = pwd;
 addpath(executableDir)
