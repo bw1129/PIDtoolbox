@@ -66,7 +66,15 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
     fevt=dir([filename(1:end-4) '*.gps.gpx']);
     for k=1:size(fevt,1)
         delete([fevt(k).name]);
+    end    
+    fevt=dir([filename(1:end-4) '*.gps.csv']);
+    for k=1:size(fevt,1)
+        delete([fevt(k).name]);
     end
+    
+    % get list of files after erasing junk
+    files=dir([filename(1:end-4) '*.csv']);
+    
     % if more than one file
     if size(files,1) > 1
         % delete files with < 500kb - may need better work-around eventually

@@ -56,11 +56,11 @@ if ~isempty(filenameA)
     if isempty(filenameAtmp)
         filenameAtmp=filenameA;  
         clear dataA dat_A
-        try
+  %      try
         [dataA] = PTimport(filenameA);
-        catch ME
-            errmsg.PTimport=PTerrorMessages('PTimport', ME);
-        end
+  %      catch ME
+  %          errmsg.PTimport=PTerrorMessages('PTimport', ME);
+  %      end
         if ~isempty(dataA)
             dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisDuf[0]'};% to be computed below
             dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisDuf[1]'};
