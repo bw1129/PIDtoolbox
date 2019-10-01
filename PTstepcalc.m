@@ -1,7 +1,7 @@
-function [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp, minInput)
-%% [stepresponse, t, rateHigh] = PTstepcalc(X, Y, lograte, subsamp, minInput))
+function [stepresponse, t, rateHigh] = PTstepcalc(SP, GY, lograte, subsamp, minInput, rateHighThreshold)
+%% [stepresponse, t, rateHigh] = PTstepcalc(SP, GY, lograte, subsamp, minInput))
 % estimate of step response function using Wiener filter/deconvolution method
-% X = set point (input), Y = filtered gyro (output)
+% SP = set point (input), GY = filtered gyro (output)
 % returns matrix/stack of etimated stepresponse functions, time [t] in ms, and  
 % rateHigh, where 1 means set point >=500 deg/s, and 0 < 500deg/s
 %
@@ -21,29 +21,29 @@ hw = waitbar(0,['generating stack of input-output segments... ']);
 segment_length=(lograte*2000); % 2 sec segments
 wnd=(lograte*1000) * .5; % 500ms step response function, length will depend on lograte  
 StepRespDuration_ms=500; % max dur of step resp in ms for plotting
-rateHighThreshold=500; % degs/s
+%rateHighThreshold=500; % degs/s
 subsampleFactor=subsamp;
 
-segment_vector=1:round(segment_length/subsampleFactor):length(X);
+segment_vector=1:round(segment_length/subsampleFactor):length(SP);
 NSegs=max(find((segment_vector+segment_length) < segment_vector(end)));
 if NSegs>0
-    clear Xseg Yseg
+    clear SPseg GYseg
     j=0;
     for i=1:NSegs
         waitbar(i/length(segment_vector),hw,['generating stack of input-output segments... ']);
-        if max(abs(X(segment_vector(i):segment_vector(i)+segment_length))) >= minInput 
+        if max(abs(SP(segment_vector(i):segment_vector(i)+segment_length))) >= minInput 
             j=j+1;
-            Xseg(j,:)=X(segment_vector(i):segment_vector(i)+segment_length);  
-            Yseg(j,:)=Y(segment_vector(i):segment_vector(i)+segment_length); 
+            SPseg(j,:)=SP(segment_vector(i):segment_vector(i)+segment_length);  
+            GYseg(j,:)=GY(segment_vector(i):segment_vector(i)+segment_length); 
         end
     end
 
     clear resp resp2 G H Hcon imp impf a b
     j=0; rateHigh=0;
-    for i=1:size(Xseg,1)
-        waitbar(i/size(Xseg,1),hw,['computing step response functions... ']); 
-        a=fft(Yseg(i,:).*hamming(length(Yseg(i,:)))');% output, using hann or hamming taper
-        b=fft(Xseg(i,:).*hamming(length(Xseg(i,:)))');% input, using hann or hamming taper
+    for i=1:size(SPseg,1)
+        waitbar(i/size(SPseg,1),hw,['computing step response functions... ']); 
+        a=fft(GYseg(i,:).*hamming(length(GYseg(i,:)))');% output, use hann or hamming taper
+        b=fft(SPseg(i,:).*hamming(length(SPseg(i,:)))');% input, use hann or hamming taper
         G=a/length(a);
         H=b/length(b);
         Hcon=conj(H);     
@@ -56,7 +56,7 @@ if NSegs>0
             j=j+1;
             stepresponse(j,:)=resptmp(i,1:1+wnd); 
             
-            if max(abs(Xseg(i,:))) >= 500
+            if max(abs(SPseg(i,:))) >= rateHighThreshold
                 rateHigh(j,:)=1;
             else
                 rateHigh(j,:)=0;

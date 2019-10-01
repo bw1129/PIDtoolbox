@@ -18,6 +18,10 @@ guiHandlesTune.run4.FontSize=fontsz4;
 guiHandlesTune.subsampFactor.FontSize=fontsz4;
 guiHandlesTune.checkboxrateHigh.FontSize=fontsz4;
 guiHandlesTune.minDegMove.FontSize=fontsz4;
+guiHandlesTune.maxDegMove.FontSize=fontsz4;
+guiHandlesTune.minDegMove_text.FontSize=fontsz4;
+guiHandlesTune.maxDegMove_text.FontSize=fontsz4;
+
 
 %% step resp computed directly from set point and gyro
 
@@ -28,7 +32,7 @@ if ~isempty(filenameA)
     for p=1:3         
         try
             if ~updateStep            
-                [stepresp_A{p} tA rateHigh_A{p}] = PTstepcalc(DATtmpA.RCRate(p,:), DATtmpA.GyroFilt(p,:), A_lograte, guiHandlesTune.subsampFactor.Value*3, guiHandlesTune.minDegMove.Value*20);
+                [stepresp_A{p} tA rateHigh_A{p}] = PTstepcalc(DATtmpA.RCRate(p,:), DATtmpA.GyroFilt(p,:), A_lograte, guiHandlesTune.subsampFactor.Value*3, str2num(guiHandlesTune.minDegMove.String), str2num(guiHandlesTune.maxDegMove.String));
             end
         catch
             stepresp_A{p}=[];
@@ -91,7 +95,7 @@ if ~isempty(filenameB)
     for p=1:3  
         try
             if ~updateStep            
-                [stepresp_B{p} tB rateHigh_B{p}] = PTstepcalc(DATtmpB.RCRate(p,:), DATtmpB.GyroFilt(p,:), B_lograte, guiHandlesTune.subsampFactor.Value*3, guiHandlesTune.minDegMove.Value*20);
+                [stepresp_B{p} tB rateHigh_B{p}] = PTstepcalc(DATtmpB.RCRate(p,:), DATtmpB.GyroFilt(p,:), B_lograte, guiHandlesTune.subsampFactor.Value*3, str2num(guiHandlesTune.minDegMove.String), str2num(guiHandlesTune.maxDegMove.String));
             end
         catch
             stepresp_B{p}=[];
@@ -118,7 +122,7 @@ if ~isempty(filenameB)
             
             eval(['PID=' ylab2{p} 'PIDF_B;'])
             h=text(320, .8, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['PID: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4)
+            h=text(320, .7, ['PIDF: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4)
             h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
             h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
             h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 

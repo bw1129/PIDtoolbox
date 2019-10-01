@@ -81,7 +81,7 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
         x=size(files,1);
         m=1;
         for k=1:x,            
-            if ((files(k).bytes)) < 600 % delete if < 500bytes
+            if ((files(k).bytes)) < 600 % delete if < 600bytes
                 delete(files(k).name)
             else
                 f2(m,:)=files(k);
@@ -114,7 +114,7 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
                 end  
                 csvFname=[files(y).name]; 
                 %%%% delete all unused BB decoded csv files
-                for k=1:x
+                for k=1:x                    
                     if k~=y, delete(files(k).name); end
                 end
             else

@@ -8,7 +8,7 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
     
-PtbVersion='v0.34';
+PtbVersion='v0.35';
     
 executableDir = pwd;
 addpath(executableDir)
@@ -59,6 +59,10 @@ errmsg=[];
 
 plotall_flag=-1;
 
+% for step resp defaults
+minDegMove=40;
+maxDegMove=500;
+
 colorA=[.93 .5 .3];
 colorB=[.3 .65 .95];
 
@@ -99,8 +103,8 @@ posInfo.Epoch2_B_text = [.94 .65 .05 .03];
 posInfo.Epoch2_B_Input = [.945 .61 .04 .04];
 
 posInfo.spectrogramButton=[.9 .555 .085 .04];
-posInfo.PIDerrButton=[.9 .51 .085 .04];
-posInfo.TuningButton=[.9 .465 .085 .04];
+posInfo.TuningButton=[.9 .51 .085 .04];
+posInfo.PIDerrButton=[.9 .465 .085 .04];
 posInfo.flightStats=[.9 .420 .085 .04];
 posInfo.DispInfoButton=[.9 .375 .085 .04];
 posInfo.saveFig=[.9 .330 .085 .04];
