@@ -91,5 +91,5 @@ guiHandles.linewidth = uicontrol(PTfig,'Style','popupmenu','string',{'line width
   
 
 catch
-    close
+  %  close
 end

@@ -8,6 +8,8 @@
 % ----------------------------------------------------------------------------------
     
 if ~isempty(filenameA) || ~isempty(filenameB)
+    set(PTstatsfig, 'pointer', 'watch')
+    pause(.05)
     %% update fonts
 
 prop_max_screen=(max([PTstatsfig.Position(3) PTstatsfig.Position(4)]));
@@ -16,283 +18,975 @@ fontsz5=round(screensz_multiplier*prop_max_screen);
 guiHandlesStats.saveFig5.FontSize=fontsz5; 
 guiHandlesStats.refresh.FontSize=fontsz5; 
 guiHandlesStats.degsecStick.FontSize=fontsz5; 
+guiHandlesStats.crossAxesStats.FontSize=fontsz5; 
+
+guiHandlesStats.crossAxesStats_text.FontSize=fontsz5;
+guiHandlesStats.crossAxesStats_input.FontSize=fontsz5;
+guiHandlesStats.crossAxesStats_text2.FontSize=fontsz5;
+guiHandlesStats.crossAxesStats_input2.FontSize=fontsz5;
 
 %% Histograms   
 
-if ~isempty(filenameA)
-    rcRates=str2num(rc_rates_A{2});
-    rcExpo=str2num(rc_expo_A{2});
-    Srates=str2num(Super_rates_A{2});
-    
-    RateCurveRoll_A=PTrc2deg([1:5:500],dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1));
-    RateCurvePitch_A=PTrc2deg([1:5:500],dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2));
-    RateCurveYaw_A=PTrc2deg([1:5:500],dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3));
-    
-    Yscale=round((max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)])) / 100) * 100;
-    
-    if guiHandlesStats.degsecStick.Value==1, 
-        RateCurveRoll_A=(diff(RateCurveRoll_A));
-        RateCurvePitch_A=(diff(RateCurvePitch_A));
-        RateCurveYaw_A=(diff(RateCurveYaw_A));
+if guiHandlesStats.crossAxesStats.Value==1    
+    if ~isempty(filenameA)
+        if ~updateStats
+        rcRates=str2num(rc_rates_A{2});
+        rcExpo=str2num(rc_expo_A{2});
+        Srates=str2num(Super_rates_A{2});
+
+        RateCurveRoll_A=PTrc2deg([1:5:500],dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1));
+        RateCurvePitch_A=PTrc2deg([1:5:500],dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2));
+        RateCurveYaw_A=PTrc2deg([1:5:500],dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3));
+
+        Yscale=round((max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)])) / 100) * 100;
+
+        if guiHandlesStats.degsecStick.Value==1, 
+            RateCurveRoll_A=(diff(RateCurveRoll_A));
+            RateCurvePitch_A=(diff(RateCurvePitch_A));
+            RateCurveYaw_A=(diff(RateCurveYaw_A));
+
+            Yscale=round(max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)]));
+        end
+
+        Rpercent_A=PTPercent(DATtmpA.RCcommand(1,:));
+        Ppercent_A=PTPercent(DATtmpA.RCcommand(2,:));
+        Ypercent_A=PTPercent(DATtmpA.RCcommand(3,:));
+        Tpercent_A=DATtmpA.RCRate(4,:); % already computed for throttle
+        end
+
+        hhist=subplot('position',posInfo.statsPos(1,:));
+        cla   
+        h=histogram(Rpercent_A,'Normalization','probability','BinWidth',1);      
+        y=xlabel('% roll','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);                 
+        ylabel('% of flight','fontweight','bold')    
+        set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)  
+
+        hold on
+
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_A)],RateCurveRoll_A);
+        set(ax(1),'Ycolor',[colorA])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_A(20) RateCurveRoll_A(40) RateCurveRoll_A(60) RateCurveRoll_A(80)],'ko','Parent', ax(2)); 
+        set(h,'markerfacecolor','k') 
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(1,:)]);
+        axis([1 99 0 .1])
+
+        text(21, RateCurveRoll_A(20),[int2str(RateCurveRoll_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
+        text(41, RateCurveRoll_A(40),[int2str(RateCurveRoll_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurveRoll_A(60),[int2str(RateCurveRoll_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurveRoll_A(80),[int2str(RateCurveRoll_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+        hhist=subplot('position',posInfo.statsPos(2,:));
+        cla
+        h=histogram(Ppercent_A,'Normalization','probability','BinWidth',1);
+        set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)    
+        y=xlabel('% pitch','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight','fontweight','bold')  
+         hold on    
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_A)],RateCurvePitch_A);
+        set(ax(1),'Ycolor',[colorA])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_A(20) RateCurvePitch_A(40) RateCurvePitch_A(60) RateCurvePitch_A(80)],'ko','Parent', ax(2));     
+        set(h,'markerfacecolor','k')  
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(2,:)]);
+        axis([1 99 0 .1])
+
+        text(21, RateCurvePitch_A(20),[int2str(RateCurvePitch_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(41, RateCurvePitch_A(40),[int2str(RateCurvePitch_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurvePitch_A(60),[int2str(RateCurvePitch_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurvePitch_A(80),[int2str(RateCurvePitch_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
+        text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+        hhist=subplot('position',posInfo.statsPos(3,:));
+        cla
+        h=histogram(Ypercent_A,'Normalization','probability','BinWidth',1);
+        set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)    
+        y=xlabel('% yaw','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight','fontweight','bold')
+
+         hold on
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_A)],RateCurveYaw_A);
+        set(ax(1),'Ycolor',[colorA])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_A(20) RateCurveYaw_A(40) RateCurveYaw_A(60) RateCurveYaw_A(80)],'ko','Parent', ax(2)); 
+        set(h,'markerfacecolor','k')  
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(3,:)]);  
+        axis([1 99 0 .1])
+
+        text(21, RateCurveYaw_A(20),[int2str(RateCurveYaw_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(41, RateCurveYaw_A(40),[int2str(RateCurveYaw_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurveYaw_A(60),[int2str(RateCurveYaw_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurveYaw_A(80),[int2str(RateCurveYaw_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
+        text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+         hhist=subplot('position',posInfo.statsPos(4,:));
+        cla
+        h=histogram(Tpercent_A,'Normalization','probability','BinWidth',1);
+        set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7);
+        grid on
+        y=xlabel('% throttle','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight', 'color',[colorA],'fontweight','bold')
+        set(hhist,'ycolor',[colorA],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(4,:)]);  
+        axis([1 99 0 .1])
+    end
+
+    if ~isempty(filenameB)
+        if ~updateStats
+        rcRates=str2num(rc_rates_B{2});
+        rcExpo=str2num(rc_expo_B{2});
+        Srates=str2num(Super_rates_B{2});
+
+        RateCurveRoll_B=PTrc2deg([1:5:500],dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1));
+        RateCurvePitch_B=PTrc2deg([1:5:500],dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2));
+        RateCurveYaw_B=PTrc2deg([1:5:500],dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3));
+
+        Yscale=round((max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)])) / 100) * 100;
+
+        if guiHandlesStats.degsecStick.Value==1, 
+            RateCurveRoll_B=(diff(RateCurveRoll_B));
+            RateCurvePitch_B=(diff(RateCurvePitch_B));
+            RateCurveYaw_B=(diff(RateCurveYaw_B));
+
+            Yscale=round(max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)]));
+        end
+
+        Rpercent_B=PTPercent(DATtmpB.RCcommand(1,:));
+        Ppercent_B=PTPercent(DATtmpB.RCcommand(2,:));
+        Ypercent_B=PTPercent(DATtmpB.RCcommand(3,:));
+        Tpercent_B=DATtmpB.RCRate(4,:); % already computed for throttle
+        end
+
+        hhist=subplot('position',posInfo.statsPos(5,:));
+        cla   
+        h=histogram(Rpercent_B,'Normalization','probability','BinWidth',1);      
+        y=xlabel('% roll','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);                 
+        ylabel('% of flight','fontweight','bold')    
+        set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)  
+
+        hold on
+
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_B)],RateCurveRoll_B);
+        set(ax(1),'Ycolor',[colorB])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_B(20) RateCurveRoll_B(40) RateCurveRoll_B(60) RateCurveRoll_B(80)],'ko','Parent', ax(2)); 
+        set(h,'markerfacecolor','k')  
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(5,:)]);
+        axis([1 99 0 .1])
+
+        text(21, RateCurveRoll_B(20),[int2str(RateCurveRoll_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(41, RateCurveRoll_B(40),[int2str(RateCurveRoll_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurveRoll_B(60),[int2str(RateCurveRoll_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurveRoll_B(80),[int2str(RateCurveRoll_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
+        text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+        hhist=subplot('position',posInfo.statsPos(6,:));
+        cla
+        h=histogram(Ppercent_B,'Normalization','probability','BinWidth',1);
+        set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)    
+        y=xlabel('% pitch','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight','fontweight','bold');
+
+         hold on    
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_B)],RateCurvePitch_B);
+        set(ax(1),'Ycolor',[colorB])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_B(20) RateCurvePitch_B(40) RateCurvePitch_B(60) RateCurvePitch_B(80)],'ko','Parent', ax(2)); 
+        set(h,'markerfacecolor','k')  
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(6,:)]);
+        axis([1 99 0 .1])
+
+        text(21, RateCurvePitch_B(20),[int2str(RateCurvePitch_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(41, RateCurvePitch_B(40),[int2str(RateCurvePitch_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurvePitch_B(60),[int2str(RateCurvePitch_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurvePitch_B(80),[int2str(RateCurvePitch_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
+
+        text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+        hhist=subplot('position',posInfo.statsPos(7,:));
+        cla
+        h=histogram(Ypercent_B,'Normalization','probability','BinWidth',1);
+        set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)    
+        y=xlabel('% yaw','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight','fontweight','bold')    
+
+         hold on
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_B)],RateCurveYaw_B);
+        set(ax(1),'Ycolor',[colorB])
+        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        ax(2).YLabel.String='deg/s';
+        if guiHandlesStats.degsecStick.Value==1, 
+            ax(2).YLabel.String='deg/s/stick travel units';
+        end
+        set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
+        hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_B(20) RateCurveYaw_B(40) RateCurveYaw_B(60) RateCurveYaw_B(80)],'ko','Parent', ax(2)); 
+        set(h,'markerfacecolor','k')  
+
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(7,:)]);  
+        axis([1 99 0 .1])
+
+        text(21, RateCurveYaw_B(20),[int2str(RateCurveYaw_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(41, RateCurveYaw_B(40),[int2str(RateCurveYaw_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(61, RateCurveYaw_B(60),[int2str(RateCurveYaw_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
+        text(81, RateCurveYaw_B(80),[int2str(RateCurveYaw_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);     
+        text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
+        text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 99 0 .1])
+        grid on
+
+        hhist=subplot('position',posInfo.statsPos(8,:));
+        cla
+        h=histogram(Tpercent_B,'Normalization','probability','BinWidth',1);    
+        set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)
+        grid on
+        y=xlabel('% throttle','fontweight','bold');
+        set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
+        ylabel('% of flight', 'color',[colorB],'fontweight','bold')
+        set(hhist,'ycolor',[colorB],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(8,:)]);  
+        axis([1 99 0 .1])
+    end   
+end
+
+%% means/standard deviations
+
+if guiHandlesStats.crossAxesStats.Value==2
+       
+    cols=[0.06 0.3 0.54 0.78];
+    rows=[0.76 0.53 0.3 0.08];
+    k=0;
+    for c=1:length(cols)
+        for r=1:length(rows)
+            k=k+1;
+            posInfo.statsPos2(k,:)=[cols(c) rows(r) 0.18 0.16];
+        end
+    end
+    lineThickness=2;
+
+    if ~isempty(filenameA)
         
-        Yscale=round(max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)]));
-    end
-     
-    Rpercent_A=PTPercent(DATtmpA.RCcommand(1,:));
-    Ppercent_A=PTPercent(DATtmpA.RCcommand(2,:));
-    Ypercent_A=PTPercent(DATtmpA.RCcommand(3,:));
-    Tpercent_A=DATtmpA.RCRate(4,:); % already computed for throttle
+        Rpercent_A=DATtmpA.RCcommand(1,:)/5;
+        Ppercent_A=DATtmpA.RCcommand(2,:)/5;
+        Ypercent_A=DATtmpA.RCcommand(3,:)/5;
+        Tpercent_A=DATtmpA.RCRate(4,:);   
+        
+        N=length(DATtmpA.GyroFilt(1,:));
 
-    hhist=subplot('position',posInfo.statsPos(1,:));
-    cla   
-    h=histogram(Rpercent_A,'Normalization','probability','BinWidth',1);      
-    y=xlabel('% roll','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);                 
-    ylabel('% of flight','fontweight','bold')    
-    set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)  
-    
-    hold on
-    
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_A)],RateCurveRoll_A);
-    set(ax(1),'Ycolor',[colorA])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
+        % gyro
+        h1=subplot('position',posInfo.statsPos2(1,:)); cla
+        s1=bar([1],mean(DATtmpA.GyroFilt(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%[ColorSet(11,:)])
+        s1=errorbar([1],mean(DATtmpA.GyroFilt(1,:)), std(DATtmpA.GyroFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.GyroFilt(2,:)));
+        set(s2,'FaceColor',[colorA]);%,[ColorSet(12,:)])
+        s1=errorbar([2],mean(DATtmpA.GyroFilt(2,:)), std(DATtmpA.GyroFilt(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.GyroFilt(1,:)));
+        set(s3,'FaceColor',[colorA]);%,[ColorSet(13,:)])
+        s1=errorbar([3],mean(DATtmpA.GyroFilt(1,:)), std(DATtmpA.GyroFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Gyro [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill 
+        box off
+        
+        % RCRate
+        h1=subplot('position',posInfo.statsPos2(5,:)); cla
+        s1=bar([1],mean(abs(Rpercent_A)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(abs(Rpercent_A)), std(abs(Rpercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(abs(Ppercent_A)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(abs(Ppercent_A)), std(abs(Ppercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(abs(Ypercent_A)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(abs(Ypercent_A)), std(abs(Ypercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(Tpercent_A));
+        set(s4,'FaceColor',[colorA]);%
+        s1=errorbar([4],mean(abs(Tpercent_A)), std(abs(Tpercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        set(gca,'Xtick',[1 2 3 4],'xticklabel',{'R';'P';'Y';'T'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('% RPYT [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean % +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis([0.5 4.5 0 100])    
+        box off
+        
+        % pterm
+        h1=subplot('position',posInfo.statsPos2(2,:)); cla
+        s1=bar([1],mean(DATtmpA.Pterm(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.Pterm(1,:)), std(DATtmpA.Pterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.Pterm(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.Pterm(2,:)), std(DATtmpA.Pterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.Pterm(3,:)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(DATtmpA.Pterm(3,:)), std(DATtmpA.Pterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Pterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill  
+        box off
+        
+        % fterm
+        h1=subplot('position',posInfo.statsPos2(6,:)); cla
+        s1=bar([1],mean(DATtmpA.Fterm(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.Fterm(1,:)), std(DATtmpA.Fterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.Fterm(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.Fterm(2,:)), std(DATtmpA.Fterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.Fterm(3,:)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(DATtmpA.Fterm(3,:)), std(DATtmpA.Fterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Fterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill  
+        box off
+        
+        % Iterm
+        h1=subplot('position',posInfo.statsPos2(3,:)); cla
+        s1=bar([1],mean(DATtmpA.Iterm(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.Iterm(1,:)), std(DATtmpA.Iterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.Iterm(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.Iterm(2,:)), std(DATtmpA.Iterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.Iterm(3,:)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(DATtmpA.Iterm(3,:)), std(DATtmpA.Iterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Iterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill  
+        box off
+        
+        % dterm
+        h1=subplot('position',posInfo.statsPos2(7,:)); cla
+        s1=bar([1],mean(DATtmpA.DtermFilt(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.DtermFilt(1,:)), std(DATtmpA.DtermFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.DtermFilt(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.DtermFilt(2,:)), std(DATtmpA.DtermFilt(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)        
+        set(gca,'Xtick',[1 2],'xticklabel',{'R';'P'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Dterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill  
+        box off
+        
+        h1=subplot('position',posInfo.statsPos2(4,:)); cla
+        s1=bar([1],mean(DATtmpA.Motor12(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.Motor12(1,:)), std(DATtmpA.Motor12(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.Motor12(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.Motor12(2,:)), std(DATtmpA.Motor12(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.Motor34(1,:)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(DATtmpA.Motor34(1,:)), std(DATtmpA.Motor34(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(DATtmpA.Motor34(2,:)));
+        set(s4,'FaceColor',[colorA]);%
+        s1=errorbar([4],mean(DATtmpA.Motor34(2,:)), std(DATtmpA.Motor34(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        set(gca,'Xtick',[1 2 3 4],'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Motors [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis([0.5 4.5 0 100]) 
+        box off
+        
+        
+         h1=subplot('position',posInfo.statsPos2(8,:)); cla
+        s1=bar([1],mean(DATtmpA.debug12(1,:)));hold on
+        set(s1,'FaceColor',[colorA]);%
+        s1=errorbar([1],mean(DATtmpA.debug12(1,:)), std(DATtmpA.debug12(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpA.debug12(2,:)));
+        set(s2,'FaceColor',[colorA]);%
+        s1=errorbar([2],mean(DATtmpA.debug12(2,:)), std(DATtmpA.debug12(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpA.debug34(1,:)));
+        set(s3,'FaceColor',[colorA]);%
+        s1=errorbar([3],mean(DATtmpA.debug34(1,:)), std(DATtmpA.debug34(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(DATtmpA.debug34(2,:)));
+        set(s4,'FaceColor',[colorA]);%
+        s1=errorbar([4],mean(DATtmpA.debug34(2,:)), std(DATtmpA.debug34(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        set(gca,'Xtick',[1 2 3 4],'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Debug [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        axis fill
+       box off
     end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_A(20) RateCurveRoll_A(40) RateCurveRoll_A(60) RateCurveRoll_A(80)],'ko','Parent', ax(2)); 
-    set(h,'markerfacecolor','k') 
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(1,:)]);
-    axis([1 99 0 .1])
-    
-    text(21, RateCurveRoll_A(20),[int2str(RateCurveRoll_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
-    text(41, RateCurveRoll_A(40),[int2str(RateCurveRoll_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurveRoll_A(60),[int2str(RateCurveRoll_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurveRoll_A(80),[int2str(RateCurveRoll_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
 
-    hhist=subplot('position',posInfo.statsPos(2,:));
-    cla
-    h=histogram(Ppercent_A,'Normalization','probability','BinWidth',1);
-    set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)    
-    y=xlabel('% pitch','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight','fontweight','bold')  
-     hold on    
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_A)],RateCurvePitch_A);
-    set(ax(1),'Ycolor',[colorA])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
+
+    if ~isempty(filenameB)
+
+        Rpercent_B=DATtmpB.RCcommand(1,:)/5;
+        Ppercent_B=DATtmpB.RCcommand(2,:)/5;
+        Ypercent_B=DATtmpB.RCcommand(3,:)/5;
+        Tpercent_B=DATtmpB.RCRate(4,:);
+        
+        N=length(DATtmpB.GyroFilt(1,:));
+        
+           % gyro
+        h1=subplot('position',posInfo.statsPos2(9,:)); cla
+        s1=bar([1],mean(DATtmpB.GyroFilt(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.GyroFilt(1,:)), std(DATtmpB.GyroFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.GyroFilt(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.GyroFilt(2,:)), std(DATtmpB.GyroFilt(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.GyroFilt(1,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.GyroFilt(1,:)), std(DATtmpB.GyroFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Gyro [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill  
+        box off
+        
+        % RCRate
+        h1=subplot('position',posInfo.statsPos2(13,:)); cla
+        s1=bar([1],mean(abs(Rpercent_A)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(abs(Rpercent_A)), std(abs(Rpercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(abs(Ppercent_A)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(abs(Ppercent_A)), std(abs(Ppercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(abs(Ypercent_A)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(abs(Ypercent_A)), std(abs(Ypercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(Tpercent_A));
+        set(s4,'FaceColor',[colorB]);%
+        s1=errorbar([4],mean(abs(Tpercent_A)), std(abs(Tpercent_A))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        set(gca,'Xtick',[1 2 3 4],'xticklabel',{'R';'P';'Y';'T'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('% RPYT [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean % +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis([0.5 4.5 0 100])    
+        box off
+        
+        % pterm
+        h1=subplot('position',posInfo.statsPos2(10,:)); cla
+        s1=bar([1],mean(DATtmpB.Pterm(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.Pterm(1,:)), std(DATtmpB.Pterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.Pterm(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.Pterm(2,:)), std(DATtmpB.Pterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.Pterm(3,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.Pterm(3,:)), std(DATtmpB.Pterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Pterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill  
+        box off
+        
+        % fterm
+        h1=subplot('position',posInfo.statsPos2(14,:)); cla
+        s1=bar([1],mean(DATtmpB.Fterm(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.Fterm(1,:)), std(DATtmpB.Fterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.Fterm(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.Fterm(2,:)), std(DATtmpB.Fterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.Fterm(3,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.Fterm(3,:)), std(DATtmpB.Fterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Fterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill  
+        box off
+        
+        % Iterm
+        h1=subplot('position',posInfo.statsPos2(11,:)); cla
+        s1=bar([1],mean(DATtmpB.Iterm(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.Iterm(1,:)), std(DATtmpB.Iterm(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.Iterm(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.Iterm(2,:)), std(DATtmpB.Iterm(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.Iterm(3,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.Iterm(3,:)), std(DATtmpB.Iterm(3,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)         
+        set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Iterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill  
+        box off
+        
+        % dterm
+        h1=subplot('position',posInfo.statsPos2(15,:)); cla
+        s1=bar([1],mean(DATtmpB.DtermFilt(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.DtermFilt(1,:)), std(DATtmpB.DtermFilt(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.DtermFilt(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.DtermFilt(2,:)), std(DATtmpB.DtermFilt(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)        
+        set(gca,'Xtick',[1 2],'xticklabel',{'R';'P'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Dterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill  
+        box off
+        
+        
+        h1=subplot('position',posInfo.statsPos2(12,:)); cla
+        s1=bar([1],mean(DATtmpB.Motor12(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.Motor12(1,:)), std(DATtmpB.Motor12(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.Motor12(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.Motor12(2,:)), std(DATtmpB.Motor12(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.Motor34(1,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.Motor34(1,:)), std(DATtmpB.Motor34(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(DATtmpB.Motor34(2,:)));
+        set(s4,'FaceColor',[colorB]);%
+        s1=errorbar([4],mean(DATtmpB.Motor34(2,:)), std(DATtmpB.Motor34(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)   
+        set(gca,'Xtick',[1 2 3 4],'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Motors [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis([0.5 4.5 0 100])   
+        box off
+        
+         h1=subplot('position',posInfo.statsPos2(16,:)); cla
+        s1=bar([1],mean(DATtmpB.debug12(1,:)));hold on
+        set(s1,'FaceColor',[colorB]);%
+        s1=errorbar([1],mean(DATtmpB.debug12(1,:)), std(DATtmpB.debug12(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(DATtmpB.debug12(2,:)));
+        set(s2,'FaceColor',[colorB]);%
+        s1=errorbar([2],mean(DATtmpB.debug12(2,:)), std(DATtmpB.debug12(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s3=bar([3],mean(DATtmpB.debug34(1,:)));
+        set(s3,'FaceColor',[colorB]);%
+        s1=errorbar([3],mean(DATtmpB.debug34(1,:)), std(DATtmpB.debug34(1,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s4=bar([4],mean(DATtmpB.debug34(2,:)));
+        set(s4,'FaceColor',[colorB]);%
+        s1=errorbar([4],mean(DATtmpB.debug34(2,:)), std(DATtmpB.debug34(2,:))/sqrt(N));hold on
+        set(s1,'color','k','linewidth',lineThickness)     
+        set(gca,'Xtick',[1 2 3 4],'ycolor',[colorB],'xcolor',[colorB],'YMinorGrid','on')
+        set(h1,'fontsize',fontsz5);
+        xlabel('Debug [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis fill
+        box off
     end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_A(20) RateCurvePitch_A(40) RateCurvePitch_A(60) RateCurvePitch_A(80)],'ko','Parent', ax(2));     
-    set(h,'markerfacecolor','k')  
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(2,:)]);
-    axis([1 99 0 .1])
-    
-    text(21, RateCurvePitch_A(20),[int2str(RateCurvePitch_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(41, RateCurvePitch_A(40),[int2str(RateCurvePitch_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurvePitch_A(60),[int2str(RateCurvePitch_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurvePitch_A(80),[int2str(RateCurvePitch_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
-    text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
-    
-    hhist=subplot('position',posInfo.statsPos(3,:));
-    cla
-    h=histogram(Ypercent_A,'Normalization','probability','BinWidth',1);
-    set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7)    
-    y=xlabel('% yaw','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight','fontweight','bold')
-    
-     hold on
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_A)],RateCurveYaw_A);
-    set(ax(1),'Ycolor',[colorA])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
+end
+
+%% Mode 1 topography
+if guiHandlesStats.crossAxesStats.Value==3
+       
+    cols=[0.06 0.52];
+    rows=[0.55 0.08];
+    k=0;
+    for c=1:2
+        for r=1:2
+            k=k+1;
+            posInfo.statsPos2(k,:)=[cols(c) rows(r) 0.38 0.4];
+        end
     end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_A(20) RateCurveYaw_A(40) RateCurveYaw_A(60) RateCurveYaw_A(80)],'ko','Parent', ax(2)); 
-    set(h,'markerfacecolor','k')  
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(3,:)]);  
-    axis([1 99 0 .1])
-    
-    text(21, RateCurveYaw_A(20),[int2str(RateCurveYaw_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(41, RateCurveYaw_A(40),[int2str(RateCurveYaw_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurveYaw_A(60),[int2str(RateCurveYaw_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurveYaw_A(80),[int2str(RateCurveYaw_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
-    text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
-    
-     hhist=subplot('position',posInfo.statsPos(4,:));
-    cla
-    h=histogram(Tpercent_A,'Normalization','probability','BinWidth',1);
-    set(h,'FaceColor',[colorA],'FaceAlpha',.9, 'edgecolor',[colorA],'EdgeAlpha',.7);
-    grid on
-    y=xlabel('% throttle','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight', 'color',[colorA],'fontweight','bold')
-    set(hhist,'ycolor',[colorA],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(4,:)]);  
-    axis([1 99 0 .1])
+
+
+    lineThickness=2;
+
+    if ~isempty(filenameA)
+        
+        Rpercent_A=DATtmpA.RCcommand(1,:)/5;
+        Ppercent_A=DATtmpA.RCcommand(2,:)/5;
+        Ypercent_A=DATtmpA.RCcommand(3,:)/5;
+        Tpercent_A=DATtmpA.RCRate(4,:);
+        Tacceleration_A=[0 (smooth( diff((Tpercent_A)*10)*A_lograte, 50))'];   
+        col=Tacceleration_A;        
+       
+        cmap_crossaxisStat=b2r(-1, 1);
+
+        h1=subplot('position',posInfo.statsPos2(1,:)); cla
+        s1=surface([Ypercent_A;Ypercent_A],[Ppercent_A;Ppercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[-100:20:100])
+        set(h1,'fontsize',fontsz5);
+        xlabel('% Yaw [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Pitch [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 -100 100])
+        set(s1, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[-100 100],':k');
+        plot([-100 100],[0 0],':k');
+
+        h2=subplot('position',posInfo.statsPos2(2,:)); cla
+        s2=surface([Rpercent_A;Rpercent_A],[Tpercent_A;Tpercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h2,'fontsize',fontsz5);
+        xlabel('% Roll [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s2, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k');
+    end
+
+
+    if ~isempty(filenameB)
+
+        Rpercent_B=DATtmpB.RCcommand(1,:)/5;
+        Ppercent_B=DATtmpB.RCcommand(2,:)/5;
+        Ypercent_B=DATtmpB.RCcommand(3,:)/5;
+        Tpercent_B=DATtmpB.RCRate(4,:);
+        Tacceleration_B=[0 (smooth( diff((Tpercent_B)*10)*B_lograte, 50))'];
+        col=Tacceleration_B; 
+
+        h3=subplot('position',posInfo.statsPos2(3,:)); cla
+        s3=surface([Ypercent_B;Ypercent_B],[Ppercent_B;Ppercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[-100:20:100])
+        set(h3,'fontsize',fontsz5);
+        xlabel('% Yaw [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Pitch [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 -100 100])
+        set(s3, 'EdgeAlpha',zTransparency);   
+        hold on; plot([0 0],[-100 100],':k');
+        plot([-100 100],[0 0],':k');
+
+        h4=subplot('position',posInfo.statsPos2(4,:)); cla
+        s4=surface([Rpercent_B;Rpercent_B],[Tpercent_B;Tpercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h4,'fontsize',fontsz5);
+        xlabel('% Roll [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s4, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k');
+    end
+
+end
+
+%% Mode 2 topography
+if guiHandlesStats.crossAxesStats.Value==4
+       
+    cols=[0.06 0.52];
+    rows=[0.55 0.08];
+    k=0;
+    for c=1:2
+        for r=1:2
+            k=k+1;
+            posInfo.statsPos2(k,:)=[cols(c) rows(r) 0.38 0.4];
+        end
+    end
+
+
+    lineThickness=2;
+
+    if ~isempty(filenameA)
+        
+        Rpercent_A=DATtmpA.RCcommand(1,:)/5;
+        Ppercent_A=DATtmpA.RCcommand(2,:)/5;
+        Ypercent_A=DATtmpA.RCcommand(3,:)/5;
+        Tpercent_A=DATtmpA.RCRate(4,:);
+        Tacceleration_A=[0 (smooth( diff((Tpercent_A)*10)*A_lograte, 50))'];   
+        col=Tacceleration_A;        
+       
+        cmap_crossaxisStat=b2r(-1, 1);
+
+        h1=subplot('position',posInfo.statsPos2(1,:)); cla
+        s1=surface([Ypercent_A;Ypercent_A],[Tpercent_A;Tpercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h1,'fontsize',fontsz5);
+        xlabel('% Yaw [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s1, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k');
+
+        h2=subplot('position',posInfo.statsPos2(2,:)); cla
+        s2=surface([Rpercent_A;Rpercent_A],[Ppercent_A;Ppercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[-100:20:100])
+        set(h2,'fontsize',fontsz5);
+        xlabel('% Roll [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Pitch [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 -100 100])
+        set(s2, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[-100 100],':k');
+        plot([-100 100],[0 0],':k');
+    end
+
+
+    if ~isempty(filenameB)
+
+        Rpercent_B=DATtmpB.RCcommand(1,:)/5;
+        Ppercent_B=DATtmpB.RCcommand(2,:)/5;
+        Ypercent_B=DATtmpB.RCcommand(3,:)/5;
+        Tpercent_B=DATtmpB.RCRate(4,:);
+        Tacceleration_B=[0 (smooth( diff((Tpercent_B)*10)*B_lograte, 50))'];
+        col=Tacceleration_B; 
+
+        h3=subplot('position',posInfo.statsPos2(3,:)); cla
+        s3=surface([Ypercent_B;Ypercent_B],[Tpercent_B;Tpercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h3,'fontsize',fontsz5);
+        xlabel('% Yaw [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s3, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k');       
+
+        h4=subplot('position',posInfo.statsPos2(4,:)); cla
+        s4=surface([Rpercent_B;Rpercent_B],[Ppercent_B;Ppercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[-100:20:100])
+        set(h4,'fontsize',fontsz5);
+        xlabel('% Roll [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Pitch [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 -100 100])
+        set(s4, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[-100 100],':k');
+        plot([-100 100],[0 0],':k');
+    end
+
+end
+%% each against throttle
+
+if guiHandlesStats.crossAxesStats.Value==5
+       
+    cols=[0.06 0.54];
+    rows=[0.69 0.385 0.08];
+    k=0;
+    for c=1:2
+        for r=1:3
+            k=k+1;
+            posInfo.statsPos2(k,:)=[cols(c) rows(r) 0.39 0.24];
+        end
+    end
+
+
+    lineThickness=2;
+
+    if ~isempty(filenameA)
+        
+        Rpercent_A=DATtmpA.RCcommand(1,:)/5;
+        Ppercent_A=DATtmpA.RCcommand(2,:)/5;
+        Ypercent_A=DATtmpA.RCcommand(3,:)/5;
+        Tpercent_A=DATtmpA.RCRate(4,:);
+        Tacceleration_A=[0 (smooth( diff((Tpercent_A)*10)*A_lograte, 50))'];   
+        col=Tacceleration_A;        
+       
+        cmap_crossaxisStat=b2r(-1, 1);
+
+        h1=subplot('position',posInfo.statsPos2(1,:)); cla
+        s1=surface([Rpercent_A;Rpercent_A],[Tpercent_A;Tpercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h1,'fontsize',fontsz5);
+        xlabel('% Roll [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s1, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k');        
+
+        h2=subplot('position',posInfo.statsPos2(2,:)); cla
+        s2=surface([Ppercent_A;Ppercent_A],[Tpercent_A;Tpercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h2,'fontsize',fontsz5);
+        xlabel('% Pitch [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s2, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k'); 
+
+        h3=subplot('position',posInfo.statsPos2(3,:)); cla
+        s3=surface([Ypercent_A;Ypercent_A],[Tpercent_A;Tpercent_A],[Tacceleration_A;Tacceleration_A],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h3,'fontsize',fontsz5);
+        xlabel('% Yaw [A]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [A]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s3, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k'); 
+    end
+
+
+    if ~isempty(filenameB)
+
+        Rpercent_B=DATtmpB.RCcommand(1,:)/5;
+        Ppercent_B=DATtmpB.RCcommand(2,:)/5;
+        Ypercent_B=DATtmpB.RCcommand(3,:)/5;
+        Tpercent_B=DATtmpB.RCRate(4,:);
+        Tacceleration_B=[0 (smooth( diff((Tpercent_B)*10)*B_lograte, 50))'];
+        col=Tacceleration_B; 
+
+        h4=subplot('position',posInfo.statsPos2(4,:)); cla
+        s4=surface([Rpercent_B;Rpercent_B],[Tpercent_B;Tpercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h4,'fontsize',fontsz5);
+        xlabel('% Roll [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s4, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k'); 
+
+        h5=subplot('position',posInfo.statsPos2(5,:)); cla
+        s5=surface([Ppercent_B;Ppercent_B],[Tpercent_B;Tpercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h5,'fontsize',fontsz5);
+        xlabel('% Pitch [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])
+        set(s5, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k'); 
+
+        h6=subplot('position',posInfo.statsPos2(6,:)); cla
+        s6=surface([Ypercent_B;Ypercent_B],[Tpercent_B;Tpercent_B],[Tacceleration_B;Tacceleration_B],[col;col],'facecol','no','edgecol','interp','linew',lineThickness);
+        colormap(cmap_crossaxisStat);
+        set(gca,'CLim',[-zScale zScale],'xtick',[-100:20:100],'ytick',[0:20:100])
+        set(h6,'fontsize',fontsz5);
+        xlabel('% Yaw [B]','fontsize',fontsz5,'fontweight','bold');
+        ylabel('% Throttle [B]','fontsize',fontsz5,'fontweight','bold');
+        axis([-100 100 0 100])  
+        set(s6, 'EdgeAlpha',zTransparency);
+        hold on; plot([0 0],[0 100],':k');
+        plot([-100 100],[50 50],':k'); 
+    end
 end
 
 
 
-if ~isempty(filenameB)
-    rcRates=str2num(rc_rates_B{2});
-    rcExpo=str2num(rc_expo_B{2});
-    Srates=str2num(Super_rates_B{2});
-    
-    RateCurveRoll_B=PTrc2deg([1:5:500],dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1));
-    RateCurvePitch_B=PTrc2deg([1:5:500],dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2));
-    RateCurveYaw_B=PTrc2deg([1:5:500],dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3));
-    
-    Yscale=round((max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)])) / 100) * 100;
-    
-    if guiHandlesStats.degsecStick.Value==1, 
-        RateCurveRoll_B=(diff(RateCurveRoll_B));
-        RateCurvePitch_B=(diff(RateCurvePitch_B));
-        RateCurveYaw_B=(diff(RateCurveYaw_B));
-        
-        Yscale=round(max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)]));
-    end
 
-    Rpercent_B=PTPercent(DATtmpB.RCcommand(1,:));
-    Ppercent_B=PTPercent(DATtmpB.RCcommand(2,:));
-    Ypercent_B=PTPercent(DATtmpB.RCcommand(3,:));
-    Tpercent_B=DATtmpB.RCRate(4,:); % already computed for throttle
-
-    hhist=subplot('position',posInfo.statsPos(5,:));
-    cla   
-    h=histogram(Rpercent_B,'Normalization','probability','BinWidth',1);      
-    y=xlabel('% roll','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);                 
-    ylabel('% of flight','fontweight','bold')    
-    set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)  
-    
-    hold on
-    
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_B)],RateCurveRoll_B);
-    set(ax(1),'Ycolor',[colorB])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
-    end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_B(20) RateCurveRoll_B(40) RateCurveRoll_B(60) RateCurveRoll_B(80)],'ko','Parent', ax(2)); 
-    set(h,'markerfacecolor','k')  
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(5,:)]);
-    axis([1 99 0 .1])
-    
-    text(21, RateCurveRoll_B(20),[int2str(RateCurveRoll_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(41, RateCurveRoll_B(40),[int2str(RateCurveRoll_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurveRoll_B(60),[int2str(RateCurveRoll_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurveRoll_B(80),[int2str(RateCurveRoll_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
-    text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
-
-    hhist=subplot('position',posInfo.statsPos(6,:));
-    cla
-    h=histogram(Ppercent_B,'Normalization','probability','BinWidth',1);
-    set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)    
-    y=xlabel('% pitch','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight','fontweight','bold');
-    
-     hold on    
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_B)],RateCurvePitch_B);
-    set(ax(1),'Ycolor',[colorB])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
-    end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_B(20) RateCurvePitch_B(40) RateCurvePitch_B(60) RateCurvePitch_B(80)],'ko','Parent', ax(2)); 
-    set(h,'markerfacecolor','k')  
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(6,:)]);
-    axis([1 99 0 .1])
-    
-    text(21, RateCurvePitch_B(20),[int2str(RateCurvePitch_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(41, RateCurvePitch_B(40),[int2str(RateCurvePitch_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurvePitch_B(60),[int2str(RateCurvePitch_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurvePitch_B(80),[int2str(RateCurvePitch_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
-    
-    text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
-    
-    hhist=subplot('position',posInfo.statsPos(7,:));
-    cla
-    h=histogram(Ypercent_B,'Normalization','probability','BinWidth',1);
-    set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)    
-    y=xlabel('% yaw','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight','fontweight','bold')    
-    
-     hold on
-    [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_B)],RateCurveYaw_B);
-    set(ax(1),'Ycolor',[colorB])
-    set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
-    ax(2).YLabel.String='deg/s';
-    if guiHandlesStats.degsecStick.Value==1, 
-        ax(2).YLabel.String='deg/s/stick travel units';
-    end
-    set(h2,'color',[.5 .5 .5],'LineWidth',1.5)
-    hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_B(20) RateCurveYaw_B(40) RateCurveYaw_B(60) RateCurveYaw_B(80)],'ko','Parent', ax(2)); 
-    set(h,'markerfacecolor','k')  
-    
-    set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(7,:)]);  
-    axis([1 99 0 .1])
-    
-    text(21, RateCurveYaw_B(20),[int2str(RateCurveYaw_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(41, RateCurveYaw_B(40),[int2str(RateCurveYaw_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(61, RateCurveYaw_B(60),[int2str(RateCurveYaw_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
-    text(81, RateCurveYaw_B(80),[int2str(RateCurveYaw_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);     
-    text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
-    text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
-    text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
-    axis([1 99 0 .1])
-    grid on
-    
-    hhist=subplot('position',posInfo.statsPos(8,:));
-    cla
-    h=histogram(Tpercent_B,'Normalization','probability','BinWidth',1);    
-    set(h,'FaceColor',[colorB],'FaceAlpha',.9, 'edgecolor',[colorB],'EdgeAlpha',.7)
-    grid on
-    y=xlabel('% throttle','fontweight','bold');
-    set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
-    ylabel('% of flight', 'color',[colorB],'fontweight','bold')
-    set(hhist,'ycolor',[colorB],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(8,:)]);  
-    axis([1 99 0 .1])
-end
-
+updateStats=0;
+set(PTstatsfig, 'pointer', 'arrow')
 end
 
 

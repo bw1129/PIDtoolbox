@@ -358,7 +358,7 @@ else
 end
 
 catch
-    close
+    %close
 end
 
 %toc
