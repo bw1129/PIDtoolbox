@@ -38,7 +38,7 @@ end
 mainFname=filename;
 if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl')          
     waitbar(.25,waitbarFid,['converting ' f ' to csv using BB-tools']);  
-    [status,result]=system(['./blackbox_decode ' filename]);  
+    [status,result]=system(['blackbox_decode.exe ' filename]);  
     files=dir([filename(1:end-4) '*.csv']);
     
     % only choose files that don't have .bbl or .bfl extension

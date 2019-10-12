@@ -122,7 +122,7 @@ if ~isempty(filenameB)
             
             eval(['PID=' ylab2{p} 'PIDF_B;'])
             h=text(320, .8, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4)
+            h=text(320, .7, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4) 
             h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
             h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
             h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 

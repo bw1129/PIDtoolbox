@@ -990,7 +990,6 @@ set(PTstatsfig, 'pointer', 'arrow')
 end
 
 
-
 function newmap = b2r(cmin_input,cmax_input)
 %BLUEWHITERED   Blue, white, and red color map.
 %   this matlab file is designed to draw anomaly figures. the color of
@@ -1124,7 +1123,6 @@ end
     
 
 
-
-
-
 end
+
+

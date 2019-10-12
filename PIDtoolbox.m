@@ -13,13 +13,13 @@ PtbVersion='v0.37';
 executableDir = pwd;
 addpath(executableDir)
 
-% try
-%     fid = fopen('logfileDir.txt');
-%     logfileDir = fscanf(fid,'%s');
-%     fclose(fid);   
-% catch
+try
+    fid = fopen('logfileDir.txt');
+    logfileDir = fscanf(fid,'%s');
+    fclose(fid);   
+catch
     logfileDir=[];
-% end
+end
 
 %%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
@@ -77,7 +77,7 @@ PTfig.Name= ['PIDtoolbox (' PtbVersion ') - Log Viewer'];
 
 pause(.2)% need to wait for figure to open before extracting screen values
 
-screensz_multiplier = sqrt(screensz(3)^2+screensz(4)^2) * .0075;
+screensz_multiplier = sqrt(screensz(3)^2+screensz(4)^2) * .0064;
 prop_max_screen=(max([PTfig.Position(3) PTfig.Position(4)]));
 fontsz=(screensz_multiplier*prop_max_screen);
 

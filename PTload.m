@@ -37,10 +37,10 @@ end
 
 % make 'logfileDir.txt' so logfiles open in same as previously selected directory  
 cd(executableDir)
-% pause(.2)
-% fid = fopen('logfileDir.txt','w');
-% fprintf(fid,'%s\n',filepath);
-% fclose(fid);
+pause(.2)
+fid = fopen('logfileDir.txt','w');
+fprintf(fid,'%s\n',filepath);
+fclose(fid);
     
 try
     cd(filepath)
@@ -447,7 +447,7 @@ if ~isempty(filenameA)
     try
         FF_A=str2num(char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'feedforward_weight')),2)));
         Rtmp=num2str([str2num(rollPIDF_A{2}) dmin_A(1) FF_A(1)]); rollPIDF_A{2}=Rtmp;
-        Ptmp=num2str([str2num(pitchPIDF_A{2}) dmin_A(2) ]); pitchPIDF_A{2}=Ptmp;
+        Ptmp=num2str([str2num(pitchPIDF_A{2}) dmin_A(2) FF_A(2)]); pitchPIDF_A{2}=Ptmp;
         Ytmp=num2str([str2num(yawPIDF_A{2}) dmin_A(3) FF_A(3)]); yawPIDF_A{2}=Ytmp;
     catch
     end
@@ -469,6 +469,7 @@ if ~isempty(filenameB)
     dmin_B=[0 0 0];
     tmp=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'd_min')),:);
     dmin_B=[str2num(tmp{2}(1,:))];
+
     try
         FF_B=str2num(char(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'feedforward_weight')),2)));
         Rtmp=num2str([str2num(rollPIDF_B{2}) dmin_B(1) FF_B(1)]); rollPIDF_B{2}=Rtmp;
