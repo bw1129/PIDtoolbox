@@ -37,7 +37,7 @@ If you have issues installing Matlab runtime, or running PIDtoolbox, please post
 
 # Acknowledgments
 
-I have to make a long overdue acknowledgment of several people who continue to contribute to this project outside GitHub. 
+I have to give a long overdue shoutout to several people who continue to contribute to this project outside GitHub. 
 **Mark Spatz (UAVtech)** has been a huge source of information for me in general and it was through conversations with him that motivated the development of this tool in the first place. 
 **Chris Thompson (ctzsnooze)** has always supported the project and continues to contribute great ideas that are continually integrated into various revisions of most of the tools, and it was through conversations with him that sparked the recent "Flight Statistics tool".
 **DusKing** has been diligently converting the tooltips to Simplified Chinese language and compiling this version. 
