@@ -37,10 +37,10 @@ end
 
 % make 'logfileDir.txt' so logfiles open in same as previously selected directory  
 cd(executableDir)
-pause(.2)
-fid = fopen('logfileDir.txt','w');
-fprintf(fid,'%s\n',filepath);
-fclose(fid);
+% pause(.2)
+% fid = fopen('logfileDir.txt','w');
+% fprintf(fid,'%s\n',filepath);
+% fclose(fid);
     
 try
     cd(filepath)
@@ -443,12 +443,12 @@ if ~isempty(filenameA)
     dterm_lpf2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
     dmin_A=[0 0 0];
     tmp=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'd_min')),:);
-    dmin_A=[str2num(tmp{2}(1)) str2num(tmp{2}(2)) str2num(tmp{2}(3))];
+    dmin_A=[str2num(tmp{2}(1,:))];
     try
         FF_A=str2num(char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'feedforward_weight')),2)));
-        Rtmp=num2str([str2num(rollPIDF_A{2}) FF_A(1) dmin_A(1)]); rollPIDF_A{2}=Rtmp;
-        Ptmp=num2str([str2num(pitchPIDF_A{2}) FF_A(2) dmin_A(2)]); pitchPIDF_A{2}=Ptmp;
-        Ytmp=num2str([str2num(yawPIDF_A{2}) FF_A(3) dmin_A(3)]); yawPIDF_A{2}=Ytmp;
+        Rtmp=num2str([str2num(rollPIDF_A{2}) dmin_A(1) FF_A(1)]); rollPIDF_A{2}=Rtmp;
+        Ptmp=num2str([str2num(pitchPIDF_A{2}) dmin_A(2) ]); pitchPIDF_A{2}=Ptmp;
+        Ytmp=num2str([str2num(yawPIDF_A{2}) dmin_A(3) FF_A(3)]); yawPIDF_A{2}=Ytmp;
     catch
     end
 end
@@ -468,13 +468,12 @@ if ~isempty(filenameB)
     dterm_lpf2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
     dmin_B=[0 0 0];
     tmp=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'd_min')),:);
-    dmin_B=[str2num(tmp{2}(1)) str2num(tmp{2}(2)) str2num(tmp{2}(3))];
-
+    dmin_B=[str2num(tmp{2}(1,:))];
     try
         FF_B=str2num(char(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'feedforward_weight')),2)));
-        Rtmp=num2str([str2num(rollPIDF_B{2}) FF_B(1) dmin_B(1)]); rollPIDF_B{2}=Rtmp;
-        Ptmp=num2str([str2num(pitchPIDF_B{2}) FF_B(2) dmin_B(2)]); pitchPIDF_B{2}=Ptmp;
-        Ytmp=num2str([str2num(yawPIDF_B{2}) FF_B(3) dmin_B(3)]); yawPIDF_B{2}=Ytmp;
+        Rtmp=num2str([str2num(rollPIDF_B{2}) dmin_B(1) FF_B(1)]); rollPIDF_B{2}=Rtmp;
+        Ptmp=num2str([str2num(pitchPIDF_B{2}) dmin_B(2) FF_B(2)]); pitchPIDF_B{2}=Ptmp;
+        Ytmp=num2str([str2num(yawPIDF_B{2}) dmin_B(3) FF_B(3)]); yawPIDF_B{2}=Ytmp;
     catch
     end
 end

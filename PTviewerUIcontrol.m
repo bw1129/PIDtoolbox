@@ -10,28 +10,29 @@
     
 try
     
+  
 posInfo.checkbox0=[.1 .965 .1 .025];
 posInfo.checkbox1=[.1 .94 .1 .025];
-posInfo.checkbox2=[.2 .965 .1 .025];
-posInfo.checkbox3=[.2 .94 .1 .025];
-posInfo.checkbox4=[.3 .965 .1 .025];
-posInfo.checkbox5=[.3 .94 .1 .025];
-posInfo.checkbox6=[.4 .965 .1 .025];
-posInfo.checkbox7=[.4 .94 .1 .025];
-posInfo.checkbox8=[.5 .965 .1 .025];
-posInfo.checkbox9=[.5 .94 .1 .025];
-posInfo.checkbox10=[.6 .965 .1 .025];
-posInfo.checkbox11=[.6 .94 .1 .025];
-posInfo.checkbox12=[.7 .965 .1 .025];
-posInfo.checkbox13=[.7 .94 .1 .025];
-posInfo.checkbox14=[.8 .965 .06 .025];
-posInfo.checkbox15=[.8 .94 .06 .025];
+posInfo.checkbox2=[.18 .965 .1 .025];
+posInfo.checkbox3=[.18 .94 .1 .025];
+posInfo.checkbox4=[.27 .965 .1 .025];
+posInfo.checkbox5=[.27 .94 .1 .025];
+posInfo.checkbox6=[.36 .965 .1 .025];
+posInfo.checkbox7=[.36 .94 .1 .025];
+posInfo.checkbox8=[.45 .965 .1 .025];
+posInfo.checkbox9=[.45 .94 .1 .025];
+posInfo.checkbox10=[.54 .965 .1 .025];
+posInfo.checkbox11=[.54 .94 .1 .025];
+posInfo.checkbox12=[.63 .965 .1 .025];
+posInfo.checkbox13=[.63 .94 .1 .025];
+posInfo.checkbox14=[.73 .965 .06 .025];
+posInfo.checkbox15=[.73 .94 .06 .025];
 
 posInfo.linewidth=[.796 .904 .07 .026];
 
 checkpanel = uipanel('Title','','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
-             'Position',[.096 .932 .77 .065]);
+             'Position',[.096 .932 .71 .065]);
          
 
 guiHandles.checkbox0=uicontrol(PTfig,'Style','checkbox','String','Gyro (prefilt)','fontsize',fontsz,'ForegroundColor',[linec.col0],'BackgroundColor',bgcolor,...
