@@ -37,7 +37,22 @@ If you have issues installing Matlab runtime, or running PIDtoolbox, please post
 
 # Acknowledgments
 
-I have to make a long overdue acknowledgment of several people who continue to contribute to this project outside GitHub. **Mark Spatz (UAVtech)** has been a huge source of information for me in general and it was through conversations with him that motivated the development of this tool in the first place. **Chris Thompson (ctzsnooze)** has always supported the project and continues to contribute great ideas that are continually integrated into various revisions of most of the tools, and it was through conversations with him that sparked the recent "Flight Statistics tool". **DusKing** has been diligently converting the tooltips to Simplified Chinese language and compiling this version. And many others have contributed thoughts and ideas that worked there way into various versions of the software, some of whom I only know by their Slack or Github name, including Qratz, Zach Young, Zak Smiley, Stephen Wright, McGiverGim, Bizmar, Martin Hapl, Ken Kammerer. I will continue to update this list. Thanks for your help!
+I have to make a long overdue acknowledgment of several people who continue to contribute to this project outside GitHub. 
+**Mark Spatz (UAVtech)** has been a huge source of information for me in general and it was through conversations with him that motivated the development of this tool in the first place. 
+**Chris Thompson (ctzsnooze)** has always supported the project and continues to contribute great ideas that are continually integrated into various revisions of most of the tools, and it was through conversations with him that sparked the recent "Flight Statistics tool".
+**DusKing** has been diligently converting the tooltips to Simplified Chinese language and compiling this version. 
+And many others have contributed thoughts and ideas that worked there way into various versions of the software, some of whom I only know by their Slack or Github name: 
+Qopter 
+Qratz 
+Zach Young ('ProgrammingGamer')
+Zak Smiley
+Stephen Wright
+McGiverGim
+Bizmar
+Martin Hapl
+Ken Kammerer
+
+I will continue to update this list. Thanks for your help!
 
  I hope you find PIDtoolbox useful, and I welcome feedback from the FPV community.
 
