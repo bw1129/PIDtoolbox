@@ -42,7 +42,9 @@ I have to make a long overdue acknowledgment of several people who continue to c
 **Chris Thompson (ctzsnooze)** has always supported the project and continues to contribute great ideas that are continually integrated into various revisions of most of the tools, and it was through conversations with him that sparked the recent "Flight Statistics tool".
 **DusKing** has been diligently converting the tooltips to Simplified Chinese language and compiling this version. 
 And many others have contributed thoughts and ideas that worked there way into various versions of the software, some of whom I only know by their Slack or Github name: 
+
 Qopter 
+
 Qratz 
 Zach Young ('ProgrammingGamer')
 Zak Smiley
