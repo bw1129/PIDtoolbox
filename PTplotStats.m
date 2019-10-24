@@ -306,7 +306,7 @@ if guiHandlesStats.crossAxesStats.Value==1
 end
 
 %% means/standard deviations
-
+ 
 if guiHandlesStats.crossAxesStats.Value==2
        
     cols=[0.06 0.3 0.54 0.78];
@@ -319,7 +319,7 @@ if guiHandlesStats.crossAxesStats.Value==2
         end
     end
     lineThickness=2;
-
+ 
     if ~isempty(filenameA)
         
         Rpercent_A=DATtmpA.RCcommand(1,:)/5;
@@ -328,186 +328,192 @@ if guiHandlesStats.crossAxesStats.Value==2
         Tpercent_A=DATtmpA.RCRate(4,:);   
         
         N=length(DATtmpA.GyroFilt(1,:));
-
-        % gyro
+ 
+          % gyro
         h1=subplot('position',posInfo.statsPos2(1,:)); cla
-        s1=bar([1],mean(DATtmpA.GyroFilt(1,:)));hold on
-        set(s1,'FaceColor',[colorA]);%[ColorSet(11,:)])
-        s1=errorbar([1],mean(DATtmpA.GyroFilt(1,:)), std(DATtmpA.GyroFilt(1,:))/sqrt(N));hold on
+        s1=errorbar([1],mean(abs(DATtmpA.GyroFilt(1,:))), std(abs(DATtmpA.GyroFilt(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.GyroFilt(2,:)));
-        set(s2,'FaceColor',[colorA]);%,[ColorSet(12,:)])
-        s1=errorbar([2],mean(DATtmpA.GyroFilt(2,:)), std(DATtmpA.GyroFilt(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpA.GyroFilt(1,:))));hold on
+        set(s1,'FaceColor',[colorA]);%[ColorSet(11,:)])        
+        s1=errorbar([2],mean(abs(DATtmpA.GyroFilt(2,:))), std(abs(DATtmpA.GyroFilt(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpA.GyroFilt(1,:)));
+        s2=bar([2],mean(abs(DATtmpA.GyroFilt(2,:))));
+        set(s2,'FaceColor',[colorA]);%,[ColorSet(12,:)])        
+        s1=errorbar([3],mean(abs(DATtmpA.GyroFilt(1,:))), std(abs(DATtmpA.GyroFilt(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)   
+        s3=bar([3],mean(abs(DATtmpA.GyroFilt(1,:))));
         set(s3,'FaceColor',[colorA]);%,[ColorSet(13,:)])
-        s1=errorbar([3],mean(DATtmpA.GyroFilt(1,:)), std(DATtmpA.GyroFilt(1,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Gyro [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill 
+        xlabel('|Gyro| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max(mean(abs(DATtmpA.GyroFilt),2))+max((std(abs(DATtmpA.GyroFilt)')')));
+        axis([.5 3.5 0 ymax])
         box off
         
         % RCRate
-        h1=subplot('position',posInfo.statsPos2(5,:)); cla
+        h1=subplot('position',posInfo.statsPos2(5,:)); cla        
+        s1=errorbar([1],mean(abs(Rpercent_A)), std(abs(Rpercent_A)));hold on
+        set(s1,'color','k','linewidth',lineThickness)
         s1=bar([1],mean(abs(Rpercent_A)));hold on
-        set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(abs(Rpercent_A)), std(abs(Rpercent_A))/sqrt(N));hold on
+        set(s1,'FaceColor',[colorA]);%        
+        s1=errorbar([2],mean(abs(Ppercent_A)), std(abs(Ppercent_A)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s2=bar([2],mean(abs(Ppercent_A)));
         set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(abs(Ppercent_A)), std(abs(Ppercent_A))/sqrt(N));hold on
+        s1=errorbar([3],mean(abs(Ypercent_A)), std(abs(Ypercent_A)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s3=bar([3],mean(abs(Ypercent_A)));
-        set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(abs(Ypercent_A)), std(abs(Ypercent_A))/sqrt(N));hold on
+        set(s3,'FaceColor',[colorA]);%        
+        s1=errorbar([4],mean(abs(Tpercent_A)), std(abs(Tpercent_A)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s4=bar([4],mean(Tpercent_A));
         set(s4,'FaceColor',[colorA]);%
-        s1=errorbar([4],mean(abs(Tpercent_A)), std(abs(Tpercent_A))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
         set(gca,'Xtick',[1 2 3 4],'xticklabel',{'R';'P';'Y';'T'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
         xlabel('% RPYT [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean % +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean % +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
         axis([0.5 4.5 0 100])    
         box off
         
         % pterm
-        h1=subplot('position',posInfo.statsPos2(2,:)); cla
-        s1=bar([1],mean(DATtmpA.Pterm(1,:)));hold on
-        set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.Pterm(1,:)), std(DATtmpA.Pterm(1,:))/sqrt(N));hold on
+        h1=subplot('position',posInfo.statsPos2(2,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpA.Pterm(1,:))), std(abs(DATtmpA.Pterm(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.Pterm(2,:)));
-        set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.Pterm(2,:)), std(DATtmpA.Pterm(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpA.Pterm(1,:))));hold on
+        set(s1,'FaceColor',[colorA]);%        
+        s1=errorbar([2],mean(abs(DATtmpA.Pterm(2,:))), std(abs(DATtmpA.Pterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpA.Pterm(3,:)));
+        s2=bar([2],mean(abs(DATtmpA.Pterm(2,:))));
+        set(s2,'FaceColor',[colorA]);%        
+        s1=errorbar([3],mean(abs(DATtmpA.Pterm(3,:))), std(abs(DATtmpA.Pterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)    
+        s3=bar([3],mean(abs(DATtmpA.Pterm(3,:))));
         set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(DATtmpA.Pterm(3,:)), std(DATtmpA.Pterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Pterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill  
+        xlabel('|Pterm| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max(mean(abs(DATtmpA.Pterm),2))+max((std(abs(DATtmpA.Pterm)')')));
+        axis([.5 3.5 0 ymax]) 
         box off
         
         % fterm
-        h1=subplot('position',posInfo.statsPos2(6,:)); cla
-        s1=bar([1],mean(DATtmpA.Fterm(1,:)));hold on
+        h1=subplot('position',posInfo.statsPos2(6,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpA.Fterm(1,:))), std(abs(DATtmpA.Fterm(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)   
+        s1=bar([1],mean(abs(DATtmpA.Fterm(1,:))));hold on
         set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.Fterm(1,:)), std(DATtmpA.Fterm(1,:))/sqrt(N));hold on
+        s1=errorbar([2],mean(abs(DATtmpA.Fterm(2,:))), std(abs(DATtmpA.Fterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.Fterm(2,:)));
-        set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.Fterm(2,:)), std(DATtmpA.Fterm(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpA.Fterm(3,:)));
-        set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(DATtmpA.Fterm(3,:)), std(DATtmpA.Fterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
+        s2=bar([2],mean(abs(DATtmpA.Fterm(2,:))));
+        set(s2,'FaceColor',[colorA]);%        %
+        s1=errorbar([3],mean(abs(DATtmpA.Fterm(3,:))), std(abs(DATtmpA.Fterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        s3=bar([3],mean(abs(DATtmpA.Fterm(3,:))));
+        set(s3,'FaceColor',[colorA]);
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Fterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill  
+        xlabel('|Fterm| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max(mean(abs(DATtmpA.Fterm),2))+max((std(abs(DATtmpA.Fterm)')')));
+        axis([.5 3.5 0 ymax])  
         box off
         
         % Iterm
-        h1=subplot('position',posInfo.statsPos2(3,:)); cla
-        s1=bar([1],mean(DATtmpA.Iterm(1,:)));hold on
-        set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.Iterm(1,:)), std(DATtmpA.Iterm(1,:))/sqrt(N));hold on
+        h1=subplot('position',posInfo.statsPos2(3,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpA.Iterm(1,:))), std(abs(DATtmpA.Iterm(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.Iterm(2,:)));
-        set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.Iterm(2,:)), std(DATtmpA.Iterm(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpA.Iterm(1,:))));hold on
+        set(s1,'FaceColor',[colorA]);%        
+        s1=errorbar([2],mean(abs(DATtmpA.Iterm(2,:))), std(abs(DATtmpA.Iterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpA.Iterm(3,:)));
+        s2=bar([2],mean(abs(DATtmpA.Iterm(2,:))));
+        set(s2,'FaceColor',[colorA]);%        
+        s1=errorbar([3],mean(abs(DATtmpA.Iterm(3,:))), std(abs(DATtmpA.Iterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        s3=bar([3],mean(abs(DATtmpA.Iterm(3,:))));
         set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(DATtmpA.Iterm(3,:)), std(DATtmpA.Iterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Iterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill  
+        xlabel('|Iterm| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max(mean(abs(DATtmpA.Iterm),2))+max((std(abs(DATtmpA.Iterm)')')));
+        axis([.5 3.5 0 ymax])   
         box off
         
         % dterm
         h1=subplot('position',posInfo.statsPos2(7,:)); cla
-        s1=bar([1],mean(DATtmpA.DtermFilt(1,:)));hold on
-        set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.DtermFilt(1,:)), std(DATtmpA.DtermFilt(1,:))/sqrt(N));hold on
+        s1=errorbar([1],mean(abs(DATtmpA.DtermFilt(1,:))), std(abs(DATtmpA.DtermFilt(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.DtermFilt(2,:)));
+        s1=bar([1],mean(abs(DATtmpA.DtermFilt(1,:))));hold on
+        set(s1,'FaceColor',[colorA]);% 
+        s1=errorbar([2],mean(abs(DATtmpA.DtermFilt(2,:))), std(abs(DATtmpA.DtermFilt(2,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness) 
+        s2=bar([2],mean(abs(DATtmpA.DtermFilt(2,:))));
         set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.DtermFilt(2,:)), std(DATtmpA.DtermFilt(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)        
         set(gca,'Xtick',[1 2],'xticklabel',{'R';'P'},'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Dterm [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill  
+        xlabel('|Dterm| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max(mean(abs(DATtmpA.DtermFilt),2))+max((std(abs(DATtmpA.DtermFilt)')')));
+        axis([.5 2.5 0 ymax])   
         box off
         
-        h1=subplot('position',posInfo.statsPos2(4,:)); cla
+        h1=subplot('position',posInfo.statsPos2(4,:)); cla 
+        s1=errorbar([1],mean(DATtmpA.Motor12(1,:)), std(DATtmpA.Motor12(1,:)));hold on
+        set(s1,'color','k','linewidth',lineThickness)
         s1=bar([1],mean(DATtmpA.Motor12(1,:)));hold on
-        set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.Motor12(1,:)), std(DATtmpA.Motor12(1,:))/sqrt(N));hold on
+        set(s1,'FaceColor',[colorA]);
+        s1=errorbar([2],mean(DATtmpA.Motor12(2,:)), std(DATtmpA.Motor12(2,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s2=bar([2],mean(DATtmpA.Motor12(2,:)));
-        set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.Motor12(2,:)), std(DATtmpA.Motor12(2,:))/sqrt(N));hold on
+        set(s2,'FaceColor',[colorA]);%  
+        s1=errorbar([3],mean(DATtmpA.Motor34(1,:)), std(DATtmpA.Motor34(1,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s3=bar([3],mean(DATtmpA.Motor34(1,:)));
         set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(DATtmpA.Motor34(1,:)), std(DATtmpA.Motor34(1,:))/sqrt(N));hold on
+        s1=errorbar([4],mean(DATtmpA.Motor34(2,:)), std(DATtmpA.Motor34(2,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s4=bar([4],mean(DATtmpA.Motor34(2,:)));
         set(s4,'FaceColor',[colorA]);%
-        s1=errorbar([4],mean(DATtmpA.Motor34(2,:)), std(DATtmpA.Motor34(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
         set(gca,'Xtick',[1 2 3 4],'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
         xlabel('Motors [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
         axis([0.5 4.5 0 100]) 
         box off
         
         
-         h1=subplot('position',posInfo.statsPos2(8,:)); cla
-        s1=bar([1],mean(DATtmpA.debug12(1,:)));hold on
+         h1=subplot('position',posInfo.statsPos2(8,:)); cla  
+        s1=errorbar([1],mean(abs(DATtmpA.debug12(1,:))), std(abs(DATtmpA.debug12(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s1=bar([1],mean(abs(DATtmpA.debug12(1,:))));hold on
         set(s1,'FaceColor',[colorA]);%
-        s1=errorbar([1],mean(DATtmpA.debug12(1,:)), std(DATtmpA.debug12(1,:))/sqrt(N));hold on
+        s1=errorbar([2],mean(abs(DATtmpA.debug12(2,:))), std(abs(DATtmpA.debug12(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpA.debug12(2,:)));
-        set(s2,'FaceColor',[colorA]);%
-        s1=errorbar([2],mean(DATtmpA.debug12(2,:)), std(DATtmpA.debug12(2,:))/sqrt(N));hold on
+        s2=bar([2],mean(abs(DATtmpA.debug12(2,:))));
+        set(s2,'FaceColor',[colorA]);% 
+        s1=errorbar([3],mean(abs(DATtmpA.debug34(1,:))), std(abs(DATtmpA.debug34(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpA.debug34(1,:)));
+        s3=bar([3],mean(abs(DATtmpA.debug34(1,:))));
         set(s3,'FaceColor',[colorA]);%
-        s1=errorbar([3],mean(DATtmpA.debug34(1,:)), std(DATtmpA.debug34(1,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
-        s4=bar([4],mean(DATtmpA.debug34(2,:)));
-        set(s4,'FaceColor',[colorA]);%
-        s1=errorbar([4],mean(DATtmpA.debug34(2,:)), std(DATtmpA.debug34(2,:))/sqrt(N));hold on
+        s1=errorbar([4],mean(abs(DATtmpA.debug34(2,:))), std(abs(DATtmpA.debug34(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)  
+        s4=bar([4],mean(abs(DATtmpA.debug34(2,:))));
+        set(s4,'FaceColor',[colorA]);%
         set(gca,'Xtick',[1 2 3 4],'xcolor',[colorA],'ycolor',[colorA],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Debug [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
-        axis fill
+        xlabel('|Debug| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
+        ymax=ceil(max([max(mean(abs(DATtmpA.debug12),2)) max(mean(abs(DATtmpA.debug34),2))]) + max([max((std(abs(DATtmpA.debug12)')')) max((std(abs(DATtmpA.debug34)')'))]));
+        axis([.5 4.5 0 ymax])   
        box off
     end
-
-
+ 
+ 
     if ~isempty(filenameB)
-
+ 
         Rpercent_B=DATtmpB.RCcommand(1,:)/5;
         Ppercent_B=DATtmpB.RCcommand(2,:)/5;
         Ypercent_B=DATtmpB.RCcommand(3,:)/5;
@@ -515,182 +521,189 @@ if guiHandlesStats.crossAxesStats.Value==2
         
         N=length(DATtmpB.GyroFilt(1,:));
         
-           % gyro
+        % gyro
         h1=subplot('position',posInfo.statsPos2(9,:)); cla
-        s1=bar([1],mean(DATtmpB.GyroFilt(1,:)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.GyroFilt(1,:)), std(DATtmpB.GyroFilt(1,:))/sqrt(N));hold on
+        s1=errorbar([1],mean(abs(DATtmpB.GyroFilt(1,:))), std(abs(DATtmpB.GyroFilt(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.GyroFilt(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.GyroFilt(2,:)), std(DATtmpB.GyroFilt(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpB.GyroFilt(1,:))));hold on
+        set(s1,'FaceColor',[colorB]);%[ColorSet(11,:)])        
+        s1=errorbar([2],mean(abs(DATtmpB.GyroFilt(2,:))), std(abs(DATtmpB.GyroFilt(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpB.GyroFilt(1,:)));
-        set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.GyroFilt(1,:)), std(DATtmpB.GyroFilt(1,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
+        s2=bar([2],mean(abs(DATtmpB.GyroFilt(2,:))));
+        set(s2,'FaceColor',[colorB]);%,[ColorSet(12,:)])        
+        s1=errorbar([3],mean(abs(DATtmpB.GyroFilt(1,:))), std(abs(DATtmpB.GyroFilt(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)   
+        s3=bar([3],mean(abs(DATtmpB.GyroFilt(1,:))));
+        set(s3,'FaceColor',[colorB]);%,[ColorSet(13,:)])
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Gyro [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill  
+        xlabel('|Gyro| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max(mean(abs(DATtmpB.GyroFilt),2))+max((std(abs(DATtmpB.GyroFilt)')')));
+        axis([.5 3.5 0 ymax])
         box off
         
         % RCRate
-        h1=subplot('position',posInfo.statsPos2(13,:)); cla
-        s1=bar([1],mean(abs(Rpercent_A)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(abs(Rpercent_A)), std(abs(Rpercent_A))/sqrt(N));hold on
+        h1=subplot('position',posInfo.statsPos2(13,:)); cla        
+        s1=errorbar([1],mean(abs(Rpercent_B)), std(abs(Rpercent_B)));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(abs(Ppercent_A)));
+        s1=bar([1],mean(abs(Rpercent_B)));hold on
+        set(s1,'FaceColor',[colorB]);%        
+        s1=errorbar([2],mean(abs(Ppercent_B)), std(abs(Ppercent_B)));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s2=bar([2],mean(abs(Ppercent_B)));
         set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(abs(Ppercent_A)), std(abs(Ppercent_A))/sqrt(N));hold on
+        s1=errorbar([3],mean(abs(Ypercent_B)), std(abs(Ypercent_B)));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(abs(Ypercent_A)));
-        set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(abs(Ypercent_A)), std(abs(Ypercent_A))/sqrt(N));hold on
+        s3=bar([3],mean(abs(Ypercent_B)));
+        set(s3,'FaceColor',[colorB]);%        
+        s1=errorbar([4],mean(abs(Tpercent_B)), std(abs(Tpercent_B)));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s4=bar([4],mean(Tpercent_A));
+        s4=bar([4],mean(Tpercent_B));
         set(s4,'FaceColor',[colorB]);%
-        s1=errorbar([4],mean(abs(Tpercent_A)), std(abs(Tpercent_A))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
         set(gca,'Xtick',[1 2 3 4],'xticklabel',{'R';'P';'Y';'T'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
         xlabel('% RPYT [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean % +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean % +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
         axis([0.5 4.5 0 100])    
         box off
         
         % pterm
-        h1=subplot('position',posInfo.statsPos2(10,:)); cla
-        s1=bar([1],mean(DATtmpB.Pterm(1,:)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.Pterm(1,:)), std(DATtmpB.Pterm(1,:))/sqrt(N));hold on
+        h1=subplot('position',posInfo.statsPos2(10,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpB.Pterm(1,:))), std(abs(DATtmpB.Pterm(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.Pterm(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.Pterm(2,:)), std(DATtmpB.Pterm(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpB.Pterm(1,:))));hold on
+        set(s1,'FaceColor',[colorB]);%        
+        s1=errorbar([2],mean(abs(DATtmpB.Pterm(2,:))), std(abs(DATtmpB.Pterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpB.Pterm(3,:)));
+        s2=bar([2],mean(abs(DATtmpB.Pterm(2,:))));
+        set(s2,'FaceColor',[colorB]);%        
+        s1=errorbar([3],mean(abs(DATtmpB.Pterm(3,:))), std(abs(DATtmpB.Pterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)    
+        s3=bar([3],mean(abs(DATtmpB.Pterm(3,:))));
         set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.Pterm(3,:)), std(DATtmpB.Pterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Pterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill  
+        xlabel('|Pterm| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max(mean(abs(DATtmpB.Pterm),2))+max((std(abs(DATtmpB.Pterm)')')));
+        axis([.5 3.5 0 ymax]) 
         box off
         
         % fterm
-        h1=subplot('position',posInfo.statsPos2(14,:)); cla
-        s1=bar([1],mean(DATtmpB.Fterm(1,:)));hold on
+        h1=subplot('position',posInfo.statsPos2(14,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpB.Fterm(1,:))), std(abs(DATtmpB.Fterm(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)      
+        s1=bar([1],mean(abs(DATtmpB.Fterm(1,:))));hold on
         set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.Fterm(1,:)), std(DATtmpB.Fterm(1,:))/sqrt(N));hold on
+        s1=errorbar([2],mean(abs(DATtmpB.Fterm(2,:))), std(abs(DATtmpB.Fterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.Fterm(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.Fterm(2,:)), std(DATtmpB.Fterm(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpB.Fterm(3,:)));
-        set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.Fterm(3,:)), std(DATtmpB.Fterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
+        s2=bar([2],mean(abs(DATtmpB.Fterm(2,:))));
+        set(s2,'FaceColor',[colorB]);%        %
+        s1=errorbar([3],mean(abs(DATtmpB.Fterm(3,:))), std(abs(DATtmpB.Fterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        s3=bar([3],mean(abs(DATtmpB.Fterm(3,:))));
+        set(s3,'FaceColor',[colorB]);
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Fterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill  
+        xlabel('|Fterm| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max(mean(abs(DATtmpB.Fterm),2))+max((std(abs(DATtmpB.Fterm)')')));
+        axis([.5 3.5 0 ymax])  
         box off
         
         % Iterm
-        h1=subplot('position',posInfo.statsPos2(11,:)); cla
-        s1=bar([1],mean(DATtmpB.Iterm(1,:)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.Iterm(1,:)), std(DATtmpB.Iterm(1,:))/sqrt(N));hold on
+        h1=subplot('position',posInfo.statsPos2(11,:)); cla        
+        s1=errorbar([1],mean(abs(DATtmpB.Iterm(1,:))), std(abs(DATtmpB.Iterm(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.Iterm(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.Iterm(2,:)), std(DATtmpB.Iterm(2,:))/sqrt(N));hold on
+        s1=bar([1],mean(abs(DATtmpB.Iterm(1,:))));hold on
+        set(s1,'FaceColor',[colorB]);%        
+        s1=errorbar([2],mean(abs(DATtmpB.Iterm(2,:))), std(abs(DATtmpB.Iterm(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpB.Iterm(3,:)));
+        s2=bar([2],mean(abs(DATtmpB.Iterm(2,:))));
+        set(s2,'FaceColor',[colorB]);%        
+        s1=errorbar([3],mean(abs(DATtmpB.Iterm(3,:))), std(abs(DATtmpB.Iterm(3,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        s3=bar([3],mean(abs(DATtmpB.Iterm(3,:))));
         set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.Iterm(3,:)), std(DATtmpB.Iterm(3,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)         
         set(gca,'Xtick',[1 2 3],'xticklabel',{'R';'P';'Y'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Iterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill  
+        xlabel('|Iterm| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max(mean(abs(DATtmpB.Iterm),2))+max((std(abs(DATtmpB.Iterm)')')));
+        axis([.5 3.5 0 ymax])   
         box off
         
         % dterm
         h1=subplot('position',posInfo.statsPos2(15,:)); cla
-        s1=bar([1],mean(DATtmpB.DtermFilt(1,:)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.DtermFilt(1,:)), std(DATtmpB.DtermFilt(1,:))/sqrt(N));hold on
+        s1=errorbar([1],mean(abs(DATtmpB.DtermFilt(1,:))), std(abs(DATtmpB.DtermFilt(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.DtermFilt(2,:)));
+        s1=bar([1],mean(abs(DATtmpB.DtermFilt(1,:))));hold on
+        set(s1,'FaceColor',[colorB]);% 
+        s1=errorbar([2],mean(abs(DATtmpB.DtermFilt(2,:))), std(abs(DATtmpB.DtermFilt(2,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness) 
+        s2=bar([2],mean(abs(DATtmpB.DtermFilt(2,:))));
         set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.DtermFilt(2,:)), std(DATtmpB.DtermFilt(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)        
         set(gca,'Xtick',[1 2],'xticklabel',{'R';'P'},'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Dterm [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill  
+        xlabel('|Dterm| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max(mean(abs(DATtmpB.DtermFilt),2))+max((std(abs(DATtmpB.DtermFilt)')')));
+        axis([.5 2.5 0 ymax])   
         box off
         
-        
-        h1=subplot('position',posInfo.statsPos2(12,:)); cla
+        h1=subplot('position',posInfo.statsPos2(12,:)); cla 
+        s1=errorbar([1],mean(DATtmpB.Motor12(1,:)), std(DATtmpB.Motor12(1,:)));hold on
+        set(s1,'color','k','linewidth',lineThickness)
         s1=bar([1],mean(DATtmpB.Motor12(1,:)));hold on
-        set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.Motor12(1,:)), std(DATtmpB.Motor12(1,:))/sqrt(N));hold on
+        set(s1,'FaceColor',[colorB]);
+        s1=errorbar([2],mean(DATtmpB.Motor12(2,:)), std(DATtmpB.Motor12(2,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s2=bar([2],mean(DATtmpB.Motor12(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.Motor12(2,:)), std(DATtmpB.Motor12(2,:))/sqrt(N));hold on
+        set(s2,'FaceColor',[colorB]);%  
+        s1=errorbar([3],mean(DATtmpB.Motor34(1,:)), std(DATtmpB.Motor34(1,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s3=bar([3],mean(DATtmpB.Motor34(1,:)));
         set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.Motor34(1,:)), std(DATtmpB.Motor34(1,:))/sqrt(N));hold on
+        s1=errorbar([4],mean(DATtmpB.Motor34(2,:)), std(DATtmpB.Motor34(2,:)));hold on
         set(s1,'color','k','linewidth',lineThickness)
         s4=bar([4],mean(DATtmpB.Motor34(2,:)));
         set(s4,'FaceColor',[colorB]);%
-        s1=errorbar([4],mean(DATtmpB.Motor34(2,:)), std(DATtmpB.Motor34(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)   
         set(gca,'Xtick',[1 2 3 4],'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
         xlabel('Motors [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis([0.5 4.5 0 100])   
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        axis([0.5 4.5 0 100]) 
         box off
         
-         h1=subplot('position',posInfo.statsPos2(16,:)); cla
-        s1=bar([1],mean(DATtmpB.debug12(1,:)));hold on
+        
+         h1=subplot('position',posInfo.statsPos2(16,:)); cla  
+        s1=errorbar([1],mean(abs(DATtmpB.debug12(1,:))), std(abs(DATtmpB.debug12(1,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)
+        s1=bar([1],mean(abs(DATtmpB.debug12(1,:))));hold on
         set(s1,'FaceColor',[colorB]);%
-        s1=errorbar([1],mean(DATtmpB.debug12(1,:)), std(DATtmpB.debug12(1,:))/sqrt(N));hold on
+        s1=errorbar([2],mean(abs(DATtmpB.debug12(2,:))), std(abs(DATtmpB.debug12(2,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s2=bar([2],mean(DATtmpB.debug12(2,:)));
-        set(s2,'FaceColor',[colorB]);%
-        s1=errorbar([2],mean(DATtmpB.debug12(2,:)), std(DATtmpB.debug12(2,:))/sqrt(N));hold on
+        s2=bar([2],mean(abs(DATtmpB.debug12(2,:))));
+        set(s2,'FaceColor',[colorB]);% 
+        s1=errorbar([3],mean(abs(DATtmpB.debug34(1,:))), std(abs(DATtmpB.debug34(1,:))));hold on
         set(s1,'color','k','linewidth',lineThickness)
-        s3=bar([3],mean(DATtmpB.debug34(1,:)));
+        s3=bar([3],mean(abs(DATtmpB.debug34(1,:))));
         set(s3,'FaceColor',[colorB]);%
-        s1=errorbar([3],mean(DATtmpB.debug34(1,:)), std(DATtmpB.debug34(1,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)
-        s4=bar([4],mean(DATtmpB.debug34(2,:)));
+        s1=errorbar([4],mean(abs(DATtmpB.debug34(2,:))), std(abs(DATtmpB.debug34(2,:))));hold on
+        set(s1,'color','k','linewidth',lineThickness)  
+        s4=bar([4],mean(abs(DATtmpB.debug34(2,:))));
         set(s4,'FaceColor',[colorB]);%
-        s1=errorbar([4],mean(DATtmpB.debug34(2,:)), std(DATtmpB.debug34(2,:))/sqrt(N));hold on
-        set(s1,'color','k','linewidth',lineThickness)     
-        set(gca,'Xtick',[1 2 3 4],'ycolor',[colorB],'xcolor',[colorB],'YMinorGrid','on')
+        set(gca,'Xtick',[1 2 3 4],'xcolor',[colorB],'ycolor',[colorB],'YMinorGrid','on')
         set(h1,'fontsize',fontsz5);
-        xlabel('Debug [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        ylabel('Mean +/-SEM ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
-        axis fill
-        box off
+        xlabel('|Debug| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
+        ymax=ceil(max([max(mean(abs(DATtmpB.debug12),2)) max(mean(abs(DATtmpB.debug34),2))]) + max([max((std(abs(DATtmpB.debug12)')')) max((std(abs(DATtmpB.debug34)')'))]));
+        axis([.5 4.5 0 ymax])   
+       box off
     end
 end
+
 
 %% Mode 1 topography
 if guiHandlesStats.crossAxesStats.Value==3

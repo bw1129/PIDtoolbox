@@ -269,10 +269,10 @@ if ~isempty(filenameA)
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[1]'};
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[2]'};
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[3]'};
-        dataA.DataMain(:,end+1)=DATmainA.RCRate(1,:);
-        dataA.DataMain(:,end+1)=DATmainA.RCRate(2,:);
-        dataA.DataMain(:,end+1)=DATmainA.RCRate(3,:);
-        dataA.DataMain(:,end+1)=DATmainA.RCRate(4,:);
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(1,:)';
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(2,:)';
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(3,:)';
+        dataA.DataMain(:,end+1)=DATmainA.RCRate(4,:)';
     end
     
     try
@@ -286,9 +286,9 @@ if ~isempty(filenameA)
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[0]'};
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[1]'};
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'axisError[2]'};
-        dataA.DataMain(:,end+1)=DATmainA.PIDerr(1,:);
-        dataA.DataMain(:,end+1)=DATmainA.PIDerr(2,:);
-        dataA.DataMain(:,end+1)=DATmainA.PIDerr(3,:);
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(1,:)';
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(2,:)';
+        dataA.DataMain(:,end+1)=DATmainA.PIDerr(3,:)';
     end
 end
 
@@ -397,10 +397,10 @@ if ~isempty(filenameB)
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[1]'};
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[2]'};
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[3]'};
-        dataB.DataMain(:,end+1)=DATmainB.RCRate(1,:);
-        dataB.DataMain(:,end+1)=DATmainB.RCRate(2,:);
-        dataB.DataMain(:,end+1)=DATmainB.RCRate(3,:);
-        dataB.DataMain(:,end+1)=DATmainB.RCRate(4,:);
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(1,:)';
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(2,:)';
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(3,:)';
+        dataB.DataMain(:,end+1)=DATmainB.RCRate(4,:)';
      end
     
     try
@@ -414,9 +414,9 @@ if ~isempty(filenameB)
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[0]'};
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[1]'};
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'axisError[2]'};
-        dataB.DataMain(:,end+1)=DATmainB.PIDerr(1,:);
-        dataB.DataMain(:,end+1)=DATmainB.PIDerr(2,:);
-        dataB.DataMain(:,end+1)=DATmainB.PIDerr(3,:);
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(1,:)';
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(2,:)';
+        dataB.DataMain(:,end+1)=DATmainB.PIDerr(3,:)';
     end 
 end
 %%
@@ -442,8 +442,11 @@ if ~isempty(filenameA)
     dterm_lpf_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf_hz')),:);
     dterm_lpf2_hz_A=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
     dmin_A=[0 0 0];
+    try
     tmp=dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'd_min')),:);
     dmin_A=[str2num(tmp{2}(1,:))];
+    catch
+    end
     try
         FF_A=str2num(char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'feedforward_weight')),2)));
         Rtmp=num2str([str2num(rollPIDF_A{2}) dmin_A(1) FF_A(1)]); rollPIDF_A{2}=Rtmp;
@@ -467,8 +470,11 @@ if ~isempty(filenameB)
     dterm_lpf_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf_hz')),:);
     dterm_lpf2_hz_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'dterm_lpf2_hz')),:);
     dmin_B=[0 0 0];
+    try
     tmp=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'd_min')),:);
     dmin_B=[str2num(tmp{2}(1,:))];
+    catch
+    end
 
     try
         FF_B=str2num(char(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'feedforward_weight')),2)));

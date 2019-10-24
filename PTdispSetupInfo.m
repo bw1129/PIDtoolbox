@@ -15,10 +15,9 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     PTdisp.NumberTitle='off';
     PTdisp.Name= ['PIDtoolbox (' PtbVersion ') -  Setup Info'];
     set(PTdisp,'color',bgcolor)
-
     prop_max_screen=(max([PTdisp.Position(3) PTdisp.Position(4)]));
-    fontsz5=14;
-    columnWidth=800*prop_max_screen;
+    fontsz5=round(screensz_multiplier*prop_max_screen);
+    columnWidth=55*round(screensz_multiplier*prop_max_screen);
 
     if ~isempty(filenameA)
         if size(dataA.SetupInfo,2)>1
