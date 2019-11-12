@@ -1,7 +1,8 @@
-function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
-%% [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
+function [freq ampMat] = PTthrSpec(X, Y, RC, RClim, F, counter, numspectrograms, subsamp)
+%% [freq ampMat] = PTthrSpec(X, Y, RC, RClim, F, counter, numspectrograms, subsamp)
 %   computes fft as function of throttle(or motor output, optional) and generates throttle/motor x freq
 %   matrix. X is throttle/motor output data in percent, Y is flight data (gyro, PIDerror, etc), 
+%   RClim sets the limit on the RC data (RPY set-point) used to compute FFT,
 %   F is sample frequency in Hz of the input flight data. Counter and numspectrograms are 
 %   used for the waitbar, and subsamp is an factor that specifies degree of subsampling (higher, more subsampling, but slower
 %   The function returns a throttle/motor output x freq matrix/spectrogram [ampMat] of input data X and Y.  %   
@@ -15,8 +16,11 @@ function [freq ampMat] = PTthrSpec(X, Y, F, counter, numspectrograms, subsamp)
 
 hw = waitbar(0,['organizing data for spectrogram '  int2str(counter) ]); 
 
-     X=X';
-     Y=Y';
+    % only uses data with RC (set point) < RClim
+    X=X(abs(RC(1,:))<RClim & abs(RC(2,:))<RClim & abs(RC(3,:))<RClim);
+    Y=Y(abs(RC(1,:))<RClim & abs(RC(2,:))<RClim & abs(RC(3,:))<RClim);
+    X=X';
+    Y=Y';
 
     Tr=100;% throttle range
     multiplier=.3; % results in 300ms segments (must be same in datatip for accurate reading)

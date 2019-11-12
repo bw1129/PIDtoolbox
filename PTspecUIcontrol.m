@@ -29,6 +29,17 @@ TooltipString_scale=['Colormap scaling. Note, the default is set such that an op
     newline, 'should show little to no activity with the exception of a sub 100Hz band across throttle.',...
     newline, 'Dterm and motor outputs will typically be noisier, so sometimes scale adjustments ',...
     newline, 'are useful to see details. Otherwise, scaling should be the same when making comparisons'];
+TooltipString_controlFreqCutoff=['Fcut1/Fcut2 = Freq cutoff, used in sub100Hz plots, and sets',...
+    newline  'the min and max cutoff (in 3.333hz steps) for computing sub100Hz mean/peak activity.',...
+    newline  'Changing this will also move the yellow dashed lines representing this range.'];
+TooltipString_RClim=['RClim=RC limit, sets the min RC value (RPY set-point in deg/s)',...
+    newline  'used in the FFT calculation. This is useful for observing spectrograms',...
+    newline  'under minimal stick influence, which is particularly useful for analyzing',...
+    newline, 'differences in propwash or other vibrations that might overlap in ',... 
+    newline  'freq range with typical copter control freqencies. I recomend using a value of ~10 or 20.',...
+    newline  'NOTE: when using low RClim cutoffs (<50) it is recommended to use higher subsampling',...
+    newline  'in order to compensate for the reduction in useable data. See also Flight stats for histograms of RC use.'];
+
 
 %%%
 
@@ -60,10 +71,17 @@ posInfo.percentMotor=[.16 .955 .06 .04];
 posInfo.ColormapSelect=[.23 .955 .06 .04];
 posInfo.smooth_select =[.30 .955 .06 .04];
 posInfo.subsampleFactor=[.37 .955 .06 .04];
-posInfo.checkbox2d=[.44 .955 .06 .04];
+posInfo.controlFreq1Cutoff_text = [.45 .97 .03 .03];
+posInfo.controlFreq1Cutoff=[.45 .95 .03 .03];
+posInfo.controlFreq2Cutoff_text = [.48 .97 .03 .03];
+posInfo.controlFreq2Cutoff=[.48 .95 .03 .03];
+posInfo.RClimCutoff_text = [.52 .97 .03 .03];
+posInfo.RClimCutoff=[.52 .95 .03 .03];
+posInfo.checkbox2d=[.56 .955 .06 .04];
 
-posInfo.AphasedelayText=[.55 .976 .4 .022];
-posInfo.BphasedelayText=[.55 .954 .4 .022];
+
+posInfo.AphasedelayText=[.59 .976 .4 .022];
+posInfo.BphasedelayText=[.59 .954 .4 .022];
 
 posInfo.hCbar1pos=[0.06 0.845 0.19  0.02];
 posInfo.hCbar2pos=[0.3 0.845 0.19  0.02];
@@ -89,6 +107,9 @@ posInfo.climMax_input3 = [.5 .845 .03 .03];
 posInfo.climMax_text4 = [.74 .87 .03 .03]; 
 posInfo.climMax_input4 = [.74 .845 .03 .03];
 climScale=[.5 .5 .5 .5];
+Flim1=6; % 3.3333Hz steps
+Flim2=30;
+RClim=1000;%deg/s
 
 PTspecfig=figure(2);
 set(PTspecfig, 'units','normalized','outerposition',[.1 .1 .75 .8])
@@ -143,6 +164,21 @@ guiHandlesSpec.percentMotor = uicontrol(PTspecfig,'Style','popupmenu','string',{
 guiHandlesSpec.subsampleFactor = uicontrol(PTspecfig,'Style','popupmenu','string',{'subsampling low (fastest | less reliable)'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high'; 'subsampling high (slowest | most reliable)'},...
     'fontsize',fontsz2,'TooltipString', [TooltipString_subsample], 'units','normalized','outerposition', [posInfo.subsampleFactor],'callback','@selection2;');
 guiHandlesSpec.subsampleFactor.Value=2;
+
+guiHandlesSpec.controlFreq1Cutoff_text = uicontrol(PTspecfig,'style','text','string','Fcut1','fontsize',fontsz2,'TooltipString',[TooltipString_controlFreqCutoff],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.controlFreq1Cutoff_text]);
+guiHandlesSpec.controlFreq1Cutoff = uicontrol(PTspecfig,'style','edit','string',[num2str(round(Flim1))],'fontsize',fontsz2,'TooltipString',[TooltipString_controlFreqCutoff],'units','normalized','outerposition',[posInfo.controlFreq1Cutoff],...
+     'callback','@textinput_call2; Flim1=round(str2num(guiHandlesSpec.controlFreq1Cutoff.String));updateSpec=1;PTplotSpec;');
+
+guiHandlesSpec.controlFreq2Cutoff_text = uicontrol(PTspecfig,'style','text','string','Fcut2','fontsize',fontsz2,'TooltipString',[TooltipString_controlFreqCutoff],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.controlFreq2Cutoff_text]);
+guiHandlesSpec.controlFreq2Cutoff = uicontrol(PTspecfig,'style','edit','string',[num2str(round(Flim2))],'fontsize',fontsz2,'TooltipString',[TooltipString_controlFreqCutoff],'units','normalized','outerposition',[posInfo.controlFreq2Cutoff],...
+     'callback','@textinput_call2; Flim2=round(str2num(guiHandlesSpec.controlFreq2Cutoff.String));updateSpec=1;PTplotSpec;');
+
+ 
+guiHandlesSpec.RClimCutoff_text = uicontrol(PTspecfig,'style','text','string','RClim','fontsize',fontsz2,'TooltipString',[TooltipString_RClim],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.RClimCutoff_text]);
+guiHandlesSpec.RClimCutoff = uicontrol(PTspecfig,'style','edit','string',[num2str(round(RClim))],'fontsize',fontsz2,'TooltipString',[TooltipString_RClim],'units','normalized','outerposition',[posInfo.RClimCutoff],...
+     'callback','@textinput_call2; RClim=round(str2num(guiHandlesSpec.RClimCutoff.String));updateSpec=1;PTplotSpec;');
+
+ 
 
 guiHandlesSpec.saveFig2 = uicontrol(PTspecfig,'string','Save Fig','fontsize',fontsz2,'TooltipString',[TooltipString_saveFig],'units','normalized','BackgroundColor',[.8 .8 .8],'outerposition',[posInfo.saveFig2],...
     'callback','guiHandlesSpec.saveFig2.FontWeight=''bold'';PTsaveFig;guiHandlesSpec.saveFig2.FontWeight=''normal'';'); 
