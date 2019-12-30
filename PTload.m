@@ -323,7 +323,7 @@ if ~isempty(filenameB)
         DATmainB.debug(1,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
         DATmainB.debug(2,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
         DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
-        DATmainB.debug(3,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
+        DATmainB.debug(4,:)=zeros(1,length(DATmainB.GyroFilt(1,:)));
     end
     if B_debugmode==DSHOT_RPM_TELEMETRY % DSHOT_RPM_TELEMETRY
         DATmainB.debug(1,:)=PTscale2ref( dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'debug[0]'))), DATmainB.Motor(1,:));
