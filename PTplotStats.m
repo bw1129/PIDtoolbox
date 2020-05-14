@@ -30,15 +30,18 @@ guiHandlesStats.crossAxesStats_input2.FontSize=fontsz5;
 if guiHandlesStats.crossAxesStats.Value==1    
     if ~isempty(filenameA)
         if ~updateStats
-        rcRates=str2num(rc_rates_A{2});
-        rcExpo=str2num(rc_expo_A{2});
-        Srates=str2num(Super_rates_A{2});
+        
+        rcRates=dataA.rates(1,:);
+        rcExpo=dataA.rates(2,:);
+        Srates=dataA.rates(3,:);
+        const=200;
+        if FirmwareCode_A==INAV, const=1000; end
 
-        RateCurveRoll_A=PTrc2deg([1:5:500],dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1));
-        RateCurvePitch_A=PTrc2deg([1:5:500],dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2));
-        RateCurveYaw_A=PTrc2deg([1:5:500],dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3));
+        RateCurveRoll_A=PTrc2deg([0:5:500],dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1), const);
+        RateCurvePitch_A=PTrc2deg([0:5:500],dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2), const);
+        RateCurveYaw_A=PTrc2deg([0:5:500],dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3), const);
 
-        Yscale=round((max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)])) / 100) * 100;
+        Yscale=round((max([max(RateCurveRoll_A) max(RateCurvePitch_A) max(RateCurveYaw_A)])) / 50) * 50;
 
         if guiHandlesStats.degsecStick.Value==1, 
             RateCurveRoll_A=(diff(RateCurveRoll_A));
@@ -64,9 +67,9 @@ if guiHandlesStats.crossAxesStats.Value==1
 
         hold on
 
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_A)],RateCurveRoll_A);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_A)-1],RateCurveRoll_A(1,2:end));
         set(ax(1),'Ycolor',[colorA])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -75,17 +78,17 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_A(20) RateCurveRoll_A(40) RateCurveRoll_A(60) RateCurveRoll_A(80)],'ko','Parent', ax(2)); 
         set(h,'markerfacecolor','k') 
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(1,:)]);
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(1,:)]);
+        axis([1 100 0 .1])
 
         text(21, RateCurveRoll_A(20),[int2str(RateCurveRoll_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
         text(41, RateCurveRoll_A(40),[int2str(RateCurveRoll_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(61, RateCurveRoll_A(60),[int2str(RateCurveRoll_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(81, RateCurveRoll_A(80),[int2str(RateCurveRoll_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .085,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 100 0 .1])
         grid on
 
         hhist=subplot('position',posInfo.statsPos(2,:));
@@ -96,9 +99,9 @@ if guiHandlesStats.crossAxesStats.Value==1
         set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
         ylabel('% of flight','fontweight','bold')  
          hold on    
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_A)],RateCurvePitch_A);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_A)-1],RateCurvePitch_A(1,2:end));
         set(ax(1),'Ycolor',[colorA])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -107,17 +110,17 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_A(20) RateCurvePitch_A(40) RateCurvePitch_A(60) RateCurvePitch_A(80)],'ko','Parent', ax(2));     
         set(h,'markerfacecolor','k')  
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(2,:)]);
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(2,:)]);
+        axis([1 100 0 .1])
 
         text(21, RateCurvePitch_A(20),[int2str(RateCurvePitch_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(41, RateCurvePitch_A(40),[int2str(RateCurvePitch_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(61, RateCurvePitch_A(60),[int2str(RateCurvePitch_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(81, RateCurvePitch_A(80),[int2str(RateCurvePitch_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
         text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .085,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 100 0 .1])
         grid on
 
         hhist=subplot('position',posInfo.statsPos(3,:));
@@ -129,9 +132,9 @@ if guiHandlesStats.crossAxesStats.Value==1
         ylabel('% of flight','fontweight','bold')
 
          hold on
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_A)],RateCurveYaw_A);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_A)-1],RateCurveYaw_A(1,2:end));
         set(ax(1),'Ycolor',[colorA])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -140,17 +143,17 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_A(20) RateCurveYaw_A(40) RateCurveYaw_A(60) RateCurveYaw_A(80)],'ko','Parent', ax(2)); 
         set(h,'markerfacecolor','k')  
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(3,:)]);  
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(3,:)]);  
+        axis([1 100 0 .1])
 
         text(21, RateCurveYaw_A(20),[int2str(RateCurveYaw_A(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(41, RateCurveYaw_A(40),[int2str(RateCurveYaw_A(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(61, RateCurveYaw_A(60),[int2str(RateCurveYaw_A(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(81, RateCurveYaw_A(80),[int2str(RateCurveYaw_A(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);  
-        text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5);    
+        text(2, .085,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 100 0 .1])
         grid on
 
          hhist=subplot('position',posInfo.statsPos(4,:));
@@ -161,21 +164,23 @@ if guiHandlesStats.crossAxesStats.Value==1
         y=xlabel('% throttle','fontweight','bold');
         set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
         ylabel('% of flight', 'color',[colorA],'fontweight','bold')
-        set(hhist,'ycolor',[colorA],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(4,:)]);  
-        axis([1 99 0 .1])
+        set(hhist,'ycolor',[colorA],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(4,:)]);  
+        axis([1 100 0 .1])
     end
 
     if ~isempty(filenameB)
         if ~updateStats
-        rcRates=str2num(rc_rates_B{2});
-        rcExpo=str2num(rc_expo_B{2});
-        Srates=str2num(Super_rates_B{2});
+        rcRates=dataB.rates(1,:);
+        rcExpo=dataB.rates(2,:);
+        Srates=dataB.rates(3,:);
+        const=200;
+        if FirmwareCode_B==INAV, const=1000; end
 
-        RateCurveRoll_B=PTrc2deg([1:5:500],dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1));
-        RateCurvePitch_B=PTrc2deg([1:5:500],dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2));
-        RateCurveYaw_B=PTrc2deg([1:5:500],dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3));
+        RateCurveRoll_B=PTrc2deg([0:5:500],dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1), const);
+        RateCurvePitch_B=PTrc2deg([0:5:500],dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2), const);
+        RateCurveYaw_B=PTrc2deg([0:5:500],dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3), const);
 
-        Yscale=round((max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)])) / 100) * 100;
+        Yscale=round((max([max(RateCurveRoll_B) max(RateCurvePitch_B) max(RateCurveYaw_B)])) / 50) * 50;
 
         if guiHandlesStats.degsecStick.Value==1, 
             RateCurveRoll_B=(diff(RateCurveRoll_B));
@@ -201,9 +206,9 @@ if guiHandlesStats.crossAxesStats.Value==1
 
         hold on
 
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_B)],RateCurveRoll_B);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveRoll_B)-1],RateCurveRoll_B(1,2:end));
         set(ax(1),'Ycolor',[colorB])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -212,17 +217,18 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveRoll_B(20) RateCurveRoll_B(40) RateCurveRoll_B(60) RateCurveRoll_B(80)],'ko','Parent', ax(2)); 
         set(h,'markerfacecolor','k')  
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(5,:)]);
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(5,:)]);
+        axis([1 100 0 .1])
 
         text(21, RateCurveRoll_B(20),[int2str(RateCurveRoll_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(41, RateCurveRoll_B(40),[int2str(RateCurveRoll_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(61, RateCurveRoll_B(60),[int2str(RateCurveRoll_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(81, RateCurveRoll_B(80),[int2str(RateCurveRoll_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
         text(2, .095,['rates: ' num2str(rcRates(1))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .085,['expo: ' num2str(rcExpo(1))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(1))],'Parent', ax(1),'fontsize',fontsz5);
+
+        axis([1 100 0 .1])
         grid on
 
         hhist=subplot('position',posInfo.statsPos(6,:));
@@ -234,9 +240,9 @@ if guiHandlesStats.crossAxesStats.Value==1
         ylabel('% of flight','fontweight','bold');
 
          hold on    
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_B)],RateCurvePitch_B);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurvePitch_B)-1],RateCurvePitch_B(1,2:end));
         set(ax(1),'Ycolor',[colorB])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -245,8 +251,8 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurvePitch_B(20) RateCurvePitch_B(40) RateCurvePitch_B(60) RateCurvePitch_B(80)],'ko','Parent', ax(2)); 
         set(h,'markerfacecolor','k')  
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(6,:)]);
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(6,:)]);
+        axis([1 100 0 .1])
 
         text(21, RateCurvePitch_B(20),[int2str(RateCurvePitch_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(41, RateCurvePitch_B(40),[int2str(RateCurvePitch_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
@@ -254,9 +260,9 @@ if guiHandlesStats.crossAxesStats.Value==1
         text(81, RateCurvePitch_B(80),[int2str(RateCurvePitch_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);   
 
         text(2, .095,['rates: ' num2str(rcRates(2))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .085,['expo: ' num2str(rcExpo(2))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(2))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 100 0 .1])
         grid on
 
         hhist=subplot('position',posInfo.statsPos(7,:));
@@ -268,9 +274,9 @@ if guiHandlesStats.crossAxesStats.Value==1
         ylabel('% of flight','fontweight','bold')    
 
          hold on
-        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_B)],RateCurveYaw_B);
+        [ax,h1,h2]=plotyy(0,0,[1:length(RateCurveYaw_B)-1],RateCurveYaw_B(1,2:end));
         set(ax(1),'Ycolor',[colorB])
-        set(ax(2),'Xlim',[1 99],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
+        set(ax(2),'Xlim',[1 100],'YLim',[0 Yscale] ,'ytick',[0 round(Yscale/2) Yscale], 'Ycolor','k','fontsize',fontsz5)
         ax(2).YLabel.String='deg/s';
         if guiHandlesStats.degsecStick.Value==1, 
             ax(2).YLabel.String='deg/s/stick travel units';
@@ -279,17 +285,17 @@ if guiHandlesStats.crossAxesStats.Value==1
         hold(ax(2),'on'); h=plot([20 40 60 80],[RateCurveYaw_B(20) RateCurveYaw_B(40) RateCurveYaw_B(60) RateCurveYaw_B(80)],'ko','Parent', ax(2)); 
         set(h,'markerfacecolor','k')  
 
-        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(7,:)]);  
-        axis([1 99 0 .1])
+        set(hhist,'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(7,:)]);  
+        axis([1 100 0 .1])
 
         text(21, RateCurveYaw_B(20),[int2str(RateCurveYaw_B(20)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(41, RateCurveYaw_B(40),[int2str(RateCurveYaw_B(40)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(61, RateCurveYaw_B(60),[int2str(RateCurveYaw_B(60)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);    
         text(81, RateCurveYaw_B(80),[int2str(RateCurveYaw_B(80)) 'deg/s'],'Parent', ax(2),'fontsize',fontsz5);     
         text(2, .095,['rates: ' num2str(rcRates(3))],'Parent', ax(1),'fontsize',fontsz5); 
-        text(2, .085,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
-        text(2, .075,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
-        axis([1 99 0 .1])
+        text(2, .085,['expo: ' num2str(rcExpo(3))],'Parent', ax(1),'fontsize',fontsz5);
+        text(2, .075,['super: ' num2str(Srates(3))],'Parent', ax(1),'fontsize',fontsz5);
+        axis([1 100 0 .1])
         grid on
 
         hhist=subplot('position',posInfo.statsPos(8,:));
@@ -300,8 +306,8 @@ if guiHandlesStats.crossAxesStats.Value==1
         y=xlabel('% throttle','fontweight','bold');
         set(y,'Units','normalized', 'position', [.5 -.1 1],'color',[.2 .2 .2]);
         ylabel('% of flight', 'color',[colorB],'fontweight','bold')
-        set(hhist,'ycolor',[colorB],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 99],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(8,:)]);  
-        axis([1 99 0 .1])
+        set(hhist,'ycolor',[colorB],'tickdir','in','xlim',[1 100],'xtick',[1 20 40 60 80 100],'ylim',[0 .1],'ytick',[0 .05 .1],'xticklabels',{0 20 40 60 80 100},'yticklabels',{0 5 10},'fontsize',fontsz5, 'Position',[posInfo.statsPos(8,:)]);  
+        axis([1 100 0 .1])
     end   
 end
 
@@ -417,6 +423,7 @@ if guiHandlesStats.crossAxesStats.Value==2
         xlabel('|Fterm| [A]','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
         ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorA]);
         ymax=ceil(max(mean(abs(DATtmpA.Fterm),2))+max((std(abs(DATtmpA.Fterm)')')));
+        if ymax<1, ymax=10, end
         axis([.5 3.5 0 ymax])  
         box off
         
@@ -609,6 +616,7 @@ if guiHandlesStats.crossAxesStats.Value==2
         xlabel('|Fterm| [B]','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
         ylabel('Mean +SD ','fontsize',fontsz5,'fontweight','bold','color',[colorB]);
         ymax=ceil(max(mean(abs(DATtmpB.Fterm),2))+max((std(abs(DATtmpB.Fterm)')')));
+         if ymax<1, ymax=10, end
         axis([.5 3.5 0 ymax])  
         box off
         

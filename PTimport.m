@@ -36,7 +36,7 @@ if size(filename,2)>20
 end
  
 mainFname=filename;
-if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl')          
+if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl') || strcmp(filename(end-3:end),'.txt') || strcmp(filename(end-3:end),'.TXT')          
     waitbar(.25,waitbarFid,['converting ' f ' to csv using BB-tools']);  
     [status,result]=system(['blackbox_decode.exe ' filename]);  
     files=dir([filename(1:end-4) '*.csv']);
@@ -237,17 +237,35 @@ if validData
             end
         end
 
-        a=strfind(SetupInfo,'rc_rates');
-        b=find(cellfun(@(a)~isempty(a)&&a>0,a));
-        rc_rates=str2num(char(SetupInfo(b,2)));
-
-        a=strfind(SetupInfo,'rc_expo');
-        b=find(cellfun(@(a)~isempty(a)&&a>0,a));
-        rc_expo=str2num(char(SetupInfo(b,2)));
+        rc_rates=[0 0 0];
+        rc_expo=[0 0 0];
+        Super_rates=[0 0 0];
         
-        a=strfind(SetupInfo,'rates');
-        b=find(cellfun(@(a)~isempty(a)&&a>0,a));if length(b)>1,b=b(2);end
-        Super_rates=str2num(char(SetupInfo(b,2))); 
+        a=strfind(SetupInfo,'INAV');
+        b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+        if ~isempty(b)
+            a=strfind(SetupInfo,'rates');
+            b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+            rc_rates=str2num(char(SetupInfo(b,2)));
+
+            a=strfind(SetupInfo,'rc_expo');
+            b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+            rc_expo=[str2num(char(SetupInfo(b,2))) str2num(char(SetupInfo(b,2))) str2num(char(SetupInfo(b,2)))];
+        
+            Super_rates=[0 0 0]; 
+        else 
+            a=strfind(SetupInfo,'rc_rates');
+            b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+            rc_rates=str2num(char(SetupInfo(b,2)));
+
+            a=strfind(SetupInfo,'rc_expo');
+            b=find(cellfun(@(a)~isempty(a)&&a>0,a));
+            rc_expo=str2num(char(SetupInfo(b,2)));
+
+            a=strfind(SetupInfo,'rates');
+            b=find(cellfun(@(a)~isempty(a)&&a>0,a));if length(b)>1,b=b(2);end
+            Super_rates=str2num(char(SetupInfo(b,2))); 
+        end
         
          a=strfind(SetupInfo,'thr_mid');
         b=find(cellfun(@(a)~isempty(a)&&a>0,a));

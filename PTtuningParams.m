@@ -30,14 +30,14 @@ ylab2={'roll';'pitch';'yaw'};
     %%%%%%%%%%%%% step resp A %%%%%%%%%%%%%
 if ~isempty(filenameA)    
     for p=1:3         
-        try
+      % try
             if ~updateStep            
                 [stepresp_A{p} tA rateHigh_A{p}] = PTstepcalc(DATtmpA.RCRate(p,:), DATtmpA.GyroFilt(p,:), A_lograte, guiHandlesTune.subsampFactor.Value*3, str2num(guiHandlesTune.minDegMove.String), str2num(guiHandlesTune.maxDegMove.String));
             end
-        catch
-            stepresp_A{p}=[];
-            rateHigh_A{p}=[];
-        end
+%        catch
+%             stepresp_A{p}=[];
+%             rateHigh_A{p}=[];
+%         end
         figure(PTtunefig)
         h1=subplot('position',posInfo.TparamsPos(p,:)); cla
         hold on
@@ -52,22 +52,22 @@ if ~isempty(filenameA)
             sd=std(stepresp_A{p}(rA,:));%/sqrt(size(stepresp_A,1));
             
             h2=fill([tA fliplr(tA)],[m+sd fliplr(m-sd)],colorA);
-            set(h2, 'FaceAlpha',.25,'EdgeColor',colorA,'EdgeAlpha',.25)
+            set(h2, 'FaceAlpha',.2,'EdgeColor',colorA,'EdgeAlpha',.2)
             hold on
             h1=plot(tA,m);         set(h1, 'color',[colorA],'linewidth',2.5);
-            stepnfo=stepinfo(nanmean(stepresp_A{p}(rA,:)),tA,1);
+            stepnfo=stepinfo(m,tA,1); 
+            latencyHalfHeight=find(m>.5,1)-1 / A_lograte;
            
             eval(['PID=' ylab2{p} 'PIDF_A;'])
-            h=text(320, .8, ['N=' int2str(size(stepresp_A{p}(rA,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4) 
-            h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
-            h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .3, ['RiseTime: ' num2str(stepnfo.RiseTime)]);set(h,'fontsize',fontsz4)
-            h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4) 
+            h=text(320, .7, ['N=' int2str(size(stepresp_A{p}(rA,:),1)) ]);set(h,'fontsize',fontsz4);
+            h=text(320, .6, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4); 
+            h=text(320, .5, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4);
+            h=text(320, .4, ['PeakTime: ' num2str(stepnfo.PeakTime) 'ms']);set(h,'fontsize',fontsz4);
+            h=text(320, .3, ['Latency (@0.5): ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
+            h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4); 
+            h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4); 
         else
-            h=text(180, 1.1, ['insufficient data'])
+            h=text(180, 1.1, ['insufficient data']);
             set(h,'fontsize',fontsz4,'fontweight','bold')
         end
         
@@ -117,20 +117,19 @@ if ~isempty(filenameB)
             set(h5, 'FaceAlpha',.25,'EdgeColor',colorB,'EdgeAlpha',.25)
             hold on
             h4=plot(tB,m);         set(h4, 'color',[colorB],'linewidth',2.5)
-                  
-            stepnfo=stepinfo(nanmean(stepresp_B{p}(rB,:)),tB,1);          
+            stepnfo=stepinfo(m,tB,1);  
+            latencyHalfHeight=find(m>.5,1)-1 / B_lograte;
             
             eval(['PID=' ylab2{p} 'PIDF_B;'])
-            h=text(320, .8, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4)
-            h=text(320, .7, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4) 
-            h=text(320, .6, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4)
-            h=text(320, .5, ['PeakTime: ' num2str(stepnfo.PeakTime)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .4, ['%Overshoot: ' num2str(stepnfo.Overshoot)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .3, ['RiseTime: ' num2str(stepnfo.RiseTime)]);set(h,'fontsize',fontsz4)
-            h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4) 
-            h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4) 
+            h=text(320, .7, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4);
+            h=text(320, .6, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4); 
+            h=text(320, .5, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4);
+            h=text(320, .4, ['PeakTime: ' num2str(stepnfo.PeakTime) 'ms']);set(h,'fontsize',fontsz4); 
+            h=text(320, .3, ['Latency (@0.5): ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
+            h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4); 
+            h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4); 
         else
-            h=text(180, 1.1, ['insufficient data'])
+            h=text(180, 1.1, ['insufficient data']);
             set(h,'fontsize',fontsz4,'fontweight','bold')
         end 
         

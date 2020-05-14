@@ -14,8 +14,7 @@ function [output_txt] = PTdatatip(obj,event_obj)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 %
-
-
+fontsz2=16;
 try
     a=event_obj.Target.Type;  
     c=event_obj.Target.Color;
@@ -29,9 +28,18 @@ if ~strcmp(a,'image') % ugly workaround
             dgts=5;
         else
             dgts=6;
-        end        
+        end   
+        if pos(2) > -1200
         output_txt = {['sec: ',num2str(pos(1),dgts)],...
             ['deg/s: ',num2str(pos(2),4)]};
+        else
+            output_txt = {['sec: ',num2str(pos(1),dgts)],...
+            ['%: ',num2str(((pos(2)+2400) / 12),4)]};
+        end
+            
+  
+%         dataTipH=plot([pos(1) pos(1)], [-2400 2400],'r-');
+%         get(dataTipH)
         if c==c1 | c==c2
             output_txt = {['x: ',num2str(pos(1),4)],...
             ['y: ',num2str(pos(2),4)]};
@@ -40,6 +48,7 @@ if ~strcmp(a,'image') % ugly workaround
         if length(pos) > 2
             output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
         end
+        set(findall(gcf,'type','hggroup'),'FontSize',fontsz2,'FontWeight', 'bold')
     else
         pos = get(event_obj,'Position');  
         output_txt = {['X: ',num2str(pos(1),4)],...
@@ -60,6 +69,8 @@ if ~strcmp(a,'image') % ugly workaround
  
             z=event_obj.Target.CData(pos(2),pos(1));
             output_txt{end+1} = ['Z: ',num2str(z,4)];   
-        end
+        end     
+        set(findall(gcf,'type','hggroup'),'FontSize',fontsz2,'FontWeight', 'bold')
 end
+
  

@@ -242,19 +242,28 @@ guiHandlesSpec.ColormapSelect.Value=3;% hot 3 viridis 12
 % note, this is an estimate, given the many dynamic filter options in BF4.0+
 % the reliability of the estimate depend to some degree on the amplitude modulation of the signals 
 % (i.e., when there is stick input).
-clear sampTime maxlag PhaseDelay_A PhaseDelay2_A 
+clear sampTime maxlag PhaseDelay_A PhaseDelay2_A SampleDelay_A SampleDelay2_A
 HardwareLPFdelay = 0.98; % ms
  
-if A_debugmode==GYRO_SCALED
+% work in progress, phase lag in a moving window
+% SampleDelay_A=zeros(1,length(DATmainA.debug(1,:)));
+% wind=A_lograte*2000; %2sec
+% for i=wind:size(DATmainA.debug(1,:),2)-wind+1
+%      SampleDelay_A(1,i)=finddelay(smooth(DATmainA.debug(1,i-wind+1:i+wind),50),smooth(DATmainA.GyroFilt(1,i-wind+1:i+wind),50),maxlag);   
+% end
+
+if A_debugmode==GYRO_SCALED || A_debugmode==DEBUG_GYRO
     try
-        sampTime=(mean(diff(tta)));%microsec
-        maxlag=int8(round(3000/sampTime)); %~3ms delay
-        PhaseDelay_A=finddelay(smooth(DATmainA.debug(1,:),50),smooth(DATmainA.GyroFilt(1,:),50),maxlag) * sampTime / 1000; % both signals smoothed equally, more reliable estimate
+        sampTime=1000/A_lograte;% yields more consistent results (mode(diff(tta)));
+        maxlag=int8(round(6000/sampTime)); %~6ms delay
+        SampleDelay_A=finddelay(smooth(DATtmpA.debug(1,:),50),smooth(DATtmpA.GyroFilt(1,:),50),maxlag) ; % both signals smoothed equally, more reliable estimate
+        PhaseDelay_A=SampleDelay_A * (sampTime / 1000);
         if PhaseDelay_A<.1, PhaseDelay_A=[]; end % when garbage gets through
 
-        PhaseDelay2_A=finddelay(smooth(DATmainA.DtermRaw(1,:),50),smooth(DATmainA.DtermFilt(1,:),50),maxlag) * sampTime / 1000;
+        SampleDelay2_A=finddelay(smooth(DATtmpA.DtermRaw(1,:),50),smooth(DATtmpA.DtermFilt(1,:),50),maxlag) ;
+        PhaseDelay2_A=SampleDelay2_A * (sampTime / 1000);
         if PhaseDelay2_A<.1, PhaseDelay2_A=[]; end % when garbage gets through
-        guiHandlesSpec.AphasedelayText = uicontrol(PTspecfig,'style','text','string',['[A] estimated phase delay (hardware/gyro/dterm/total): ' num2str(HardwareLPFdelay) ' / ' num2str(round(PhaseDelay_A*100)/100) ' / ' num2str(round(PhaseDelay2_A*100)/100) ' / ' num2str(round((HardwareLPFdelay+PhaseDelay_A+PhaseDelay2_A)*100)/100) ' ms'],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText]);
+        guiHandlesSpec.AphasedelayText = uicontrol(PTspecfig,'style','text','string',['[A] estimated filter delay - Gyro: ' num2str(round(PhaseDelay_A*100)/100) 'ms, Dterm: ' num2str(round(PhaseDelay2_A*100)/100) 'ms'],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText]);
     catch
         guiHandlesSpec.AphasedelayText = uicontrol(PTspecfig,'style','text','string',['[A] unable to estimate phase delay '],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText]);
     end
@@ -262,18 +271,20 @@ else
         guiHandlesSpec.AphasedelayText = uicontrol(PTspecfig,'style','text','string',['[A] unable to estimate phase delay '],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText]);
 end
 
-clear sampTime maxlag PhaseDelay_B PhaseDelay2_B
-if B_debugmode==GYRO_SCALED
+clear sampTime maxlag PhaseDelay_B PhaseDelay2_B SampleDelay_B SampleDelay2_B
+if B_debugmode==GYRO_SCALED || B_debugmode==DEBUG_GYRO
     try
-        sampTime=(mean(diff(ttb)));
-        maxlag=int8(round(3000/sampTime)); %~3ms delay
-        PhaseDelay_B=finddelay(smooth(DATmainB.debug(1,:),50),smooth(DATmainB.GyroFilt(1,:),50),maxlag) * sampTime / 1000;
+        sampTime=1000/B_lograte;% yields more consistent results (mode(diff(ttb)));
+        maxlag=int8(round(6000/sampTime)); %~6ms delay
+        SampleDelay_B=finddelay(smooth(DATtmpB.debug(1,:),50),smooth(DATtmpB.GyroFilt(1,:),50),maxlag) ;
+        PhaseDelay_B=SampleDelay_B * (sampTime / 1000);
         if PhaseDelay_B<.1, PhaseDelay_B=[]; end % when garbage gets through
 
-        PhaseDelay2_B=finddelay(smooth(DATmainB.DtermRaw(1,:),50),smooth(DATmainB.DtermFilt(1,:),50),maxlag) * sampTime / 1000;
+        SampleDelay2_B=finddelay(smooth(DATtmpB.DtermRaw(1,:),50),smooth(DATtmpB.DtermFilt(1,:),50),maxlag);
+        PhaseDelay2_B=SampleDelay2_B * (sampTime / 1000);
         if PhaseDelay2_B<.1, PhaseDelay2_B=[]; end % when garbage gets through
 
-        guiHandlesSpec.BphasedelayText = uicontrol(PTspecfig,'style','text','string',['[B] estimated phase delay (hardware/gyro/dterm/total): ' num2str(HardwareLPFdelay) ' / ' num2str(round(PhaseDelay_B*100)/100) ' / ' num2str(round(PhaseDelay2_B*100)/100) ' / ' num2str(round((HardwareLPFdelay+PhaseDelay_B+PhaseDelay2_B)*100)/100) ' ms'],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.BphasedelayText]);
+        guiHandlesSpec.BphasedelayText = uicontrol(PTspecfig,'style','text','string',['[B] estimated filter delay - Gyro: ' num2str(round(PhaseDelay_B*100)/100) 'ms, Dterm: ' num2str(round(PhaseDelay2_B*100)/100) 'ms'],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.BphasedelayText]);
     catch
         guiHandlesSpec.BphasedelayText = uicontrol(PTspecfig,'style','text','string',['[B] unable to estimate phase delay '],'fontsize',fontsz2,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.BphasedelayText]);
     end

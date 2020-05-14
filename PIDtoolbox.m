@@ -8,8 +8,16 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
     
-PtbVersion='v0.39';
+PtbVersion='v0.391';
     
+% FirmwareCodes
+BF=1;
+INAV=2;
+
+
+FirmwareCode_A=[];
+FirmwareCode_B=[];
+
 executableDir = pwd;
 addpath(executableDir)
 
@@ -162,11 +170,11 @@ TooltipString_wiki=['Link to the PIDtoolbox wiki in Github'];
 TooltipString_refresh=['Refreshes fonts and button sizes after change in window size'];
 %%%
 guiHandles.fileA = uicontrol(PTfig,'string','Select File [A]','fontsize',fontsz,'TooltipString', [TooltipString_files], 'units','normalized','outerposition',[posInfo.fileA],...
-     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL'' }); if filepathA==0, filepathA=[]; filenameA=[]; end, filenameAtmp=[];'); 
+     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT'' }); if filepathA==0, filepathA=[]; filenameA=[]; end, filenameAtmp=[];'); 
 guiHandles.fileA.BackgroundColor=colorA;
 
 guiHandles.fileB = uicontrol(PTfig,'string','Select File [B]','fontsize',fontsz,'TooltipString', [TooltipString_files],'units','normalized','outerposition',[posInfo.fileB],...
-     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end;[filenameB, filepathB] = uigetfile({''*.BBL;*.BFL'' }); if filepathB==0, filepathB=[]; filenameB=[]; end, filenameBtmp=[];'); 
+     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end;[filenameB, filepathB] = uigetfile({''*.BBL;*.BFL;*.TXT'' }); if filepathB==0, filepathB=[]; filenameB=[]; end, filenameBtmp=[];'); 
 guiHandles.fileB.BackgroundColor=colorB; 
 guiHandles.runAll = uicontrol(PTfig,'string','Load+Run','fontsize',fontsz,'TooltipString', [TooltipString_loadRun],'units','normalized','outerposition',[posInfo.runAll],...
     'callback','guiHandles.runAll.FontWeight=''bold'';PTload;PTprocess;PTviewerUIcontrol; PTplotLogViewer; guiHandles.runAll.FontWeight=''normal'';'); 

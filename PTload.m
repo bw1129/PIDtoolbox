@@ -12,6 +12,7 @@
 % https://github.com/betaflight/betaflight/wiki/Debug-Modes?fbclid=IwAR2bKepD_cNZNnRtlAxf7yf3CWjYm2-MbFuwoGn3tUm8wPefp9CCJQR7c9Y
 GYRO_SCALED=6;
 DSHOT_RPM_TELEMETRY=47;
+DEBUG_GYRO=1;% INAV prefiltered gyro
     
 try
     
@@ -258,12 +259,18 @@ if ~isempty(filenameA)
         DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[0]')));
         DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[1]')));
         DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[2]')));
-        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[3]')))/10;% scale to 100          
+        DATmainA.RCRate(4,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'setpoint[3]')))/10;% scale to 100      
+    elseif ~isempty(find(strcmp(dataA.VarLabels, 'axisRate[0]')))% new set point
+        disp('axisRate for A called')
+        DATmainA.RCRate(1,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisRate[0]')));
+        DATmainA.RCRate(2,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisRate[1]')));
+        DATmainA.RCRate(3,:)=dataA.DataMain(:,find(strcmp(dataA.VarLabels, 'axisRate[2]')));
+        DATmainA.RCRate(4,:)=PTthrPercent(DATmainA.RCcommand(4,:));
     else % if it doesnt exist
         disp('PTrc2deg for A called')
-        DATmainA.RCRate(1,:)=PTrc2deg(DATmainA.RCcommand(1,:),dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1));
-        DATmainA.RCRate(2,:)=PTrc2deg(DATmainA.RCcommand(2,:),dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2));
-        DATmainA.RCRate(3,:)=PTrc2deg(DATmainA.RCcommand(3,:),dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3));
+        DATmainA.RCRate(1,:)=PTrc2deg(DATmainA.RCcommand(1,:),dataA.rates(1,1), dataA.rates(2,1), dataA.rates(3,1), 200);
+        DATmainA.RCRate(2,:)=PTrc2deg(DATmainA.RCcommand(2,:),dataA.rates(1,2), dataA.rates(2,2), dataA.rates(3,2), 200);
+        DATmainA.RCRate(3,:)=PTrc2deg(DATmainA.RCcommand(3,:),dataA.rates(1,3), dataA.rates(2,3), dataA.rates(3,3), 200);
         DATmainA.RCRate(4,:)=PTthrPercent(DATmainA.RCcommand(4,:));
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[0]'};
         dataA.VarLabels(size(dataA.VarLabels,2)+1)={'rcCommands[1]'};
@@ -387,11 +394,17 @@ if ~isempty(filenameB)
         DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[1]')));
         DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[2]')));
         DATmainB.RCRate(4,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'setpoint[3]')))/10;% scale to 100  
+    elseif ~isempty(find(strcmp(dataB.VarLabels, 'axisRate[0]')))% new set point
+        disp('axisRate for B called')
+        DATmainB.RCRate(1,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisRate[0]')));
+        DATmainB.RCRate(2,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisRate[1]')));
+        DATmainB.RCRate(3,:)=dataB.DataMain(:,find(strcmp(dataB.VarLabels, 'axisRate[2]')));
+        DATmainB.RCRate(4,:)=PTthrPercent(DATmainB.RCcommand(4,:));
     else
         disp('PTrc2deg for B called')
-        DATmainB.RCRate(1,:)=PTrc2deg(DATmainB.RCcommand(1,:),dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1));
-        DATmainB.RCRate(2,:)=PTrc2deg(DATmainB.RCcommand(2,:),dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2));
-        DATmainB.RCRate(3,:)=PTrc2deg(DATmainB.RCcommand(3,:),dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3));
+        DATmainB.RCRate(1,:)=PTrc2deg(DATmainB.RCcommand(1,:),dataB.rates(1,1), dataB.rates(2,1), dataB.rates(3,1), 200);
+        DATmainB.RCRate(2,:)=PTrc2deg(DATmainB.RCcommand(2,:),dataB.rates(1,2), dataB.rates(2,2), dataB.rates(3,2), 200);
+        DATmainB.RCRate(3,:)=PTrc2deg(DATmainB.RCcommand(3,:),dataB.rates(1,3), dataB.rates(2,3), dataB.rates(3,3), 200);
         DATmainB.RCRate(4,:)=PTthrPercent(DATmainB.RCcommand(4,:));
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[0]'};
         dataB.VarLabels(size(dataB.VarLabels,2)+1)={'rcCommands[1]'};
@@ -422,13 +435,17 @@ end
 %%
 clear Firmware_revision_A looptime_A frameIntervalPDenom_A rollPIDF_A pitchPIDF_A yawPIDF_A rc_rates_A rc_expo_A Super_rates_A gyro_lowpass_hz_A gyro_lowpass2_hz_A  dterm_lpf_hz_A 
 clear Firmware_revision_B looptime_B frameIntervalPDenom_B rollPIDF_B pitchPIDF_B yawPIDF_B rc_rates_B rc_expo_B Super_rates_B gyro_lowpass_hz_B gyro_lowpass2_hz_B  dterm_lpf_hz_B 
-
+FirmwareCode_A=[];
+FirmwareCode_B=[];
 %%%%% only for finding setup info from BBlog file directly
 infoStr={'Firmware revision';'looptime';'rollPID';'pitchPID';'yawPID'; 'rc_rates';'rc_expo';'rates';'gyro_lowpass_hz';'gyro_lowpass2_hz';'dterm_lowpass_hz';'dterm_lowpass2_hz'};
 infoStr2={'Firmware_revision';'looptime';'rollPIDF';'pitchPIDF';'yawPIDF'; 'rc_rates';'rc_expo';'Super_rates';'gyro_lowpass_hz';'gyro_lowpass2_hz';'dterm_lpf_hz';'dterm_lpf2_hz'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~isempty(filenameA)    
-    Firmware_revision_A=char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'Firmware revision')),:));
+    Firmware_revision_A=char(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'Firmware revision')),:)); 
+    if strfind(Firmware_revision_A(2,:),'INAV'), FirmwareCode_A=INAV; end %2
+    if isempty(FirmwareCode_A), FirmwareCode_A=BF; end
+
     looptime_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'looptime')),:));
     frameIntervalPDenom_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'frameIntervalPDenom')),:));
     rollPIDF_A=(dataA.SetupInfo(find(strcmp(dataA.SetupInfo(:,1), 'rollPID')),:));
@@ -456,7 +473,10 @@ if ~isempty(filenameA)
     end
 end
 if ~isempty(filenameB)
-    Firmware_revision_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'Firmware revision')),:));
+    Firmware_revision_B=char(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'Firmware revision')),:));
+    if strfind(Firmware_revision_B(2,:),'INAV'), FirmwareCode_B=INAV; end %2
+    if isempty(Firmware_revision_B), FirmwareCode_B=BF; end
+
     looptime_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'looptime')),:);
     frameIntervalPDenom_B=dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'frameIntervalPDenom')),:);
     rollPIDF_B=(dataB.SetupInfo(find(strcmp(dataB.SetupInfo(:,1), 'rollPID')),:));

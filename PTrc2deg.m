@@ -1,11 +1,12 @@
-function [angleRate] = PTrc2deg(X,rcRate,rcExpo,superrate)
+function [angleRate] = PTrc2deg(X,rcRate,rcExpo,superrate, rcRateConstant)
 % raw RCcommand data to RCrate in deg/s, i.e. "set point"
 %  with help from: https://github.com/betaflight/betaflight-configurator/blob/master/src/js/RateCurve.js
 %   X is a vector containing a single axis of RCcommand data scaled from -500 to 500, 
 %   rcRate(0-255),rcExpo(0-100),superrate(0-100)
 
     expoPower=3;
-    rcRateConstant=200;
+    rcRateConstant=rcRateConstant; 
+    
     angleRate=[];
 
     rcRate=rcRate/100;
