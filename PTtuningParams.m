@@ -63,7 +63,7 @@ if ~isempty(filenameA)
             h=text(320, .6, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4); 
             h=text(320, .5, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4);
             h=text(320, .4, ['PeakTime: ' num2str(stepnfo.PeakTime) 'ms']);set(h,'fontsize',fontsz4);
-            h=text(320, .3, ['Latency (@0.5): ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
+            h=text(320, .3, ['Latency: ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
             h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4); 
             h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4); 
         else
@@ -83,8 +83,14 @@ if ~isempty(filenameA)
         if p==1, title('Step response [A]');end
         h=text(5,1.5,ylab2{p});
         set(h,'fontsize',fontsz4,'fontweight','bold')
-         h=plot([0 500],[1 1],'k--');
+        h=plot([0 500],[1 1],'k--');
         set(h,'linewidth',.5)
+%         h=plot([0 latencyHalfHeight],[.5 .5],'k:');
+%         set(h,'linewidth',1)
+%         h=plot([latencyHalfHeight latencyHalfHeight],[0 .5],'k:');
+%         set(h,'linewidth',1)
+%         h=text(latencyHalfHeight,.51,[int2str(latencyHalfHeight) 'ms']);
+%         set(h,'fontsize',fontsz4)
         axis([0 500 0 1.6])
         grid on
     end
@@ -125,7 +131,7 @@ if ~isempty(filenameB)
             h=text(320, .6, ['P,I,D,Dmin,F: ' char(string(PID(:,2)))]);set(h,'fontsize',fontsz4); 
             h=text(320, .5, ['Peak: ' num2str(stepnfo.Peak)]);set(h,'fontsize',fontsz4);
             h=text(320, .4, ['PeakTime: ' num2str(stepnfo.PeakTime) 'ms']);set(h,'fontsize',fontsz4); 
-            h=text(320, .3, ['Latency (@0.5): ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
+            h=text(320, .3, ['Latency: ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz4);
             h=text(320, .2, ['SettlingMin: ' num2str(stepnfo.SettlingMin)]);set(h,'fontsize',fontsz4); 
             h=text(320, .1, ['SettlingMax: ' num2str(stepnfo.SettlingMax)]);set(h,'fontsize',fontsz4); 
         else
@@ -148,6 +154,10 @@ if ~isempty(filenameB)
         set(h,'fontsize',fontsz4,'fontweight','bold')
         h=plot([0 500],[1 1],'k--');
         set(h,'linewidth',.5)
+%          h=plot([0 latencyHalfHeight],[.5 .5],'k:');
+%         set(h,'linewidth',1)
+%         h=plot([latencyHalfHeight latencyHalfHeight],[0 .5],'k:');
+%         set(h,'linewidth',1)
         axis([0 500 0 1.6])
        grid on
     end
