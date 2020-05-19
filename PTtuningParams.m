@@ -56,7 +56,7 @@ if ~isempty(filenameA)
             hold on
             h1=plot(tA,m);         set(h1, 'color',[colorA],'linewidth',2.5);
             stepnfo=stepinfo(m,tA,1); 
-            latencyHalfHeight=find(m>.5,1)-1 / A_lograte;
+            latencyHalfHeight=(find(m>.5,1) / A_lograte) - 1;
            
             eval(['PID=' ylab2{p} 'PIDF_A;'])
             h=text(320, .7, ['N=' int2str(size(stepresp_A{p}(rA,:),1)) ]);set(h,'fontsize',fontsz4);
@@ -124,7 +124,7 @@ if ~isempty(filenameB)
             hold on
             h4=plot(tB,m);         set(h4, 'color',[colorB],'linewidth',2.5)
             stepnfo=stepinfo(m,tB,1);  
-            latencyHalfHeight=find(m>.5,1)-1 / B_lograte;
+            latencyHalfHeight=(find(m>.5,1) / B_lograte) - 1;
             
             eval(['PID=' ylab2{p} 'PIDF_B;'])
             h=text(320, .7, ['N=' int2str(size(stepresp_B{p}(rB,:),1)) ]);set(h,'fontsize',fontsz4);
