@@ -52,7 +52,7 @@ if NSegs>0
         imp=real(ifft((G .* Hcon) ./ (H .* Hcon + .0001)))'; % impulse response function, .0001 to avoid divide by 0
         resptmp(i,:) = (cumsum(imp));%.^.5;% integrate impulse resp functions
         a=stepinfo(resptmp(i,1:wnd)); % gather info about quality of step resp function
-        if a.SettlingMin>.5 && a.SettlingMin<=1 && a.SettlingMax>1 && a.SettlingMax<1.5 %Quality control
+        if a.SettlingMin>.5 && a.SettlingMin<=1 && a.SettlingMax>1 && a.SettlingMax<2 %Quality control
             j=j+1;
             stepresponse(j,:)=real(resptmp(i,1:1+wnd)); 
             
