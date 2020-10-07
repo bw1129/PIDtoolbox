@@ -1,7 +1,7 @@
 
 # PIDtoolbox
 
-PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for both Windows and Mac, and is tailored to work for Betaflight and INAV logfiles, but should also run EMU flight logfiles. Although PIDtoolbox is designed for the person who likes to tinker and get the best performance possible out of their miniquad, it should be relatively straightforward for those new to the hobby as well, and there is a detailed **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">Wiki page</a>** to help.
+PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for Windows, Mac and Linux, and is tailored to work for Betaflight and INAV logfiles, but should also run EMU flight logfiles. Although PIDtoolbox is designed for the person who likes to tinker and get the best performance possible out of their miniquad, it should be relatively straightforward for those new to the hobby as well, and there is a detailed **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">Wiki page</a>** to help.
 
 ![](images/PIDtoolbox_v0.32.png)
 
@@ -15,7 +15,7 @@ The motivation for the development of this tool was to create a user-friendly GU
 
 The **`PIDtoolbox`** program file can be found under **`PIDtoolbox\main\`**. The contents of the **`main`** folder should not be moved. PIDtoolbox uses **`blackbox_decode`** from <a href="https://github.com/betaflight/blackbox-tools" target="blank">Betaflight/Cleanflight Blackbox Tools</a>, which is conveniently packaged within this download. The **`blackbox_decode`** program file should also remain in the main folder (or at the very least must be in the same folder as your **`.bbl`** or **`.bfl`** log files. **Disclaimer**: Personally I've had no issue with placing my log files anywhere on my computer as long as blackbox_decode is in there with them, but in the interest of having less reported issues, I'm erring on the side of caution with these recommendations, but feel free to experiment.
 
-* PIDtoolbox has been confirmed to run on Windows7/8/10 64bit machines, and Mac 10.11 (El capitan), 10.13 (Sierra) and 10.14 (Mojave). If you have issues installing Matlab runtime, or running PIDtoolbox, please post **<a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">feedback here</a>**, or post a response in the **<a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">Betaflight BlackBox Log Review Facebook group</a>** for Betaflight specific issues, or **<a href="https://www.facebook.com/groups/INAVOfficial/?ref=bookmarks" target="blank">INAV official Facebook group</a>** for INAV specific issues.
+* PIDtoolbox has been confirmed to run on Windows7/8/10 64bit machines, and Mac 10.11 (El capitan), 10.13 (Sierra) and 10.14 (Mojave), and Linux. If you have issues installing Matlab runtime, or running PIDtoolbox, please post **<a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">feedback here</a>**, or post a response in the **<a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">Betaflight BlackBox Log Review Facebook group</a>** for Betaflight specific issues, or **<a href="https://www.facebook.com/groups/INAVOfficial/?ref=bookmarks" target="blank">INAV official Facebook group</a>** for INAV specific issues.
 
 * If you have Matlab and all the required toolboxes you can simply download the source code (download from the zip file on the **<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">releases</a>** page for the most up to date and platform-specific source code), and run from the command window. 
 
@@ -28,6 +28,10 @@ For a detailed guide to PIDtoolbox, please visit the **<a href="https://github.c
 For a quick guide, follow the steps below:
 
 **(i)** **<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">PIDtoolbox</a>** (versions 0.2 onward) reads **`.bbl`** or **`.bfl`** files directly by decoding them using **`blackbox_decode`** <a href="https://github.com/betaflight/blackbox-tools" target="blank">(Betaflight/Cleanflight Blackbox Tools)</a>, which is conveniently packaged within the PIDtoolbox download (earlier versions required users to convert **`.bbl`** or **`.bfl`** files into **`.csv`** files). Just place your **`.bbl`** or **`.bfl`** files right in the main folder where the **`PIDtoolbox`** and **`blackbox_decode`** program files are already located. As stated earlier, the contents of this folder should not be moved. Start the program, select the file(s) you wish to load by clicking the **`select file`** button, then click **`load+run`**. NOTE: the Mac version does not show a "splash screen" when you run the program (an issue with Matlab for Mac), so it may seem like nothing is happening, but please be patient while it to loads.
+
+*Linux users:* 
+Navigate to the folder where PIDToolbox was installed (default is **'/usr/PIDtoolbox/application/'** )
+If running via the terminal, execute **'./run_PIDtoolbox.sh'**. Double clicking **'./run_PIDtoolbox.sh'** in the 'main' folder should also work, unless you installed the runtime somewhere else than the default path, in which case you must provide the path as an argument:	e.g. **'[[./run_PIDtoolbox.sh]] /opt/matlab/matlab_runtime/v93'**.
 
 **(ii)** It is recommended to log at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. It is not recommended to log higher than 4k. It'll run, but much slower.
 
