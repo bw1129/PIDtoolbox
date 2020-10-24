@@ -17,59 +17,66 @@ if ~isempty(filenameA) || ~isempty(filenameB)
     set(PTdisp,'color',bgcolor)
     prop_max_screen=(max([PTdisp.Position(3) PTdisp.Position(4)]));
     fontsz5=round(screensz_multiplier*prop_max_screen);
-    columnWidth=55*round(screensz_multiplier*prop_max_screen);
 
+    setupMap = containers.Map;
     if ~isempty(filenameA)
         if size(dataA.SetupInfo,2)>1
-            str=strings(size(dataA.SetupInfo,1),1);
-            str(:)=':'; str2=strcat(dataA.SetupInfo(:,1), char(str));
-            setupA=strcat(str2, string(dataA.SetupInfo(:,2)));
+            for i = 1:size(dataA.SetupInfo,1)
+                vals = strings(1,2);
+                vals(1,1) = dataA.SetupInfo(i,2);
+                setupMap(dataA.SetupInfo(i,1))=vals;
+            end
         else
-            setupA=dataA.SetupInfo;
+            vals = strings(1,2);
+            vals(1,1) = dataA.SetupInfo;
+            setupMap("setup")=vals;
         end
     end
     if ~isempty(filenameB)
         if size(dataB.SetupInfo,2)>1
-            str=strings(size(dataB.SetupInfo,1),1);
-            str(:)=':'; str2=strcat(dataB.SetupInfo(:,1), char(str));
-            setupB=strcat(str2, string(dataB.SetupInfo(:,2)));
+            for i = 1:size(dataB.SetupInfo,1)
+                if isKey(setupMap, dataB.SetupInfo(i,1))
+                    vals = setupMap(dataB.SetupInfo(i,1));
+                else
+                    vals = strings(1,2);
+                end
+                vals(1,2) = dataB.SetupInfo(i,2);
+                setupMap(dataB.SetupInfo(i,1))=vals;
+            end
         else
-            setupB=dataB.SetupInfo;
+            if isKey(setupMap, "setup")
+                vals = setupMap("setup");
+            else
+                vals = strings(1,2);
+            end
+            vals(1,2) = dataB.SetupInfo;
+            setupMap("setup")=vals;
         end
     end
 
-    if ~isempty(filenameA) & ~isempty(filenameB)  
-        if length(setupA)==length(setupB)      
-            t = uitable('ColumnName',{filenameA; filenameB},'ColumnWidth',{columnWidth columnWidth},'ColumnFormat',{'char' 'char'},'Data',[cellstr(char(setupA)) cellstr(char(setupB))]);
-            set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
-        end
-        if length(setupA)>length(setupB)  
-            clear btmp
-            btmp = strings(size(setupA)); 
-            btmp(1:length(setupB),:)=setupB;
-            t = uitable('ColumnName',{filenameA; filenameB},'ColumnWidth',{columnWidth columnWidth},'ColumnFormat',{'char' 'char'},'Data',[cellstr(char(setupA)) cellstr(char(btmp))]);
-            set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
-        end
-        if length(setupB)>length(setupA)  
-            clear btmp
-            btmp = strings(size(setupB)); 
-            btmp(1:length(setupA),:)=setupA;
-            t = uitable('ColumnName',{filenameA; filenameB},'ColumnWidth',{columnWidth columnWidth},'ColumnFormat',{'char' 'char'},'Data',[cellstr(char(btmp)) cellstr(string(setupB))]);
-            set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
+    setupKeys = keys(setupMap);
+    setupMapSize = size(setupKeys,2);
+    tabledata = strings(setupMapSize, 3);
+    for k = 1:setupMapSize
+        setupKey = char(setupKeys(k));
+        setupVals = setupMap(setupKey);
+        val1 = setupVals(1,1);
+        val2 = setupVals(1,2);
+        if ((~isempty(filenameA)) && (~isempty(filenameB)) && (val1 ~= val2))
+            tabledata(k,1) = "<html><b>" + setupKey + "</b></html>";
+            tabledata(k,2) = "<html><b>" + val1 + "</b></html>";
+            tabledata(k,3) = "<html><b>" + val2 + "</b></html>";
+        else
+            tabledata(k,1) = setupKey;
+            tabledata(k,2) = val1 + " ";
+            tabledata(k,3) = val2 + " ";
         end
     end
-    if ~isempty(filenameA) & isempty(filenameB)
-          t = uitable('ColumnWidth',{columnWidth},'ColumnFormat',{'char'},'Data',[cellstr(char(setupA))]);
-          set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
-    end
-    if isempty(filenameA) & ~isempty(filenameB)
-          t = uitable('ColumnWidth',{columnWidth},'ColumnFormat',{'char'},'Data',[cellstr(char(setupB))]);
-          set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
-    end
+    t = uitable('ColumnName',{"Parameter"; filenameA; filenameB},'ColumnWidth',{'auto' 'auto' 'auto'},'ColumnFormat',{'char' 'char' 'char'},'Data',[cellstr(char(tabledata(:,1))) cellstr(char(tabledata(:,2))) cellstr(char(tabledata(:,3)))] );
+    set(t,'units','normalized','OuterPosition',[.05 .05 .9 .9],'FontSize',fontsz5)
+    
 
 else
     errordlg('Please select file(s) then click ''load+run''', 'Error, no data');
     pause(2);
 end
-
-    
