@@ -7,17 +7,14 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
     
-if ~isempty(filenameA) || ~isempty(filenameB)
+if ~isempty(fnameMaster)
     
 PTtunefig=figure(4);
 set(PTtunefig, 'units','normalized','outerposition',[.1 .1 .75 .8])
-PTtunefig.NumberTitle='off';
+PTtunefig.NumberTitle='on';
 PTtunefig.Name= ['PIDtoolbox (' PtbVersion ') - Step Response Tool'];
 PTtunefig.InvertHardcopy='off';
 set(PTtunefig,'color',bgcolor)
-
-prop_max_screen=(max([PTtunefig.Position(3) PTtunefig.Position(4)]));
-fontsz4=round(screensz_multiplier*prop_max_screen);
 
 updateStep=0;
 
@@ -27,67 +24,66 @@ TooltipString_minRate=['Input the minimum rate of rotation for calculating the s
     newline, 'Really low values may yield more noisy contributions to the data, whereas higher values limit the total data used.',...
     newline, 'The default of 40deg/s should be sufficient in most cases, but if N is low, try setting this to lower'];
 TooltipString_maxRate=['Input the maximum rate of rotation for for calculating the step response (upper bound must be greater than lower bound).',...
-    newline, 'This also marks the lower bound for step resp plots associated with the ''> upper (deg/s)'' selection.',...
+    newline, 'This also marks the lower bound for step resp plots associated with the ''snap maneuvers'' selection.',...
     newline, 'The default of 500deg/s is sufficient in most cases'];
-TooltipString_FastStepResp=['Plots the step response associated with snap maneuvers (> upper (deg/s) setting), whose lower cutoff is defined by upper (deg/s) dropdown.',...
-    newline, 'Note: this requires that the log contains maneuvers > the selected upper (deg/s), else the plot is left blank']; 
-TooltipString_subsample=['Choose degree of subsampling. If N is small and the step resp looks very noisy, it is useful to select med-high to high subsampling.',...
-    newline  'Warning, selecting higher subsampling will typically result in slower processing']; 
+TooltipString_FastStepResp=['Plots the step response associated with snap maneuvers, whose lower cutoff is defined by upper deg/s dropdown.',...
+    newline, 'Note: this requires that the log contains maneuvers > the selected upper deg/s, else the plot is left blank']; 
+TooltipString_fileListWindowStep=['List of files available. Click to select which files to run']; 
+TooltipString_clearPlot=['Clears lines from all subplots']; 
 
-TooltipString_minRatetxt=['Lower bound in degs/s'];
-TooltipString_maxRatetxt=['Upper bound in degs/s'];
+fcnt = 0;
 
 clear posInfo.TparamsPos
-cols=[0.1 0.55];
-rows=[0.66 0.38 0.1];
+cols=[0.05 0.55];
+rows=[0.69 0.395 0.1];
 k=0;
 for c=1:2
     for r=1:3
         k=k+1;
-        posInfo.TparamsPos(k,:)=[cols(c) rows(r) 0.39 0.24];
+        posInfo.TparamsPos(k,:)=[cols(c) rows(r) 0.48 0.26];
     end
 end
 
-posInfo.run4=[.09 .94 .06 .04];
-posInfo.saveFig4=[.16 .94 .06 .04];
-posInfo.subsampFactor=[.23 .94 .06 .04];
-posInfo.minDegMovetxt=[.29 .965 .08 .03];
-posInfo.minDegMove=[.30 .94 .06 .03];
-posInfo.maxDegMovetxt=[.36 .965 .08 .03];
-posInfo.maxDegMove=[.37 .94 .06 .03];
-posInfo.checkboxrateHigh=[.44 .94 .09 .04];
-
+verticalOffset = 0.03;
+posInfo.fileListWindowStep=[.898 .64+verticalOffset .088 .22];
+posInfo.run4=[.9 .60+verticalOffset .041 .04];
+posInfo.clearPlots=[.944 .60+verticalOffset .041 .04];
+posInfo.saveFig4=[.9 .555+verticalOffset .085 .04];
+posInfo.linewidth4=[.9 .94 .07 .026];
  
-tuneCrtlpanel = uipanel('Title','','FontSize',fontsz4,...
+tuneCrtlpanel = uipanel('Title','select files (max 10)','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.085 .93 .45 .06]);
-          
-guiHandlesTune.run4 = uicontrol(PTtunefig,'string','Run','fontsize',fontsz4,'TooltipString',[TooltipString_steprun],'units','normalized','outerposition',[posInfo.run4],...
+              'Position',[.89 .515+verticalOffset .105 .37]);
+        
+% guiHandlesTune.linewidth4 = uicontrol(PTtunefig,'Style','popupmenu','string',{'line width 1','line width 2','line width 3','line width 4','line width 5'},...
+% 'fontsize',fontsz,'units','normalized','outerposition', [posInfo.linewidth4],'callback','@selection; PTtuningParams;');
+% guiHandlesTune.linewidth4.Value = 3;
+
+guiHandlesTune.run4 = uicontrol(PTtunefig,'string','Run','fontsize',fontsz,'TooltipString',[TooltipString_steprun],'units','normalized','outerposition',[posInfo.run4],...
     'callback','PTtuningParams;'); 
-guiHandlesTune.run4.BackgroundColor=[.3 .9 .3];
+guiHandlesTune.run4.BackgroundColor=[colRun];
 
-guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','Save Fig','fontsize',fontsz4,'TooltipString',[TooltipString_saveFig],'units','normalized','outerposition',[posInfo.saveFig4],...
+guiHandlesTune.fileListWindowStep = uicontrol(PTtunefig,'Style','listbox','string',[fnameMaster],'max',10,'min',1,...
+    'fontsize',fontsz,'TooltipString', [TooltipString_fileListWindowStep],'units','normalized','outerposition', [posInfo.fileListWindowStep],'callback','@selection2;');
+guiHandlesTune.fileListWindowStep.Value=1;
+
+guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','Save Fig','fontsize',fontsz,'TooltipString',[TooltipString_saveFig],'units','normalized','outerposition',[posInfo.saveFig4],...
     'callback','guiHandlesTune.saveFig4.FontWeight=''bold'';PTsaveFig; guiHandlesTune.saveFig4.FontWeight=''normal'';'); 
-guiHandlesTune.saveFig4.BackgroundColor=[ .8 .8 .8];
+guiHandlesTune.saveFig4.BackgroundColor=[ saveCol];
 
-guiHandlesTune.subsampFactor = uicontrol(PTtunefig,'Style','popupmenu','string',{'subsampling low (fastest | less reliable)'; 'subsampling med-low'; 'subsampling medium'; 'subsampling med-high';  'subsampling high (slowest | most reliable)';},...
-    'fontsize',fontsz4,'TooltipString', [TooltipString_subsample],'units','normalized','outerposition', [posInfo.subsampFactor],'callback','@selection2;');
-guiHandlesTune.subsampFactor.Value=3;
+guiHandlesTune.clearPlots = uicontrol(PTtunefig,'string','Reset','fontsize',fontsz,'TooltipString',[TooltipString_clearPlot],'units','normalized','outerposition',[posInfo.clearPlots],...
+    'callback','guiHandlesTune.clearPlots.Value=1; guiHandlesTune.clearPlots.FontWeight=''bold''; fcnt = 0; PTtuningParams; guiHandlesTune.clearPlots.Value=0; guiHandlesTune.clearPlots.FontWeight=''normal'';'); 
+guiHandlesTune.clearPlots.BackgroundColor=[cautionCol];
 
-guiHandlesTune.checkboxrateHigh =uicontrol(PTtunefig,'Style','checkbox','String','> upper (deg/s)','fontsize',fontsz4,'TooltipString', [TooltipString_FastStepResp],...
-    'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.checkboxrateHigh],'callback','if (~isempty(filenameA) | ~isempty(filenameB)), end; updateStep=1;PTtuningParams;');
+posInfo.maxYStepTxt = [.895 .55 .06 .025];
+posInfo.maxYStepInput = [.94 .551 .025 .025];
+guiHandles.maxYStepTxt = uicontrol(PTtunefig,'style','text','string','Y max ','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.maxYStepTxt]);
+guiHandles.maxYStepInput = uicontrol(PTtunefig,'style','edit','string','1.75','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','outerposition',[posInfo.maxYStepInput],...
+     'callback','@textinput_call3; ');
 
-guiHandlesTune.minDegMove_text = uicontrol(PTtunefig,'style','text','string','lower (deg/s)','fontsize',fontsz4,'TooltipString', [TooltipString_minRatetxt],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.minDegMovetxt]);
-guiHandlesTune.minDegMove = uicontrol(PTtunefig,'style','edit','string',int2str(minDegMove),'fontsize',fontsz4,'TooltipString', [TooltipString_minRate],'units','normalized','outerposition',[posInfo.minDegMove],...
-     'callback','@textinput_call3;minDegMove=str2num(guiHandlesTune.minDegMove.String); if (minDegMove<1), minDegMove=1; PTtuneUIcontrol; end');
 
-guiHandlesTune.maxDegMove_text = uicontrol(PTtunefig,'style','text','string','upper (deg/s)','fontsize',fontsz4,'TooltipString', [TooltipString_maxRatetxt],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.maxDegMovetxt]);
-guiHandlesTune.maxDegMove = uicontrol(PTtunefig,'style','edit','string',int2str(maxDegMove),'fontsize',fontsz4,'TooltipString', [TooltipString_maxRate],'units','normalized','outerposition',[posInfo.maxDegMove],...
-     'callback','@textinput_call3;maxDegMove=str2num(guiHandlesTune.maxDegMove.String); if (maxDegMove<minDegMove), maxDegMove=minDegMove+1; PTtuneUIcontrol; end');
- 
 else
-    errordlg('Please select file(s) then click ''load+run''', 'Error, no data');
-    pause(2);
+    warndlg('Please select file(s)');
 end
 
 % functions

@@ -14,6 +14,9 @@ function [output_txt] = PTdatatip(obj,event_obj)
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 %
+
+global logviewerYscale
+
 fontsz2=16;
 try
     a=event_obj.Target.Type;  
@@ -29,12 +32,12 @@ if ~strcmp(a,'image') % ugly workaround
         else
             dgts=6;
         end   
-        if pos(2) > -1200
+        if pos(2) > -logviewerYscale
         output_txt = {['sec: ',num2str(pos(1),dgts)],...
             ['deg/s: ',num2str(pos(2),4)]};
         else
             output_txt = {['sec: ',num2str(pos(1),dgts)],...
-            ['%: ',num2str(((pos(2)+2400) / 12),4)]};
+            ['%: ',num2str(((pos(2)+(logviewerYscale*2)) / (logviewerYscale/100)),4)]};
         end
             
   
@@ -72,5 +75,4 @@ if ~strcmp(a,'image') % ugly workaround
         end     
         set(findall(gcf,'type','hggroup'),'FontSize',fontsz2,'FontWeight', 'bold')
 end
-
  

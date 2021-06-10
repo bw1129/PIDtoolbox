@@ -8,40 +8,11 @@
 % ----------------------------------------------------------------------------------
 
 %% create saveDirectory
-if ~isempty(filenameA) && ~isempty(filenameB)
-    saveDirectory=[filenameA(1:end-4) '-' filenameB(1:end-4)];
-end
-if ~isempty(filenameA) && isempty(filenameB)
-    saveDirectory=[filenameA(1:end-4)];
-end
-if ~isempty(filenameB) && isempty(filenameA)
-    saveDirectory=[filenameB(1:end-4)];
-end
-if ~exist(saveDirectory,'dir')
-    if ~isempty(strfind(saveDirectory,'.bbl')) 
-        s=strfind(saveDirectory,'.bbl');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-    end
-     if ~isempty(strfind(saveDirectory,'.bfl')) 
-        s=strfind(saveDirectory,'.bfl');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-     end
-    if ~isempty(strfind(saveDirectory,'.BBL'))  
-        s=strfind(saveDirectory,'.BBL');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-    end
-     if ~isempty(strfind(saveDirectory,'.BFL'))
-        s=strfind(saveDirectory,'.BFL');
-        for i=length(s):-1:1
-            saveDirectory(s(i):s(i)+3)=[];
-        end       
-    end
+if ~isempty(fnameMaster) 
+    saveDirectory='PTB_FIGS';
+    saveDirectory = [saveDirectory '_' fnameMaster{1}(1:end-4) 'xx_' currentDate];
+ 
+if ~isfolder(saveDirectory)
    mkdir(saveDirectory)
 end
 
@@ -62,4 +33,6 @@ print(figname,'-dpng','-r200')
 set(gcf, 'pointer', 'arrow')
 cd(filepath)
 
-
+else
+     warndlg('Please select file(s)');
+end

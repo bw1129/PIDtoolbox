@@ -8,26 +8,27 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
     
-PtbVersion='v0.391';
+clear
+
+PtbVersion='v0.41';
     
-% FirmwareCodes
-BF=1;
-INAV=2;
-
-
-FirmwareCode_A=[];
-FirmwareCode_B=[];
-
 executableDir = pwd;
-addpath(executableDir)
+%addpath(executableDir)
 
-try
-    fid = fopen('logfileDir.txt');
-    logfileDir = fscanf(fid,'%s');
-    fclose(fid);   
-catch
+GYRO_SCALED=6;
+
+
+t = now;
+currentDate = char(datetime(t,'ConvertFrom','datenum'));
+currentDate = currentDate(1:strfind(currentDate,' ')-1);
+
+% try
+%     fid = fopen('logfileDir.txt');
+%     logfileDir = fscanf(fid,'%s');
+%     fclose(fid);   
+% catch
     logfileDir=[];
-end
+% end
 
 %%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
@@ -35,10 +36,9 @@ PTfig.InvertHardcopy='off';
 bgcolor=[.95 .95 .95];
 set(PTfig,'color',bgcolor);
 
-wikipage='https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
+wikipage = 'https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
 
-if ~exist('filenameA','var'), filenameA=[]; end
-if ~exist('filenameB','var'), filenameB=[]; end
+if ~exist('filenameA','var'), filenameA={}; end
 
 expandON=0;
 use_randsamp=0;
@@ -46,83 +46,82 @@ smp_sze=100;
 choose_epoch=0;
 epoch1_A=[];
 epoch2_A=[];
-epoch1_B=[];
-epoch2_B=[];
+tIND = [];
+maxY =  500;
 updateSpec=0;
 A_debugmode=0;%default to gyro_scaled
-B_debugmode=0;
 filepathA=[];
-filepathB=[];
-filenameA=[];
-filenameB=[];
+filenameA={};
 
 hexpand1=[];
 hexpand2=[];
 hexpand3=[];
-hexpand4=[];
-hexpand5=[];
-hexpand6=[];
 
 errmsg=[];
 
 plotall_flag=-1;
 
-% for step resp defaults
-minDegMove=40;
-maxDegMove=500;
+colorA=[.93 .55 .3];
+colorB=[.3 .7 .95];
+colorC=[1 .2 .2];
+colorD=[.1 .7 .4];
 
-colorA=[.93 .5 .3];
-colorB=[.3 .65 .95];
-
+colRun = [.3 .9 .4];
+saveCol = [.8 .8 .8];
+setUpCol = [.95 .95 .95];
+cautionCol = [0.9500    0.9500    0.1900];
 %use_phsCorrErr=0;
 flightSpec=0;
 screensz = get(0,'ScreenSize');
+screenRatio = screensz(3)/screensz(4);
+if screenRatio > 1.78 % 16:9
+    screensz(3) = round(1.78 * screensz(4));
+end
 
 %set(PTfig, 'Position', [10, 10, screensz(3)*.5, screensz(4)*.5]);
 set(PTfig, 'units','normalized','outerposition',[.1 .1 .75 .8])
 PTfig.NumberTitle='off';
 PTfig.Name= ['PIDtoolbox (' PtbVersion ') - Log Viewer'];
 
-pause(.2)% need to wait for figure to open before extracting screen values
+pause(.1)% need to wait for figure to open before extracting screen values
 
-screensz_multiplier = sqrt(screensz(3)^2+screensz(4)^2) * .0064;
-prop_max_screen=(max([PTfig.Position(3) PTfig.Position(4)]));
-fontsz=(screensz_multiplier*prop_max_screen);
+screensz_multiplier = sqrt(screensz(4)^2) * .016; % based on vertical dimension only, to deal with for ultrawide monitors
+prop_max_screen = PTfig.Position(4);
+fontsz = (screensz_multiplier*prop_max_screen);
 
 controlpanel = uipanel('Title','Control Panel','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
-             'Position',[.89 .265 .105 .655]); 
+             'Position',[.89 .53 .105 .39]); 
 
          
-posInfo.fnameAText = [.89 .955 .11 .04];
-posInfo.fnameBText = [.89 .92 .11 .04];
-posInfo.fileA=[.9 .85 .085 .04];
-posInfo.fileB=[.9 .805 .085 .04];
-posInfo.runAll=[.9 .76 .085 .04]; 
+posInfo.fileA=[.9 .855 .042 .04];
+posInfo.clr=[.945 .855 .042 .04];
+posInfo.fnameAText = [.899 .805 .09 .04];
 
-posInfo.Epoch1_A_text = [.895 .72 .05 .03];
-posInfo.Epoch1_A_Input = [.901 .68 .04 .04];
-posInfo.Epoch2_A_text = [.94 .72 .05 .03];
-posInfo.Epoch2_A_Input = [.945 .68 .04 .04]; 
+posInfo.Epoch1_A_text = [.895 .785 .05 .03];
+posInfo.Epoch1_A_Input = [.905 .765 .03 .025];
+posInfo.Epoch2_A_text = [.94 .785 .05 .03];
+posInfo.Epoch2_A_Input = [.95 .765 .03 .025]; 
+LogStDefault = 2;% default ignore first 2 seconds of logfile
+LogNdDefault = 1;% default ignore last 1 second of logfile
 
-posInfo.Epoch1_B_text = [.895 .65 .05 .03];
-posInfo.Epoch1_B_Input =[.901 .61 .04 .04];
-posInfo.Epoch2_B_text = [.94 .65 .05 .03];
-posInfo.Epoch2_B_Input = [.945 .61 .04 .04];
-
-posInfo.spectrogramButton=[.9 .555 .085 .04];
-posInfo.TuningButton=[.9 .51 .085 .04];
-posInfo.PIDerrButton=[.9 .465 .085 .04];
-posInfo.flightStats=[.9 .420 .085 .04];
-posInfo.DispInfoButton=[.9 .375 .085 .04];
-posInfo.saveFig=[.9 .330 .085 .04];
-posInfo.wiki=[.9 .285 .085 .04];
-
-posInfo.feelingLucky=[.9 .225 .085 .04]; 
+posInfo.spectrogramButton=[.9 .71 .085 .04];
+posInfo.TuningButton=[.9 .665 .085 .04];
+posInfo.DispInfoButton=[.9 .62 .085 .04];
+posInfo.saveFig=[.9 .575 .085 .04];
+posInfo.wiki=[.9 .543 .042 .025];
+posInfo.donate=[.944 .543 .042 .025];
 
 
-% posInfo.AlooptimeText  = [.8 .43 .18 .04];
-% posInfo.BlooptimeText = [.8 .4 .18 .04];
+fnameMaster = {}; 
+fcnt = 0;
+
+NmultiLineCols=10;
+cmap=flipud(colormap(jet));
+multiLineCols=(downsample(cmap,ceil(length(cmap)/NmultiLineCols)));
+for i = 4 : 7
+    multiLineCols(i,:) = multiLineCols(i,:) * .76;
+end
 
 % ColorSet=colormap(jet);%hsv jet gray lines colorcube
 % j=[1     8    17    20    23    27   45    50    58    64];
@@ -131,18 +130,17 @@ ColorSet=[.6 .6 .6;..., % gray - Gyro raw
   0  .7  0;..., % green - Pterm
  .8  .65 .1;..., % yellow - I term
  .3  .7  .9;..., % light blue - Dterm raw
- .1  .2  .8;..., % dark blue -Dterm Filt
  .6  .3  .3;..., % brown - Fterm 
  .8  0  .2;..., % dark red
- .9  .2  .9;..., % light purple
- .6 0 1;...,    % dark purple
+ 1  .2  .9;..., % light purple
+ .4 0 .9;...,    % dark purple
+ 0 0 0;..., % throttle
  .9 0 0;..., %M1 
  1  .6 0;..., %M2
 0  0 .9;..., %M3
 .1  1  .8;..., %M4
- .5 .5 .5;..., % throttle
  0 0 0]; % all
-j=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16];
+j=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
 
 k=1;
 for i=1:length(j)
@@ -153,80 +151,59 @@ end
 %%% tooltips
 TooltipString_files=['Select the .BBL or .BFL file you wish to analyze. ' , newline,...
     'Warning: blackbox_decode must be in the same folder as the selected log file!' , newline,...
-    'It usually does not matter where the PIDtoolbox program file is located.' newline,...
-    'If problem persists, it usually means the log file is missing header info,' newline,... 
-    'because of a corrupted file and/or SD card issue.'];
+    'It usually does not matter where the PIDtoolbox program file is located.'];
 
-TooltipString_loadRun=['Load and run selected files. '];
-TooltipString_feelingLucky=['Load and run selected files, then plot and save the important stuff! '];
-TooltipString_Epochs=['Input the desired start and end points (in seconds) of the log file' , newline, 'Note: the selected time window denotes the data used for all other analyses.' , newline, 'The shaded regions indicate ignored data.'];
+TooltipString_loadRun=['Select one or more files to analyze. '];
+TooltipString_Epochs=['Input the desired start and end points (in seconds) of the selected log file' , newline, 'Note: the selected time window denotes the data used for all other analyses.' , newline, 'The shaded regions indicate ignored data.'];
 TooltipString_spec=['Opens spectral analysis tool in new window'];
-TooltipString_err=['Opens PID error tool in new window'];
 TooltipString_step=['Opens step response tool in new window'];
 TooltipString_setup=['Displays detailed setup information in new window'];
 TooltipString_saveFig=['Saves current figure', newline,'Note: Clicking the ''Save fig'' button for the first time creates a folder using the log file names'];
-TooltipString_flightStats=['Plots flight statistics in new window' ];
 TooltipString_wiki=['Link to the PIDtoolbox wiki in Github'];
-TooltipString_refresh=['Refreshes fonts and button sizes after change in window size'];
 %%%
-guiHandles.fileA = uicontrol(PTfig,'string','Select File [A]','fontsize',fontsz,'TooltipString', [TooltipString_files], 'units','normalized','outerposition',[posInfo.fileA],...
-     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT'' }); if filepathA==0, filepathA=[]; filenameA=[]; end, filenameAtmp=[];'); 
-guiHandles.fileA.BackgroundColor=colorA;
 
-guiHandles.fileB = uicontrol(PTfig,'string','Select File [B]','fontsize',fontsz,'TooltipString', [TooltipString_files],'units','normalized','outerposition',[posInfo.fileB],...
-     'callback','try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end;[filenameB, filepathB] = uigetfile({''*.BBL;*.BFL;*.TXT'' }); if filepathB==0, filepathB=[]; filenameB=[]; end, filenameBtmp=[];'); 
-guiHandles.fileB.BackgroundColor=colorB; 
-guiHandles.runAll = uicontrol(PTfig,'string','Load+Run','fontsize',fontsz,'TooltipString', [TooltipString_loadRun],'units','normalized','outerposition',[posInfo.runAll],...
-    'callback','guiHandles.runAll.FontWeight=''bold'';PTload;PTprocess;PTviewerUIcontrol; PTplotLogViewer; guiHandles.runAll.FontWeight=''normal'';'); 
-guiHandles.runAll.BackgroundColor=[.3 .9 .3];
+guiHandles.fileA = uicontrol(PTfig,'string','Select ','fontsize',fontsz,'TooltipString', [TooltipString_loadRun], 'units','normalized','outerposition',[posInfo.fileA],...
+     'callback','guiHandles.fileA.FontWeight=''Bold''; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT''}, ''MultiSelect'',''on''); if isstr(filenameA), filenameA={filenameA}; end; if iscell(filenameA), PTload; PTviewerUIcontrol; PTplotLogViewer; end'); 
+guiHandles.fileA.BackgroundColor=[colRun];
 
-% guiHandles.feelingLucky = uicontrol(PTfig,'string','Feeling Lucky','fontsize',fontsz,'TooltipString', [TooltipString_feelingLucky],'units','normalized','outerposition',[posInfo.feelingLucky],...
-%     'callback',['guiHandles.feelingLucky.FontWeight=''bold'';PTspecUIcontrol;',...
-%     'guiHandlesSpec.SpecSelect{1}.Value=3; guiHandlesSpec.SpecSelect{2}.Value=2; guiHandlesSpec.SpecSelect{3}.Value=6; guiHandlesSpec.SpecSelect{4}.Value=7; PTplotSpec; PTtuneUIcontrol; PTtuningParams; ',...
-%     'guiHandles.feelingLucky.FontWeight=''normal'';']);
-% guiHandles.feelingLucky.BackgroundColor=[.7 .9 .7];
-  
-guiHandles.Epoch1_A_text = uicontrol(PTfig,'style','text','string','[A] st(s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_A_text]);
-guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string',int2str(epoch1_A),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch1_A_Input],...
-     'callback','@textinput_call; epoch1_A=str2num(guiHandles.Epoch1_A_Input.String);PTprocess;PTplotLogViewer; ');
-guiHandles.Epoch2_A_text = uicontrol(PTfig,'style','text','string','[A] end(s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch2_A_text]);
-guiHandles.Epoch2_A_Input = uicontrol(PTfig,'style','edit','string',int2str(epoch2_A),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch2_A_Input],...
-     'callback','@textinput_call;epoch2_A=str2num(guiHandles.Epoch2_A_Input.String);PTprocess;PTplotLogViewer; ');
-guiHandles.Epoch1_B_text = uicontrol(PTfig,'style','text','string','[B] st(s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_B_text]);
-guiHandles.Epoch1_B_Input = uicontrol(PTfig,'style','edit','string',int2str(epoch1_B),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch1_B_Input],...
-     'callback','@textinput_call; epoch1_B=str2num(guiHandles.Epoch1_B_Input.String);PTprocess;PTplotLogViewer;  ');
-guiHandles.Epoch2_B_text = uicontrol(PTfig,'style','text','string','[B] end(s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch2_B_text]);
-guiHandles.Epoch2_B_Input = uicontrol(PTfig,'style','edit','string',int2str(epoch2_B),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch2_B_Input],...
-     'callback','@textinput_call; epoch2_B=str2num(guiHandles.Epoch2_B_Input.String);PTprocess;PTplotLogViewer; ');
+guiHandles.clr = uicontrol(PTfig,'string','Reset','fontsize',fontsz,'TooltipString', ['clear all data'], 'units','normalized','outerposition',[posInfo.clr],...
+     'callback','clear T dataA tta A_lograte epoch1_A epoch2_A SetupInfo rollPIDF pitchPIDF yawPIDF; fcnt = 0; filenameA={};fnameMaster = {}; try, subplot(''position'',posInfo.linepos1);cla; subplot(''position'',posInfo.linepos2);cla; subplot(''position'',posInfo.linepos3); cla; catch, end; guiHandles.FileNum.String='' ''; guiHandles.Epoch1_A_Input.String='' ''; guiHandles.Epoch2_A_Input.String='' '';'); 
+guiHandles.clr.BackgroundColor=[cautionCol];
+
+
+guiHandles.Epoch1_A_text = uicontrol(PTfig,'style','text','string','start (s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_A_text]);
+guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string','','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch1_A_Input]);
+guiHandles.Epoch2_A_text = uicontrol(PTfig,'style','text','string','end (s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch2_A_text]);
+guiHandles.Epoch2_A_Input = uicontrol(PTfig,'style','edit','string','','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch2_A_Input]);
+
+guiHandles.FileNum = uicontrol(PTfig,'Style','popupmenu','string',[filenameA], 'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.fnameAText]);
+guiHandles.FileNum.String=' ';
 
 guiHandles.spectrogramButton = uicontrol(PTfig,'string','Spectral Analyzer','fontsize',fontsz,'TooltipString', [TooltipString_spec],'units','normalized','outerposition',[posInfo.spectrogramButton],...
     'callback','PTspecUIcontrol;');
-guiHandles.spectrogramButton.BackgroundColor=[ .8 .8 .8];
-guiHandles.PIDerrButton = uicontrol(PTfig,'string','PID Error Tool','fontsize',fontsz,'TooltipString', [TooltipString_err],'units','normalized','outerposition',[posInfo.PIDerrButton],...
-     'callback','PTerrUIcontrol;PTplotPIDerror'); 
-guiHandles.PIDerrButton.BackgroundColor=[ .8 .8 .8];
+guiHandles.spectrogramButton.BackgroundColor=[colorA];
+
 guiHandles.TuningButton = uicontrol(PTfig,'string','Step Resp Tool','fontsize',fontsz,'TooltipString', [TooltipString_step],'units','normalized','outerposition',[posInfo.TuningButton],...
     'callback','PTtuneUIcontrol');
-guiHandles.TuningButton.BackgroundColor=[ .8 .8 .8];
+guiHandles.TuningButton.BackgroundColor=[colorB];
 
-
-guiHandles.flightStats = uicontrol(PTfig,'string','Flight Stats','fontsize',fontsz, 'TooltipString',[TooltipString_flightStats], 'units','normalized','outerposition',[posInfo.flightStats],...
-    'callback','guiHandles.flightStats.FontWeight=''bold'';PTstatsUIcontrol; PTplotStats; guiHandles.flightStats.FontWeight=''normal'';'); 
-guiHandles.flightStats.BackgroundColor=[ .8 .8 .8];
 
 guiHandles.DispInfoButton = uicontrol(PTfig,'string','Setup Info','fontsize',fontsz,'TooltipString', [TooltipString_setup],'units','normalized','outerposition',[posInfo.DispInfoButton],...
-    'callback','PTdispSetupInfo;');
-guiHandles.DispInfoButton.BackgroundColor=[ .8 .8 .8];
+    'callback','PTdispSetupInfoUIcontrol;PTdispSetupInfo;');
+guiHandles.DispInfoButton.BackgroundColor=[setUpCol];
 
 guiHandles.saveFig = uicontrol(PTfig,'string','Save Fig','fontsize',fontsz, 'TooltipString',[TooltipString_saveFig], 'units','normalized','outerposition',[posInfo.saveFig],...
     'callback','guiHandles.saveFig.FontWeight=''bold'';PTsaveFig; guiHandles.saveFig.FontWeight=''normal'';'); 
-guiHandles.saveFig.BackgroundColor=[ .8 .8 .8];
+guiHandles.saveFig.BackgroundColor=[saveCol];
 
 
-guiHandles.wiki = uicontrol(PTfig,'string','Wiki','fontsize',fontsz,'TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
-    'callback','try, system([''start chrome '' wikipage]), catch, web(wikipage), end'); 
-guiHandles.wiki.BackgroundColor=[1 1 .2];
+guiHandles.wiki = uicontrol(PTfig,'string','wiki','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
+    'callback','web(wikipage);'); 
+guiHandles.wiki.BackgroundColor=[cautionCol];
 
+guiHandles.donate = uicontrol(PTfig,'string','donate','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['If you''d like to donate to the PTB project.',newline 'this link takes you to my PayPal page.',newline 'Any contribution is greatly appreciated, Thanks!!! '],'units','normalized','outerposition',[posInfo.donate],...
+    'callback','web(''https://www.paypal.com/donate?business=EMCJRU9M7AKAA&currency_code=CAD'');'); 
+guiHandles.donate.BackgroundColor=[cautionCol];
 
 %% functions
 

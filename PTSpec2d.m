@@ -1,5 +1,5 @@
-function [freq amp2d] = PTSpec2d(Y, F)
-%% [freq amp2d] = PTSpec2d(Y, F) 
+function [Fs amp2d] = PTSpec2d(Y, F, psd)
+%% [freq amp2d] = PTSpec2d(Y, F, psd) 
 %   computes standard fft on input data Y. F is sample frequency in Hz.  
 
 % ----------------------------------------------------------------------------------
@@ -8,13 +8,17 @@ function [freq amp2d] = PTSpec2d(Y, F)
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
+N=length(Y);
 
-Y2 = fft(Y);
-L=length(Y);
-P2 = abs(Y2/L); % 'normalize' amplitude spectrum by length of signal
-P1 = P2(1:L/2+1);
-P1(2:end-1) = 2*P1(2:end-1);
-freq = (F*1000)*(0:(L/2))/L;
-amp2d=P1;
+if psd
+     [amp2d,Fs] = periodogram(Y, [], N-1,F*1000,'psd');
+else                  
+    Y2 = fft(Y);
+    P2 = abs(Y2/N); % 'normalize' amplitude spectrum by length of signal
+    P1 = P2(1:N/2+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    Fs = ((F*1000)*(0:(N/2))/N);
+    amp2d=P1;
+end
 
 end
