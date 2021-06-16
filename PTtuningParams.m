@@ -37,8 +37,8 @@ if ~guiHandlesTune.clearPlots.Value
     pause(.05);
     
     for f = guiHandlesTune.fileListWindowStep.Value     
-        fcnt = fcnt + 1;   
-        if fcnt <= 10
+        fcntSR = fcntSR + 1;   
+        if fcntSR <= 10
             for p=1:3   
                 cnt = cnt + 1;
                 try 
@@ -60,19 +60,19 @@ if ~guiHandlesTune.clearPlots.Value
 
                     hold on
                     h1=plot(tA,m);         
-                    set(h1, 'color',[multiLineCols(fcnt,:)],'linewidth', 3);
+                    set(h1, 'color',[multiLineCols(fcntSR,:)],'linewidth', guiHandles.linewidth.Value);
                     latencyHalfHeight=(find(m>.5,1) / A_lograte(f)) - 1;
                     peakresp=max(m);
                     peaktime=find(m == max(m));
 
                     eval(['PID=' ylab2{p} 'PIDF{f};'])  
                     if cnt <= 3, h=text(505, ymax, ['    P, I, D, Dm, F']);set(h,'fontsize',fontsz,'fontweight','bold'); end
-                    h=text(505, ymax-(fcnt*(ymax*.09)), [int2str(fcnt) ') ' PID '  (n=' int2str(size(stepresp_A{p},1)) ')  |  Peak = ' num2str(peakresp) ', Peak Time = ' num2str(peaktime) 'ms, Latency = ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz);  
-                    set(h, 'Color',[multiLineCols(fcnt,:)],'fontweight','bold')
+                    h=text(505, ymax-(fcntSR*(ymax*.09)), [int2str(fcntSR) ') ' PID '  (n=' int2str(size(stepresp_A{p},1)) ')  |  Peak = ' num2str(peakresp) ', Peak Time = ' num2str(peaktime) 'ms, Latency = ' num2str(latencyHalfHeight) 'ms']);set(h,'fontsize',fontsz);  
+                    set(h, 'Color',[multiLineCols(fcntSR,:)],'fontweight','bold')
                  else
                     if cnt <= 3, h=text(505, ymax, ['    P, I, D, Dm, F']);set(h,'fontsize',fontsz,'fontweight','bold'); end
-                    h=text(505, ymax-(fcnt*(ymax*.09)), [int2str(fcnt) ') insufficient data']); 
-                    set(h,'Color',[multiLineCols(fcnt,:)],'fontsize',fontsz, 'fontweight','bold')
+                    h=text(505, ymax-(fcntSR*(ymax*.09)), [int2str(fcntSR) ') insufficient data']); 
+                    set(h,'Color',[multiLineCols(fcntSR,:)],'fontsize',fontsz, 'fontweight','bold')
                 end
 
                 if cnt <= 3, set(gca,'fontsize',fontsz,'xminortick','on','yminortick','on','xtick',[0 100 200 300 400 500],'xticklabel',{'0' '100' '200' '300' '400' '500'},'ytick',[0 .25 .5 .75 1 1.25 1.5 1.75 2],'tickdir','out'); end
@@ -91,7 +91,7 @@ if ~guiHandlesTune.clearPlots.Value
                 axis([0 500 0 ymax])
                 grid on
             end    
-        elseif fcnt == 11
+        elseif fcntSR == 11
             warndlg('10 files maximum. Click reset.');
         end 
     end
@@ -104,7 +104,3 @@ else
     end
 end
     
-
-
-
-

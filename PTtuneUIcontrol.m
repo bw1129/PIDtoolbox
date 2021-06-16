@@ -31,7 +31,6 @@ TooltipString_FastStepResp=['Plots the step response associated with snap maneuv
 TooltipString_fileListWindowStep=['List of files available. Click to select which files to run']; 
 TooltipString_clearPlot=['Clears lines from all subplots']; 
 
-fcnt = 0;
 
 clear posInfo.TparamsPos
 cols=[0.05 0.55];
@@ -45,16 +44,18 @@ for c=1:2
 end
 
 verticalOffset = 0.03;
-posInfo.fileListWindowStep=[.898 .64+verticalOffset .088 .22];
-posInfo.run4=[.9 .60+verticalOffset .041 .04];
-posInfo.clearPlots=[.944 .60+verticalOffset .041 .04];
-posInfo.saveFig4=[.9 .555+verticalOffset .085 .04];
+posInfo.fileListWindowStep=[.898 .645+verticalOffset .088 .21];
+posInfo.run4=[.9 .60+verticalOffset .085 .04];
+posInfo.clearPlots=[.9 .555+verticalOffset .085 .04];
+posInfo.saveFig4=[.9 .51+verticalOffset .085 .04];
 posInfo.linewidth4=[.9 .94 .07 .026];
  
 tuneCrtlpanel = uipanel('Title','select files (max 10)','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.89 .515+verticalOffset .105 .37]);
+              'Position',[.89 .46+verticalOffset .105 .42]);
         
+fcntSR = 0;
+          
 % guiHandlesTune.linewidth4 = uicontrol(PTtunefig,'Style','popupmenu','string',{'line width 1','line width 2','line width 3','line width 4','line width 5'},...
 % 'fontsize',fontsz,'units','normalized','outerposition', [posInfo.linewidth4],'callback','@selection; PTtuningParams;');
 % guiHandlesTune.linewidth4.Value = 3;
@@ -72,19 +73,20 @@ guiHandlesTune.saveFig4 = uicontrol(PTtunefig,'string','Save Fig','fontsize',fon
 guiHandlesTune.saveFig4.BackgroundColor=[ saveCol];
 
 guiHandlesTune.clearPlots = uicontrol(PTtunefig,'string','Reset','fontsize',fontsz,'TooltipString',[TooltipString_clearPlot],'units','normalized','outerposition',[posInfo.clearPlots],...
-    'callback','guiHandlesTune.clearPlots.Value=1; guiHandlesTune.clearPlots.FontWeight=''bold''; fcnt = 0; PTtuningParams; guiHandlesTune.clearPlots.Value=0; guiHandlesTune.clearPlots.FontWeight=''normal'';'); 
+    'callback','guiHandlesTune.clearPlots.Value=1; guiHandlesTune.clearPlots.FontWeight=''bold''; fcntSR = 0; PTtuningParams; guiHandlesTune.clearPlots.Value=0; guiHandlesTune.clearPlots.FontWeight=''normal''; set(PTtunefig, ''pointer'', ''arrow'');'); 
 guiHandlesTune.clearPlots.BackgroundColor=[cautionCol];
 
-posInfo.maxYStepTxt = [.895 .55 .06 .025];
-posInfo.maxYStepInput = [.94 .551 .025 .025];
+posInfo.maxYStepTxt = [.895 .5 .06 .025];
+posInfo.maxYStepInput = [.94 .501 .025 .025];
 guiHandles.maxYStepTxt = uicontrol(PTtunefig,'style','text','string','Y max ','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.maxYStepTxt]);
 guiHandles.maxYStepInput = uicontrol(PTtunefig,'style','edit','string','1.75','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','outerposition',[posInfo.maxYStepInput],...
-     'callback','@textinput_call3; ');
-
+     'callback','@textinput_call3; guiHandlesTune.clearPlots.Value=1; guiHandlesTune.clearPlots.FontWeight=''bold''; fcntSR = 0;PTtuningParams; guiHandlesTune.clearPlots.Value=0; guiHandlesTune.clearPlots.FontWeight=''normal'' ;PTtuningParams;  ');
+ 
 
 else
     warndlg('Please select file(s)');
 end
+
 
 % functions
 function textinput_call3(src,eventdata)

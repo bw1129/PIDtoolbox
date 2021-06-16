@@ -36,7 +36,7 @@ end
 mainFname=filename;
 if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl') || strcmp(filename(end-3:end),'.txt') || strcmp(filename(end-3:end),'.TXT')          
     waitbar(.25,waitbarFid,['converting ' f ' to csv using BB-tools']);  
-    [status,result]=system(['./blackbox_decode ' filename]);  
+    [status,result]=system(['blackbox_decode.exe ' filename]);
     files=dir([filename(1:end-4) '*.csv']);
     
     % only choose files that don't have .bbl or .bfl extension
@@ -78,7 +78,7 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
         % delete files with < 1000kb - may need better work-around eventually
         x=size(files,1);
         m=1;
-        for k=1:x,     
+        for k=1:x,            
             if ((files(k).bytes)) < 1000 % delete if < 1000bytes
                 delete(files(k).name)
             else

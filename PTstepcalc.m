@@ -15,49 +15,57 @@ function [stepresponse, t] = PTstepcalc(SP, GY, lograte)
 
 minInput = 20;
 segment_length = (lograte*2000); % 2 sec segments
-wnd=(lograte*1000) * .5; % 500ms step response function, length will depend on lograte  
+wnd = (lograte*1000) * .5; % 500ms step response function, length will depend on lograte  
 StepRespDuration_ms = 500; % max dur of step resp in ms for plotting
-subsampleFactor = round(20 - log(length(SP)));
-if subsampleFactor < 1, subsampleFactor = 1; end
+t = 0 : 1/lograte : StepRespDuration_ms;% time in ms 
 
-segment_vector=1:round(segment_length/subsampleFactor):length(SP);
-NSegs=max(find((segment_vector+segment_length) < segment_vector(end)));
-if NSegs>0
-    SPseg=[]; GYseg=[];
-    j=0;
-    for i=1:NSegs
+fileDurSec = length(SP) / (lograte*1000);
+subsampleFactor = 1;
+switch subsampleFactor
+    case fileDurSec <= 20
+        subsampleFactor = 10;
+    case fileDurSec > 20 & fileDurSec <= 60
+        subsampleFactor = 7;
+    case fileDurSec > 60
+        subsampleFactor = 3;
+end
+      
+segment_vector = 1 : round(segment_length/subsampleFactor) : length(SP);
+NSegs = max(find((segment_vector+segment_length) < segment_vector(end)));
+if NSegs > 0
+    SPseg = []; GYseg = [];
+    j = 0;
+    for i = 1 : NSegs
         if max(abs(SP(segment_vector(i):segment_vector(i)+segment_length))) >= minInput 
             j=j+1;
-            SPseg(j,:)=SP(segment_vector(i):segment_vector(i)+segment_length);  
-            GYseg(j,:)=GY(segment_vector(i):segment_vector(i)+segment_length); 
+            SPseg(j,:) = SP(segment_vector(i):segment_vector(i)+segment_length);  
+            GYseg(j,:) = GY(segment_vector(i):segment_vector(i)+segment_length); 
         end
     end
 
+    padLength = 100;% 2^nextpow2(length(SPseg(i,:)));
     clear resp resp2 G H Hcon imp impf a b
-    j=0; rateHigh=0;
+    j=0; 
     if ~isempty(SPseg)
-        for i=1:size(SPseg,1)
-            
+        for i = 1 : size(SPseg,1)
             a = GYseg(i,:).*hann(length(GYseg(i,:)))';
             b = SPseg(i,:).*hann(length(SPseg(i,:)))';
-            padLength = 100% 2^nextpow2(length(GYseg(i,:)));
-            a = [zeros(1,padLength) a zeros(1,padLength)];
-            b = [zeros(1,padLength) b zeros(1,padLength)];
-            a = fft(a); 
-            b = fft(b); 
-            G=a/length(a);
-            H=b/length(b);
-            Hcon=conj(H);  
+            a = fft([zeros(1,padLength) a zeros(1,padLength)]); 
+            b = fft([zeros(1,padLength) b zeros(1,padLength)]); 
+            G = a / length(a);
+            H = b / length(b); 
+            Hcon = conj(H);  
 
-            imp=real(ifft((G .* Hcon) ./ (H .* Hcon + 0.00001 )))'; %  impulse response function
-            resptmp(i,:) = smooth(cumsum(imp), 10);% integrate impulse resp functions 
+            imp = real(ifft((G .* Hcon) ./ (H .* Hcon + 0.0001 )))'; %  impulse response function
+            resptmp(i,:) = cumsum(imp);% integrate impulse resp function 
             
-            a=stepinfo(resptmp(i,1:wnd)); % (100*lograte) gather info about quality of step resp function
-            if a.SettlingMin>.5 && a.SettlingMax<3 %Quality control    
+            clear a steadyStatePeriod
+            steadyStatePeriod = find(t > 200 & t < StepRespDuration_ms); 
+            a = resptmp(i, steadyStatePeriod);
+            if min(a) > 0.5 && max(a) < 3 % Quality control  
                 j=j+1;
                 stepresponse(j,:)=resptmp(i,1:1+wnd); 
-            end
-            t = 0:1/lograte:StepRespDuration_ms;% time in ms        
+            end     
         end 
     else
     end

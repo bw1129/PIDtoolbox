@@ -10,25 +10,26 @@
     
 clear
 
-PtbVersion='v0.41';
-    
-executableDir = pwd;
-%addpath(executableDir)
-
-GYRO_SCALED=6;
-
+PtbVersion='v0.42';
 
 t = now;
 currentDate = char(datetime(t,'ConvertFrom','datenum'));
 currentDate = currentDate(1:strfind(currentDate,' ')-1);
 
-% try
-%     fid = fopen('logfileDir.txt');
-%     logfileDir = fscanf(fid,'%s');
-%     fclose(fid);   
-% catch
+executableDir = pwd;
+%addpath(executableDir)
+
+BF=1;
+GYRO_SCALED=6;
+
+try
+    fid = fopen('logfileDir.txt');
+    logfileDir = fscanf(fid,'%s');
+    fclose(fid);   
+catch
     logfileDir=[];
-% end
+end
+
 
 %%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
@@ -36,9 +37,9 @@ PTfig.InvertHardcopy='off';
 bgcolor=[.95 .95 .95];
 set(PTfig,'color',bgcolor);
 
-wikipage = 'https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
+wikipage='https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
 
-if ~exist('filenameA','var'), filenameA={}; end
+if ~exist('filenameA','var'), filenameA=[]; end
 
 expandON=0;
 use_randsamp=0;
@@ -85,13 +86,13 @@ PTfig.Name= ['PIDtoolbox (' PtbVersion ') - Log Viewer'];
 
 pause(.1)% need to wait for figure to open before extracting screen values
 
-screensz_multiplier = sqrt(screensz(4)^2) * .016; % based on vertical dimension only, to deal with for ultrawide monitors
+screensz_multiplier = sqrt(screensz(4)^2) * .0115; % based on vertical dimension only, to deal with for ultrawide monitors
 prop_max_screen = PTfig.Position(4);
 fontsz = (screensz_multiplier*prop_max_screen);
 
 controlpanel = uipanel('Title','Control Panel','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
-             'Position',[.89 .53 .105 .39]); 
+             'Position',[.89 .53 .105 .39]);
 
          
 posInfo.fileA=[.9 .855 .042 .04];
@@ -109,9 +110,8 @@ posInfo.spectrogramButton=[.9 .71 .085 .04];
 posInfo.TuningButton=[.9 .665 .085 .04];
 posInfo.DispInfoButton=[.9 .62 .085 .04];
 posInfo.saveFig=[.9 .575 .085 .04];
-posInfo.wiki=[.9 .543 .042 .025];
-posInfo.donate=[.944 .543 .042 .025];
-
+posInfo.wiki=[.9 .54 .042 .025];
+posInfo.donate=[.944 .54 .042 .025];
 
 fnameMaster = {}; 
 fcnt = 0;
@@ -130,17 +130,18 @@ ColorSet=[.6 .6 .6;..., % gray - Gyro raw
   0  .7  0;..., % green - Pterm
  .8  .65 .1;..., % yellow - I term
  .3  .7  .9;..., % light blue - Dterm raw
+ .1  .2  .8;..., % dark blue -Dterm Filt
  .6  .3  .3;..., % brown - Fterm 
  .8  0  .2;..., % dark red
  1  .2  .9;..., % light purple
  .4 0 .9;...,    % dark purple
- 0 0 0;..., % throttle
  .9 0 0;..., %M1 
  1  .6 0;..., %M2
 0  0 .9;..., %M3
 .1  1  .8;..., %M4
+ 0 0 0;..., % throttle
  0 0 0]; % all
-j=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
+j=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16];
 
 k=1;
 for i=1:length(j)
@@ -163,13 +164,12 @@ TooltipString_wiki=['Link to the PIDtoolbox wiki in Github'];
 %%%
 
 guiHandles.fileA = uicontrol(PTfig,'string','Select ','fontsize',fontsz,'TooltipString', [TooltipString_loadRun], 'units','normalized','outerposition',[posInfo.fileA],...
-     'callback','guiHandles.fileA.FontWeight=''Bold''; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT''}, ''MultiSelect'',''on''); if isstr(filenameA), filenameA={filenameA}; end; if iscell(filenameA), PTload; PTviewerUIcontrol; PTplotLogViewer; end'); 
+     'callback','guiHandles.fileA.FontWeight=''Bold''; try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT''}, ''MultiSelect'',''on''); if isstr(filenameA), filenameA={filenameA}; end; if iscell(filenameA), PTload; PTviewerUIcontrol; PTplotLogViewer; end'); 
 guiHandles.fileA.BackgroundColor=[colRun];
 
 guiHandles.clr = uicontrol(PTfig,'string','Reset','fontsize',fontsz,'TooltipString', ['clear all data'], 'units','normalized','outerposition',[posInfo.clr],...
-     'callback','clear T dataA tta A_lograte epoch1_A epoch2_A SetupInfo rollPIDF pitchPIDF yawPIDF; fcnt = 0; filenameA={};fnameMaster = {}; try, subplot(''position'',posInfo.linepos1);cla; subplot(''position'',posInfo.linepos2);cla; subplot(''position'',posInfo.linepos3); cla; catch, end; guiHandles.FileNum.String='' ''; guiHandles.Epoch1_A_Input.String='' ''; guiHandles.Epoch2_A_Input.String='' '';'); 
+     'callback','clear T dataA tta A_lograte epoch1_A epoch2_A SetupInfo rollPIDF pitchPIDF yawPIDF filenameA fnameMaster; fcnt = 0; filenameA={};fnameMaster = {}; try, subplot(''position'',posInfo.linepos1);cla; subplot(''position'',posInfo.linepos2);cla; subplot(''position'',posInfo.linepos3); cla; catch, end; guiHandles.FileNum.String='' ''; guiHandles.Epoch1_A_Input.String='' ''; guiHandles.Epoch2_A_Input.String='' '';'); 
 guiHandles.clr.BackgroundColor=[cautionCol];
-
 
 guiHandles.Epoch1_A_text = uicontrol(PTfig,'style','text','string','start (s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_A_text]);
 guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string','','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch1_A_Input]);
@@ -197,13 +197,14 @@ guiHandles.saveFig = uicontrol(PTfig,'string','Save Fig','fontsize',fontsz, 'Too
 guiHandles.saveFig.BackgroundColor=[saveCol];
 
 
-guiHandles.wiki = uicontrol(PTfig,'string','wiki','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
+guiHandles.wiki = uicontrol(PTfig,'string','wiki','fontsize',fontsz,'TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
     'callback','web(wikipage);'); 
 guiHandles.wiki.BackgroundColor=[cautionCol];
 
 guiHandles.donate = uicontrol(PTfig,'string','donate','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['If you''d like to donate to the PTB project.',newline 'this link takes you to my PayPal page.',newline 'Any contribution is greatly appreciated, Thanks!!! '],'units','normalized','outerposition',[posInfo.donate],...
-    'callback','web(''https://www.paypal.com/donate?business=EMCJRU9M7AKAA&currency_code=CAD'');'); 
+    'callback','system([''start '' ''https://www.paypal.com/donate/?business=EMCJRU9M7AKAA&currency_code=CAD&Z3JncnB0=''])');%     'web(donatePaypalPage);'); 
 guiHandles.donate.BackgroundColor=[cautionCol];
+
 
 %% functions
 

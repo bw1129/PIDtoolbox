@@ -19,22 +19,22 @@ try
         us2sec=1000000;
         maxMotorOutput=2000; 
 
-   %     set(PTfig, 'pointer', 'watch')
+        set(PTfig, 'pointer', 'watch')
         guiHandles.runAll.FontWeight='Bold';
 
         pause(.2)
 
         % make 'logfileDir.txt' so logfiles open in same as previously selected directory  
         cd(executableDir)
-        % pause(.2)
-        % fid = fopen('logfileDir.txt','w');
-        % fprintf(fid,'%s\n',filepath);
-        % fclose(fid);
+        pause(.2)
+        fid = fopen('logfileDir.txt','w');
+        fprintf(fid,'%s\n',filepath);
+        fclose(fid);
 
         try
             cd(filepath)
         catch
-            errordlg('please select file then click ''load+run'' ','error - no file selected!');
+            warndlg('Please select file(s)');
             close(waitbarFid); 
         end
 
@@ -81,12 +81,22 @@ try
                     eval(['T{fcnt}.debug_' int2str(k) '_(1);'])
                     eval(['T{fcnt}.axisF_' int2str(k) '_(1);'])
                 catch
-                    eval(['T{fcnt}.(''debug_' int2str(k) '_'')' '= nan(length(T{fcnt}.loopIteration),1)']) ;
-                    eval(['T{fcnt}.(''axisF_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1)']);
+                    eval(['T{fcnt}.(''debug_' int2str(k) '_'')' '= nan(length(T{fcnt}.loopIteration),1);']) ;
+                    eval(['T{fcnt}.(''axisF_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1);']);
                 end 
-
+                
                 eval(['T{fcnt}.motor_' int2str(k) '_ = ((T{fcnt}.motor_' int2str(k) '_ - 0) / (2000 - 0)) * 100;'])% scale motor sigs to %
-                if k < 3, 
+                if k < 3,
+                    if k < 2 % compute prefiltered dterm and scale
+                        eval(['T{fcnt}.axisDpf_' int2str(k) '_ = -[0; diff(T{fcnt}.gyroADC_' int2str(k) '_)];'])
+                        clear d1 d2 d3 sclr
+                        eval(['d1 = smooth(T{fcnt}.axisDpf_' int2str(k) '_, 100);'])
+                        eval(['d2 = smooth(T{fcnt}.axisD_' int2str(k) '_, 100);'])
+                        d3 = (d2 ./ d1);
+                        sclr = nanmedian(d3(~isinf(d3) & d3 > 0));
+                        eval(['T{fcnt}.axisDpf_' int2str(k) '_ = T{fcnt}.axisDpf_' int2str(k) '_ * sclr;'])
+                    end
+                     
                     eval(['T{fcnt}.(''piderr_' int2str(k) '_'') = T{fcnt}.gyroADC_' int2str(k) '_ - T{fcnt}.setpoint_' int2str(k) '_;'])
                     try
                         eval(['T{fcnt}.(''pidsum_' int2str(k) '_'') = T{fcnt}.axisP_' int2str(k) '_ + T{fcnt}.axisI_' int2str(k) '_ + T{fcnt}.axisD_' int2str(k) '_ + T{fcnt}.axisF_' int2str(k) '_;'])
@@ -99,6 +109,6 @@ try
     end
 
 catch ME
-     errmsg.PTload=PTerrorMessages('PTload', ME); 
+    errmsg.PTload=PTerrorMessages('PTload', ME); 
 end
 

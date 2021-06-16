@@ -11,7 +11,7 @@
 if ~isempty(fnameMaster) 
     saveDirectory='PTB_FIGS';
     saveDirectory = [saveDirectory '_' fnameMaster{1}(1:end-4) 'xx_' currentDate];
- 
+
 if ~isfolder(saveDirectory)
    mkdir(saveDirectory)
 end
