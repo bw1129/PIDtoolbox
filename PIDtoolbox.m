@@ -10,7 +10,7 @@
     
 clear
 
-PtbVersion='v0.42';
+PtbVersion='v0.43';
 
 t = now;
 currentDate = char(datetime(t,'ConvertFrom','datenum'));

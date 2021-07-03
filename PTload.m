@@ -59,16 +59,20 @@ try
             r = (SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'rollPID')),2));  
             p = (SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'pitchPID')),2));
             y = (SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'yawPID')),2));
-            try
+            
+            dm = {};
+            if ~isempty(SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'd_min')),2))
                 dm = (SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'd_min')),2));
-            catch
+            else
                 dm = {' , , '};
             end
-            try
+            ff = {};
+            if ~isempty(SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'feedforward_weight') | strcmp(SetupInfo{fcnt}(:,1), 'ff_weight')),2))
                 ff = (SetupInfo{fcnt}(find(strcmp(SetupInfo{fcnt}(:,1), 'feedforward_weight') | strcmp(SetupInfo{fcnt}(:,1), 'ff_weight')),2));
-            catch 
+            else 
                 ff = {' , , '};
             end
+            
             a=strfind(char(dm),',');
             b=strfind(char(ff),',');
             rollPIDF{fcnt} = [char(r) ',' dm{1}(1:a(1)-1) ',' ff{1}(1:b(1)-1)];

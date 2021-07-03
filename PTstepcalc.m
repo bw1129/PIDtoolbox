@@ -59,12 +59,17 @@ if NSegs > 0
             imp = real(ifft((G .* Hcon) ./ (H .* Hcon + 0.0001 )))'; %  impulse response function
             resptmp(i,:) = cumsum(imp);% integrate impulse resp function 
             
-            clear a steadyStatePeriod
-            steadyStatePeriod = find(t > 200 & t < StepRespDuration_ms); 
-            a = resptmp(i, steadyStatePeriod);
-            if min(a) > 0.5 && max(a) < 3 % Quality control  
+             clear a steadyStateWindow steadyStateResp yoffset
+            steadyStateWindow = find(t > 200 & t < StepRespDuration_ms); 
+            steadyStateResp = resptmp(i, steadyStateWindow); 
+            if nanmean(steadyStateResp) < 1 || nanmean(steadyStateResp) > 1
+                yoffset = 1 - nanmean(steadyStateResp);
+                resptmp(i,:) = resptmp(i,:) * (yoffset+1);
+            end  
+            steadyStateResp = resptmp(i, steadyStateWindow); 
+            if min(steadyStateResp) > 0.5 && max(steadyStateResp) < 3 % Quality control     
                 j=j+1;
-                stepresponse(j,:)=resptmp(i,1:1+wnd); 
+                stepresponse(j,:)=resptmp(i,1:1+wnd);
             end     
         end 
     else
