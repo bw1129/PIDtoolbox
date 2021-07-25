@@ -41,11 +41,8 @@ If you have issues installing Matlab runtime, or running PIDtoolbox, please post
 
 # Acknowledgments
 
-I have to give a long overdue shoutout to several people who contributed to this project outside GitHub. 
-**Mark Spatz (UAVtech)** has been a huge source of information for me in general and it was through conversations with him that motivated the development of this tool in the first place. 
-**Chris Thompson (ctzsnooze)** has always supported the project and continues to contribute great ideas that are continually integrated into various revisions of the tools.
-**DusKing** converted the tooltips to Simplified Chinese language, and maintained and compiled this version for Chinese users. 
-Many others have contributed thoughts and ideas that worked there way into various versions of the software, some of whom I only know by their Slack or Github name: **Qopter, Qratz, Zach Young, Zak Smiley, Stephen Wright, McGiverGim, Bizmar, Martin Hapl, Ken Kammerer, Paweł Spychalski, Christoph Herndler**. I will continue to update this list. Thanks for your help!
+Huge shout out to several people who contributed to this project outside GitHub. 
+**Mark Spatz (UAVtech), Chris Thompson (ctzsnooze), Hugo Chiang (DusKing1), Qopter, Qratz, Zach Young, Zak Smiley, Stephen Wright, McGiverGim, Bizmar, Martin Hapl, Ken Kammerer, Paweł Spychalski, Christoph Herndler.** Thanks for your help!
 
  I hope you find PIDtoolbox useful, and I welcome feedback from the FPV community.
 
