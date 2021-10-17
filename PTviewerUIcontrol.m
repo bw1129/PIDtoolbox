@@ -76,10 +76,12 @@ guiHandles.linewidth = uicontrol(PTfig,'Style','popupmenu','string',{'line width
     'fontsize',fontsz,'units','normalized','outerposition', [posInfo.linewidth],'callback','@selection; if ~isempty(filenameA), PTplotLogViewer; end');
  guiHandles.linewidth.Value = 2;
  
+ 
 TooltipString_FileNum=['Select the file you wish to plot in the logviewer. '];
 guiHandles.FileNum = uicontrol(PTfig,'Style','popupmenu','string',[fnameMaster],'TooltipString', [TooltipString_FileNum],...
     'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.fnameAText],'callback','@selection;if ~isempty(fnameMaster), PTplotLogViewer; end');
 guiHandles.FileNum.Value=1;
+
 
 if isempty(epoch1_A(guiHandles.FileNum.Value)) || isempty(epoch2_A(guiHandles.FileNum.Value))
     epoch1_A(guiHandles.FileNum.Value)=tta{guiHandles.FileNum.Value}(1)/us2sec;

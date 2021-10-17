@@ -1,5 +1,5 @@
-function [stepresponse, t] = PTstepcalc(SP, GY, lograte)
-%% [stepresponse, t] = PTstepcalc(SP, GY, lograte))
+function [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection)
+%% [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection)
 % this function deconvolves the step response function using
 % SP = set point (input), GY = filtered gyro (output)
 % returns matrix/stack of etimated stepresponse functions, time [t] in ms
@@ -48,8 +48,8 @@ if NSegs > 0
     j=0; 
     if ~isempty(SPseg)
         for i = 1 : size(SPseg,1)
-            a = GYseg(i,:).*hann(length(GYseg(i,:)))';
-            b = SPseg(i,:).*hann(length(SPseg(i,:)))';
+            a = GYseg(i,:).*hann(length(GYseg(i,:)))'; 
+            b = SPseg(i,:).*hann(length(SPseg(i,:)))'; 
             a = fft([zeros(1,padLength) a zeros(1,padLength)]); 
             b = fft([zeros(1,padLength) b zeros(1,padLength)]); 
             G = a / length(a);
@@ -59,17 +59,22 @@ if NSegs > 0
             imp = real(ifft((G .* Hcon) ./ (H .* Hcon + 0.0001 )))'; %  impulse response function
             resptmp(i,:) = cumsum(imp);% integrate impulse resp function 
             
-             clear a steadyStateWindow steadyStateResp yoffset
+            clear a steadyStateWindow steadyStateResp yoffset
             steadyStateWindow = find(t > 200 & t < StepRespDuration_ms); 
             steadyStateResp = resptmp(i, steadyStateWindow); 
-            if nanmean(steadyStateResp) < 1 || nanmean(steadyStateResp) > 1
-                yoffset = 1 - nanmean(steadyStateResp);
-                resptmp(i,:) = resptmp(i,:) * (yoffset+1);
-            end  
-            steadyStateResp = resptmp(i, steadyStateWindow); 
+            if Ycorrection
+                if nanmean(steadyStateResp) < 1 || nanmean(steadyStateResp) > 1
+                    yoffset = 1 - nanmean(steadyStateResp);
+                    resptmp(i,:) = resptmp(i,:) * (yoffset+1);
+                end  
+                steadyStateResp = resptmp(i, steadyStateWindow); 
+            else
+            end
+            
             if min(steadyStateResp) > 0.5 && max(steadyStateResp) < 3 % Quality control     
                 j=j+1;
                 stepresponse(j,:)=resptmp(i,1:1+wnd);
+                 
             end     
         end 
     else

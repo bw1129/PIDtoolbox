@@ -19,22 +19,22 @@ try
         us2sec=1000000;
         maxMotorOutput=2000; 
 
-        set(PTfig, 'pointer', 'watch')
+   %     set(PTfig, 'pointer', 'watch')
         guiHandles.runAll.FontWeight='Bold';
 
         pause(.2)
 
         % make 'logfileDir.txt' so logfiles open in same as previously selected directory  
         cd(executableDir)
-        pause(.2)
-        fid = fopen('logfileDir.txt','w');
-        fprintf(fid,'%s\n',filepath);
-        fclose(fid);
+        % pause(.2)
+        % fid = fopen('logfileDir.txt','w');
+        % fprintf(fid,'%s\n',filepath);
+        % fclose(fid);
 
         try
             cd(filepath)
         catch
-            warndlg('Please select file(s)');
+            errordlg('please select file then click ''load+run'' ','error - no file selected!');
             close(waitbarFid); 
         end
 
@@ -43,14 +43,18 @@ try
 
     %    clear T dataA tta A_lograte epoch1_A epoch2_A    SetupInfo rollPIDF pitchPIDF yawPIDF
 
-        n = size(filenameA,2)
+        n = size(filenameA,2);
         for ii = 1 : n  
             fcnt = fcnt + 1;
-            dataA(fcnt) = PTimport(filenameA{ii});
+            dataA(fcnt) = PTimport(filenameA{ii}, guiHandles.Firmware.Value);
             T{fcnt}=dataA(fcnt).T;
 
             tta{fcnt}=T{fcnt}.time_us_-T{fcnt}.time_us_(1);
-            A_lograte(fcnt)=round(1000/median(diff(tta{fcnt})));
+            if round(1000/median(diff(tta{fcnt}))) < 1
+                A_lograte(fcnt)=round((1000/median(diff(tta{fcnt}))) * 100) / 100;
+            else  
+                A_lograte(fcnt)=round(1000/median(diff(tta{fcnt})));
+            end
             epoch1_A(fcnt)=round(((tta{fcnt}(1)/us2sec)+LogStDefault)*10) / 10;
             epoch2_A(fcnt)=round(((tta{fcnt}(end)/us2sec)-LogNdDefault)*10) / 10;
 
@@ -78,19 +82,28 @@ try
             rollPIDF{fcnt} = [char(r) ',' dm{1}(1:a(1)-1) ',' ff{1}(1:b(1)-1)];
             pitchPIDF{fcnt} = [char(p) ',' dm{1}(a(1)+1:a(2)-1) ',' ff{1}(b(1)+1:b(2)-1)];
             yawPIDF{fcnt} = [char(y) ',' dm{1}(a(2)+1:end) ',' ff{1}(b(2)+1:end)];
-
+            
+            if guiHandles.Firmware.Value == 3 % INAV
+                T{fcnt}.setpoint_0_ = T{fcnt}.axisRate_0_;
+                T{fcnt}.setpoint_1_ = T{fcnt}.axisRate_1_;
+                T{fcnt}.setpoint_2_ = T{fcnt}.axisRate_2_;
+                T{fcnt}.setpoint_3_ = (T{fcnt}.rcData_3_ - 1000);
+            end
 
             for k = 0 : 3
                 try
                     eval(['T{fcnt}.debug_' int2str(k) '_(1);'])
                     eval(['T{fcnt}.axisF_' int2str(k) '_(1);'])
                 catch
-                    eval(['T{fcnt}.(''debug_' int2str(k) '_'')' '= nan(length(T{fcnt}.loopIteration),1);']) ;
+                    eval(['T{fcnt}.(''debug_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1);']) ;
                     eval(['T{fcnt}.(''axisF_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1);']);
                 end 
-                
                 eval(['T{fcnt}.motor_' int2str(k) '_ = ((T{fcnt}.motor_' int2str(k) '_ - 0) / (2000 - 0)) * 100;'])% scale motor sigs to %
-                if k < 3,
+                try 
+                    eval(['T{fcnt}.motor_' int2str(k+4) '_ = ((T{fcnt}.motor_' int2str(k+4) '_ - 0) / (2000 - 0)) * 100;'])% scale motor sigs 4-7 for x8 configuration
+                catch
+                end
+                if k < 3 
                     if k < 2 % compute prefiltered dterm and scale
                         eval(['T{fcnt}.axisDpf_' int2str(k) '_ = -[0; diff(T{fcnt}.gyroADC_' int2str(k) '_)];'])
                         clear d1 d2 d3 sclr
@@ -100,7 +113,7 @@ try
                         sclr = nanmedian(d3(~isinf(d3) & d3 > 0));
                         eval(['T{fcnt}.axisDpf_' int2str(k) '_ = T{fcnt}.axisDpf_' int2str(k) '_ * sclr;'])
                     end
-                     
+                        
                     eval(['T{fcnt}.(''piderr_' int2str(k) '_'') = T{fcnt}.gyroADC_' int2str(k) '_ - T{fcnt}.setpoint_' int2str(k) '_;'])
                     try
                         eval(['T{fcnt}.(''pidsum_' int2str(k) '_'') = T{fcnt}.axisP_' int2str(k) '_ + T{fcnt}.axisI_' int2str(k) '_ + T{fcnt}.axisD_' int2str(k) '_ + T{fcnt}.axisF_' int2str(k) '_;'])
@@ -112,7 +125,7 @@ try
         end
     end
 
-catch ME
-    errmsg.PTload=PTerrorMessages('PTload', ME); 
+catch  ME
+     errmsg.PTload=PTerrorMessages('PTload', ME); 
 end
 

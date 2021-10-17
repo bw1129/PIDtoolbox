@@ -15,7 +15,6 @@ fontsz=(screensz_multiplier*prop_max_screen);
 %% update fonts 
 guiHandlesSpec.computeSpec.FontSize=fontsz;
 guiHandlesSpec.checkbox2d.FontSize=fontsz;
-guiHandlesSpec.checkboxPSD.FontSize=fontsz;
 guiHandlesSpec.ColormapSelect.FontSize=fontsz;
 guiHandlesSpec.smoothFactor_select.FontSize=fontsz;
 guiHandlesSpec.saveFig2.FontSize=fontsz;
@@ -24,6 +23,7 @@ guiHandlesSpec.specPresets.FontSize=fontsz;
 guiHandlesSpec.controlFreqCutoff_text.FontSize=fontsz;
 guiHandlesSpec.controlFreq1Cutoff.FontSize=fontsz;
 guiHandlesSpec.controlFreq2Cutoff.FontSize=fontsz;
+guiHandlesSpec.checkboxPSD.FontSize=fontsz;
 
 guiHandlesSpec.climMax_text.FontSize=fontsz;
 guiHandlesSpec.climMax_input.FontSize=fontsz;
@@ -47,10 +47,10 @@ guiHandlesSpec.Sub100HzCheck{2}.FontSize=fontsz;
 guiHandlesSpec.Sub100HzCheck{3}.FontSize=fontsz;
 guiHandlesSpec.Sub100HzCheck{4}.FontSize=fontsz;
 
-guiHandlesSpec.AphasedelayText1 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{1}.Value} 'ms, Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{1}.Value} 'ms'],'fontsize',fontsz*.9,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText1]);
-guiHandlesSpec.AphasedelayText2 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{2}.Value} 'ms, Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{2}.Value} 'ms'],'fontsize',fontsz*.9,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText2]);
-guiHandlesSpec.AphasedelayText3 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{3}.Value} 'ms, Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{3}.Value} 'ms'],'fontsize',fontsz*.9,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText3]);
-guiHandlesSpec.AphasedelayText4 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{4}.Value} 'ms, Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{4}.Value} 'ms'],'fontsize',fontsz*.9,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText4]);
+guiHandlesSpec.AphasedelayText1 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{1}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{1}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText1]);
+guiHandlesSpec.AphasedelayText2 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{2}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{2}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText2]);
+guiHandlesSpec.AphasedelayText3 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{3}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{3}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText3]);
+guiHandlesSpec.AphasedelayText4 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{4}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{4}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText4]);
 
 guiHandlesSpec.climMax_input = uicontrol(PTspecfig,'style','edit','string',[num2str(climScale(guiHandlesSpec.checkboxPSD.Value+1, 1))],'fontsize',fontsz,'TooltipString',[TooltipString_scale],'units','normalized','outerposition',[posInfo.climMax_input],...
      'callback','@textinput_call2; climScale(guiHandlesSpec.checkboxPSD.Value+1, 1)=str2num(guiHandlesSpec.climMax_input.String);updateSpec=1;PTplotSpec;');
@@ -133,7 +133,7 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
             img = flipud((filter2(ftr, ampmat{p} ))') + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
             imagesc(img); 
 
-            lograte=A_lograte(guiHandles.FileNum.Value);
+            lograte=A_lograte(guiHandlesSpec.FileSelect{c1(p)}.Value);
 
              axLabel={'roll';'pitch';'yaw'};
             
@@ -240,8 +240,8 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
                 ax.GridColor = [0 0 0]; % black on white background
                 set(h,'Color',[0 0 0],'fontsize',fontsz,'fontweight','bold')             
             end
-             ylabel('freq Hz','fontweight','bold') 
-             xlabel('% throttle','fontweight','bold') 
+             ylabel('Frequency (Hz)','fontweight','bold') 
+             xlabel('% Throttle','fontweight','bold') 
         end 
     end
 
@@ -289,7 +289,7 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
     delete(hCbar1);delete(hCbar2);delete(hCbar3);delete(hCbar4)
     catch
     end
-    baselineYlines = [0 -60];
+    baselineYlines = [0 -50];
     c1=[1 1 1 2 2 2 3 3 3 4 4 4];
     c2=[1 2 3 1 2 3 1 2 3 1 2 3]; 
     %%%%% plot 2d amp spec
@@ -299,10 +299,10 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
         delete(subplot('position',posInfo.SpecPos(p,:)));
         if ~isempty(amp2d{p})
             h2=subplot('position',posInfo.SpecPos(p,:)); cla
-            h=plot(freq2d{p}, amp2d{p});hold on
+            h=plot(freq2d{p}, smooth(amp2d{p}, log10(size(amp2d{p},1)) * (guiHandlesSpec.smoothFactor_select.Value^2), 'lowess'));hold on
             set(h, 'linewidth', guiHandles.linewidth.Value)
             set(h2,'fontsize',fontsz,'fontweight','bold')
-            if guiHandlesSpec.specPresets.Value <= 4
+            if guiHandlesSpec.specPresets.Value <= 3
                 set(h,'Color',[SpecLineCols(c1(p),:,1)])
             end
             if guiHandlesSpec.specPresets.Value > 4 && guiHandlesSpec.specPresets.Value <= 6
@@ -314,7 +314,7 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
             if max(freq2d{p})<=500,
                 if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
                     set(h2,'xtick',[0 20 40 60 80 100],'yminortick','on')
-                    axis([0 100 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
+                    axis([0 100 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+3, c1(p))])
                     h=plot([round(Flim1) round(Flim1)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
                     set(h,'linewidth',1)
                     h=plot([round(Flim2) round(Flim2)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
@@ -336,14 +336,15 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
                     axis([0 1000 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
                 end
             end 
-            xlabel('freq hz')
+            xlabel('Frequency (Hz)')
             if guiHandlesSpec.checkboxPSD.Value
                 ylabel(['PSD (dB)'])
             else
-                ylabel(['amp spec'])
+                ylabel(['Amplitude'])
             end
                 
-            h=text(2,climScale(1, c1(p))*.95,axLabel{c2(p)});
+
+            h=text(2,climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))*.95,axLabel{c2(p)});
             set(h,'Color',[.2 .2 .2],'fontsize',fontsz,'fontweight','bold')
 
             grid on

@@ -33,8 +33,8 @@ if ~strcmp(a,'image') % ugly workaround
             dgts=6;
         end   
         if pos(2) > -logviewerYscale
-        output_txt = {['sec: ',num2str(pos(1),dgts)],...
-            ['deg/s: ',num2str(pos(2),4)]};
+        output_txt = {['x: ',num2str(pos(1),dgts)],...
+            ['y: ',num2str(pos(2),4)]};
         else
             output_txt = {['sec: ',num2str(pos(1),dgts)],...
             ['%: ',num2str(((pos(2)+(logviewerYscale*2)) / (logviewerYscale/100)),4)]};
@@ -61,7 +61,7 @@ if ~strcmp(a,'image') % ugly workaround
         if length(pos) > 2
            output_txt{end+1} = ['Z: ',num2str(pos(3),4)];
         end
-        if strcmp(a,'image')  
+        if strcmp(a,'image') 
 %             pos = get(event_obj,'Position');
 %             output_txt = {['X: ',num2str(pos(1),4)],...
 %             ['Y: ',num2str(pos(2),4)]};

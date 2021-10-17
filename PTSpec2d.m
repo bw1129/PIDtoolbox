@@ -16,22 +16,20 @@ if psd
     
     N = length(Y);
     Fs = ((F*1000)*(0:(N/2))/N);
-    
+    Y = Y.*hann(N)';
     Y = fft(Y); 
     psdx = abs(Y).^2 / (F*1000*N); % (1/(F*N)) * abs(Y).^2  is exactly same as  abs(Y).^2 / (F*N), to 
     psdx(2:end-1) = 2*psdx(2:end-1);
     psdx = psdx(1:N/2+1); 
 %     % scale to dB
-     psdx = 10 * log10(psdx);
-     spec = smooth(psdx, log10(N) * 30, 'lowess'); 
+     spec = 10 * log10(psdx)';
 else       
     N = length(Y);
     Fs = ((F*1000)*(0:(N/2))/N);
+    Y = Y.*hann(N)';
     Y = fft(Y); 
     spec = abs(Y) / N; % (1/(F*N)) * abs(Y).^2  is exactly same as  abs(Y).^2 / (F*N), to 
-    Y = spec(1:N/2+1);
-    spec = smooth(Y, log10(N) * 30, 'lowess');
-    
+    spec = spec(1:N/2+1)';
 end
 
 end

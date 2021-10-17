@@ -7,31 +7,20 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-%% create saveDirectory
+%% simplified figure saving
 if ~isempty(fnameMaster) 
-    saveDirectory='PTB_FIGS';
-    saveDirectory = [saveDirectory '_' fnameMaster{1}(1:end-4) 'xx_' currentDate];
+    
+    [filename, saveDirectory] = uiputfile('*.png')
 
-if ~isfolder(saveDirectory)
-   mkdir(saveDirectory)
-end
+    set(gcf, 'pointer', 'watch')
 
-%%
-set(gcf, 'pointer', 'watch')
-cd(filepath)
-cd(saveDirectory)
-FigDoesNotExist=1;
-n=0;
-while FigDoesNotExist,
-    n=n+1;
-    FigDoesNotExist=isfile([saveDirectory '-' int2str(n) '.png']);
-end
-figname=[saveDirectory '-' int2str(n)];
-saveas(gcf, [figname '.png'] );
-print(figname,'-dpng','-r200')
+    figname=[saveDirectory filename];
+    try
+        saveas(gcf, figname );
+    catch
+    end
 
-set(gcf, 'pointer', 'arrow')
-cd(filepath)
+    set(gcf, 'pointer', 'arrow')
 
 else
      warndlg('Please select file(s)');
