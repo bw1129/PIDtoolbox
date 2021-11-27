@@ -1,4 +1,4 @@
-function [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection)
+function [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection, smoothFactor)
 %% [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection)
 % this function deconvolves the step response function using
 % SP = set point (input), GY = filtered gyro (output)
@@ -11,7 +11,8 @@ function [stepresponse, t] = PTstepcalc(SP, GY, lograte, Ycorrection)
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
-
+smoothVals = [1 20 40 60];
+GY = smooth(GY, smoothVals(smoothFactor),'lowess');
 
 minInput = 20;
 segment_length = (lograte*2000); % 2 sec segments

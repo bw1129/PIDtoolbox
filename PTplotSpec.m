@@ -13,39 +13,28 @@ if ~isempty(fnameMaster)
 prop_max_screen=(max([PTspecfig.Position(3) PTspecfig.Position(4)]));
 fontsz=(screensz_multiplier*prop_max_screen);
 %% update fonts 
-guiHandlesSpec.computeSpec.FontSize=fontsz;
-guiHandlesSpec.checkbox2d.FontSize=fontsz;
-guiHandlesSpec.ColormapSelect.FontSize=fontsz;
-guiHandlesSpec.smoothFactor_select.FontSize=fontsz;
-guiHandlesSpec.saveFig2.FontSize=fontsz;
-guiHandlesSpec.resetSpec.FontSize=fontsz;
-guiHandlesSpec.specPresets.FontSize=fontsz;
-guiHandlesSpec.controlFreqCutoff_text.FontSize=fontsz;
-guiHandlesSpec.controlFreq1Cutoff.FontSize=fontsz;
-guiHandlesSpec.controlFreq2Cutoff.FontSize=fontsz;
-guiHandlesSpec.checkboxPSD.FontSize=fontsz;
 
-guiHandlesSpec.climMax_text.FontSize=fontsz;
-guiHandlesSpec.climMax_input.FontSize=fontsz;
-guiHandlesSpec.climMax_text2.FontSize=fontsz;
-guiHandlesSpec.climMax_input2.FontSize=fontsz;
-guiHandlesSpec.climMax_text3.FontSize=fontsz;
-guiHandlesSpec.climMax_input3.FontSize=fontsz;
-guiHandlesSpec.climMax_text4.FontSize=fontsz;
-guiHandlesSpec.climMax_input4.FontSize=fontsz;
+f = fields(guiHandlesSpec);
+for i = 1 : size(f,1)
+    try
+        eval(['guiHandlesSpec.' f{i} '.FontSize=fontsz;']);
+    catch
+        guiHandlesSpec.SpecSelect{1}.FontSize=fontsz;
+        guiHandlesSpec.SpecSelect{2}.FontSize=fontsz;
+        guiHandlesSpec.SpecSelect{3}.FontSize=fontsz;
+        guiHandlesSpec.SpecSelect{4}.FontSize=fontsz;
+        guiHandlesSpec.FileSelect{1}.FontSize=fontsz;
+        guiHandlesSpec.FileSelect{2}.FontSize=fontsz;
+        guiHandlesSpec.FileSelect{3}.FontSize=fontsz;
+        guiHandlesSpec.FileSelect{4}.FontSize=fontsz;
+        guiHandlesSpec.Sub100HzCheck{1}.FontSize=fontsz;
+        guiHandlesSpec.Sub100HzCheck{2}.FontSize=fontsz;
+        guiHandlesSpec.Sub100HzCheck{3}.FontSize=fontsz;
+        guiHandlesSpec.Sub100HzCheck{4}.FontSize=fontsz;
+    end       
+end
 
-guiHandlesSpec.SpecSelect{1}.FontSize=fontsz;
-guiHandlesSpec.SpecSelect{2}.FontSize=fontsz;
-guiHandlesSpec.SpecSelect{3}.FontSize=fontsz;
-guiHandlesSpec.SpecSelect{4}.FontSize=fontsz;
-guiHandlesSpec.FileSelect{1}.FontSize=fontsz;
-guiHandlesSpec.FileSelect{2}.FontSize=fontsz;
-guiHandlesSpec.FileSelect{3}.FontSize=fontsz;
-guiHandlesSpec.FileSelect{4}.FontSize=fontsz;
-guiHandlesSpec.Sub100HzCheck{1}.FontSize=fontsz;
-guiHandlesSpec.Sub100HzCheck{2}.FontSize=fontsz;
-guiHandlesSpec.Sub100HzCheck{3}.FontSize=fontsz;
-guiHandlesSpec.Sub100HzCheck{4}.FontSize=fontsz;
+
 
 guiHandlesSpec.AphasedelayText1 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{1}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{1}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText1]);
 guiHandlesSpec.AphasedelayText2 = uicontrol(PTspecfig,'style','text','string',['Gyro: ' PhaseDelay_A{guiHandlesSpec.FileSelect{2}.Value} 'ms Dterm: ' PhaseDelay2_A{guiHandlesSpec.FileSelect{2}.Value} 'ms'],'fontsize',fontsz,'TooltipString', [TooltipString_phase],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.AphasedelayText2]);

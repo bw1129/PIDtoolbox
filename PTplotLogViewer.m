@@ -12,9 +12,6 @@
 try   
     if ~isempty(fnameMaster)
 
-    prop_max_screen=(max([PTfig.Position(3) PTfig.Position(4)]));
-    fontsz=(screensz_multiplier*prop_max_screen);
-
         set(PTfig, 'pointer', 'watch')
 
         global logviewerYscale 
@@ -28,42 +25,16 @@ try
         alpha_blue=.8;
 
         % scale fonts according to size of window and/or screen
-        guiHandles.firmware.FontSize=fontsz;
-        guiHandles.fileA.FontSize=fontsz;
-        guiHandles.FileNum.FontSize=fontsz;
-        guiHandles.Epoch1_A_text.FontSize=fontsz;
-        guiHandles.Epoch1_A_Input.FontSize=fontsz;
-        guiHandles.Epoch2_A_text.FontSize=fontsz;
-        guiHandles.Epoch2_A_Input.FontSize=fontsz;
-        guiHandles.spectrogramButton.FontSize=fontsz;
-        guiHandles.spectrogramButton2.FontSize=fontsz;
-        guiHandles.TuningButton.FontSize=fontsz;
-        guiHandles.DispInfoButton.FontSize=fontsz;
-        guiHandles.saveFig.FontSize=fontsz;
-        guiHandles.wiki.FontSize=fontsz;
-        guiHandles.checkbox0.FontSize=fontsz;
-        guiHandles.checkbox1.FontSize=fontsz;
-        guiHandles.checkbox2.FontSize=fontsz;
-        guiHandles.checkbox3.FontSize=fontsz;
-        guiHandles.checkbox4.FontSize=fontsz;
-        guiHandles.checkbox5.FontSize=fontsz;
-        guiHandles.checkbox6.FontSize=fontsz;
-        guiHandles.checkbox7.FontSize=fontsz;
-        guiHandles.checkbox8.FontSize=fontsz;
-        guiHandles.checkbox9.FontSize=fontsz;
-        guiHandles.checkbox10.FontSize=fontsz;
-        guiHandles.checkbox11.FontSize=fontsz;
-        guiHandles.checkbox12.FontSize=fontsz;
-        guiHandles.checkbox13.FontSize=fontsz;
-        guiHandles.checkbox14.FontSize=fontsz;
-        guiHandles.checkbox15.FontSize=fontsz;
-        guiHandles.linewidth.FontSize=fontsz;
+        prop_max_screen=(max([PTfig.Position(3) PTfig.Position(4)]));
+        fontsz=(screensz_multiplier*prop_max_screen);
+
+        f = fields(guiHandles);
+        for i = 1 : size(f,1)
+            eval(['guiHandles.' f{i} '.FontSize=fontsz;']);
+        end
         controlpanel.FontSize=fontsz;
-        guiHandles.maxY_input.FontSize=fontsz;
-        guiHandles.maxY_text.FontSize=fontsz;
-        guiHandles.clr.FontSize=fontsz;
-        guiHandles.donate.FontSize=fontsz;
-        guiHandles.Firmware.FontSize=fontsz;
+
+        lineSmoothFactors = [1 10 20 40 80];
 
         if plotall_flag>=0 
             guiHandles.checkbox0.Value=guiHandles.checkbox15.Value;
@@ -100,7 +71,13 @@ try
 
 
         %% where you want full range of data
-
+        
+        % if start or end > length of file, or start > end  
+        if (epoch1_A(guiHandles.FileNum.Value) > (tta{(guiHandles.FileNum.Value)}(end) / us2sec))  ||  (epoch2_A(guiHandles.FileNum.Value) > (tta{(guiHandles.FileNum.Value)}(end) / us2sec)) || (epoch1_A(guiHandles.FileNum.Value) > epoch2_A(guiHandles.FileNum.Value))
+            epoch1_A(guiHandles.FileNum.Value) = 2;
+            epoch2_A(guiHandles.FileNum.Value) = floor(tta{(guiHandles.FileNum.Value)}(end) / us2sec) - 1;
+        end
+            
          y=[epoch1_A(guiHandles.FileNum.Value)*us2sec epoch2_A(guiHandles.FileNum.Value)*us2sec];%%% used for fill in unused data range
          t1=(tta{(guiHandles.FileNum.Value)}(find(tta{(guiHandles.FileNum.Value)}>y(1),1))) / us2sec;
          t2=(tta{(guiHandles.FileNum.Value)}(find(tta{(guiHandles.FileNum.Value)}>y(2),1))) / us2sec;  
@@ -135,31 +112,31 @@ try
                     hold on
 
                     set(gca,'ytick',[2*-maxY -maxY -maxY+1 -(maxY/2) 0 maxY/2 maxY],'yticklabel',{'0%' '100%' '' num2str(-(maxY/2)) '0' num2str((maxY/2)) ''},'YColor',[.2 .2 .2],'fontweight','bold') 
-                    set(gca,'xtick',[round(xmax/10):round(xmax/10):round(xmax)],'XColor',[.2 .2 .2])                 
-
-
-                    if guiHandles.checkbox0.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.debug_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col0],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox1.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.gyroADC_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col1],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox2.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.axisP_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col2],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox3.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.axisI_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col3],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox4.Value && ii<3, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.axisDpf_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col4],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox5.Value && ii<3, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.axisD_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col5],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox6.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.axisF_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col6],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox7.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.setpoint_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col7],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox8.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.pidsum_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col8],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox9.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'T{guiHandles.FileNum.Value}.piderr_' int2str(ii-1) '_' ]));hold on;set(h,'color', [linec.col9],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox10.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_0_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox11.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_1_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox12.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_2_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value), end
-                    if guiHandles.checkbox13.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_3_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value), end
-                    % motor sigs 4-7 for x8 configuration
-                    if guiHandles.checkbox10.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_4_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
-                    if guiHandles.checkbox11.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_5_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
-                    if guiHandles.checkbox12.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_6_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
-                    if guiHandles.checkbox13.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.motor_7_)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
+                    set(gca,'xtick',[round(xmax/10):round(xmax/10):round(xmax)],'XColor',[.2 .2 .2])  
                     
-                    if guiHandles.checkbox14.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (T{guiHandles.FileNum.Value}.setpoint_3_/10)*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value), end
+                    sFactor = lineSmoothFactors(guiHandles.lineSmooth.Value);
 
+                    if guiHandles.checkbox0.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.debug_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col0],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox1.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.gyroADC_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col1],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox2.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.axisP_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col2],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox3.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.axisI_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col3],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox4.Value && ii<3, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.axisDpf_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col4],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox5.Value && ii<3, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.axisD_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col5],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox6.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.axisF_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col6],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox7.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.setpoint_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col7],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox8.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.pidsum_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col8],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox9.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, eval([ 'smooth(T{guiHandles.FileNum.Value}.piderr_' int2str(ii-1) '_, sFactor, ''loess'')' ]));hold on;set(h,'color', [linec.col9],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox10.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_0_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox11.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_1_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox12.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_2_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value), end
+                    if guiHandles.checkbox13.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_3_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value), end
+                    % motor sigs 4-7 for x8 configuration
+                    if guiHandles.checkbox10.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_4_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col10],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
+                    if guiHandles.checkbox11.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_5_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col11],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
+                    if guiHandles.checkbox12.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_6_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col12],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
+                    if guiHandles.checkbox13.Value, try h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.motor_7_, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col13],'LineWidth',guiHandles.linewidth.Value, 'LineStyle', '--'), catch, end, end
+                    
+                    if guiHandles.checkbox14.Value, h=plot(tta{guiHandles.FileNum.Value}/us2sec, (smooth(T{guiHandles.FileNum.Value}.setpoint_3_/10, sFactor, 'loess'))*(maxY/100) -(maxY*2));hold on;set(h,'color', [linec.col14],'LineWidth',guiHandles.linewidth.Value), end
 
 
                      h=fill([0,t1,t1,0],[-maxY*2,-maxY*2,maxY,maxY],[.8 .8 .8]);
@@ -205,13 +182,6 @@ try
                 end           
             end
         end
-
-        guiHandles.Epoch1_A_text = uicontrol(PTfig,'style','text','string','start (s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch1_A_text]);
-        guiHandles.Epoch1_A_Input = uicontrol(PTfig,'style','edit','string',num2str(epoch1_A(guiHandles.FileNum.Value)),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch1_A_Input],...
-         'callback','@textinput_call; epoch1_A(guiHandles.FileNum.Value)=str2num(guiHandles.Epoch1_A_Input.String); PTplotLogViewer;');
-        guiHandles.Epoch2_A_text = uicontrol(PTfig,'style','text','string','end (s)','fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.Epoch2_A_text]);
-        guiHandles.Epoch2_A_Input = uicontrol(PTfig,'style','edit','string',num2str(epoch2_A(guiHandles.FileNum.Value)),'fontsize',fontsz,'TooltipString', [TooltipString_Epochs],'units','normalized','outerposition',[posInfo.Epoch2_A_Input],...
-         'callback','@textinput_call;epoch2_A(guiHandles.FileNum.Value)=str2num(guiHandles.Epoch2_A_Input.String); PTplotLogViewer');
 
         set(PTfig, 'pointer', 'arrow')
     else 

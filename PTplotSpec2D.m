@@ -9,20 +9,14 @@
 % ----------------------------------------------------------------------------------
 
 if ~isempty(fnameMaster) 
-   
+%% update fonts 
 prop_max_screen=(max([PTspecfig2.Position(3) PTspecfig2.Position(4)]));
 fontsz=(screensz_multiplier*prop_max_screen);
-%% update fonts 
-guiHandlesSpec2.computeSpec.FontSize=fontsz;
-guiHandlesSpec2.smoothFactor_select.FontSize=fontsz;
-guiHandlesSpec2.saveFig2.FontSize=fontsz;
-guiHandlesSpec2.resetSpec.FontSize=fontsz;
 
-guiHandlesSpec2.SpecList.FontSize=fontsz;
-
-guiHandlesSpec2.FileSelect.FontSize=fontsz;
-guiHandlesSpec2.checkboxPSD.FontSize=fontsz;
-guiHandlesSpec2.spectrogramButton2.FontSize=fontsz;
+f = fields(guiHandlesSpec2);
+for i = 1 : size(f,1)
+    eval(['guiHandlesSpec2.' f{i} '.FontSize=fontsz;']);
+end
 
 guiHandlesSpec2.climMax1_text = uicontrol(PTspecfig2,'style','text','string','Y min','fontsize',fontsz,'TooltipString',['Y min'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.climMax1_text]);
 guiHandlesSpec2.climMax1_input = uicontrol(PTspecfig2,'style','edit','string',[num2str(climScale1(guiHandlesSpec2.checkboxPSD.Value+1, 1))],'fontsize',fontsz,'TooltipString',['Y min'],'units','normalized','outerposition',[posInfo.climMax1_input],...
@@ -103,7 +97,7 @@ for k = 1 : length(guiHandlesSpec2.SpecList.Value)
                     axis([0 m climScale1(guiHandlesSpec2.checkboxPSD.Value+1) climScale2(guiHandlesSpec2.checkboxPSD.Value+1)])             
                     xlabel('Frequency (Hz)','fontweight','bold');
                     if guiHandlesSpec2.checkboxPSD.Value
-                        ylabel(['PSD (dB)'],'fontweight','bold');
+                        ylabel(['Power Spectral Density (dB)'],'fontweight','bold');
                     else
                         ylabel(['Amplitude'],'fontweight','bold');
                     end
@@ -127,7 +121,7 @@ for k = 1 : length(guiHandlesSpec2.SpecList.Value)
                     axis([0 100 climScale1(guiHandlesSpec2.checkboxPSD.Value+1) climScale2(guiHandlesSpec2.checkboxPSD.Value+1)]) 
                     xlabel('Frequency (Hz)','fontweight','bold');
                     if guiHandlesSpec2.checkboxPSD.Value
-                        ylabel(['PSD (dB)'],'fontweight','bold');
+                        ylabel(['Power Spectral Density (dB)'],'fontweight','bold');
                     else
                         ylabel(['Amplitude'],'fontweight','bold');
                     end
@@ -160,7 +154,7 @@ for m = 1 : length(guiHandlesSpec2.SpecList.Value)
 end
 if ~isempty(freq2d2) && ~isempty(amp2d2)
     h=legend(legnd);     
-    h.Position = [0.885 0.39-h.Position(4) h.Position(3:4)];
+    h.Position = [0.885 0.33-h.Position(4) h.Position(3:4)];
 end
 
 

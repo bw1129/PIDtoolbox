@@ -12,25 +12,22 @@ PTtunefig=figure(4);
 prop_max_screen=(max([PTtunefig.Position(3) PTtunefig.Position(4)]));
 fontsz=(screensz_multiplier*prop_max_screen);
 
-tuneCrtlpanel.FontSize=fontsz;  
-guiHandlesTune.saveFig4.FontSize=fontsz;
-guiHandlesTune.run4.FontSize=fontsz;
-guiHandlesTune.fileListWindowStep.FontSize=fontsz;
-guiHandlesTune.clearPlots.FontSize=fontsz;
-guiHandles.maxYStepTxt.FontSize=fontsz;
-guiHandles.maxYStepInput.FontSize=fontsz;
-guiHandlesTune.chooseaxis.FontSize=fontsz;
-guiHandlesTune.Ycorrection.FontSize=fontsz;
+f = fields(guiHandlesTune);
+for i = 1 : size(f,1)
+    eval(['guiHandlesTune.' f{i} '.FontSize=fontsz;']);
+end
 
 
 %% step resp computed directly from set point and gyro
 ylab={'R';'P';'Y'};
 ylab2={'roll';'pitch';'yaw'};
 
+axesOptions = {[1 2 3]; [1 2]; 1; 2; 3};
+
 %%%%%%%%%%%%% step resp %%%%%%%%%%%%%
 figure(PTtunefig)
 
-ymax = str2num(guiHandles.maxYStepInput.String);
+ymax = str2num(guiHandlesTune.maxYStepInput.String);
 hwarn=[];
 if ~guiHandlesTune.clearPlots.Value
     cnt = 0;
@@ -40,14 +37,14 @@ if ~guiHandlesTune.clearPlots.Value
     for f = guiHandlesTune.fileListWindowStep.Value   
         fcntSR = fcntSR + 1;   
         if fcntSR <= 10
-            for p=1:guiHandlesTune.chooseaxis.Value+1   
+            for p = axesOptions{guiHandlesTune.chooseaxis.Value}   
                 cnt = cnt + 1;
                 try 
                     if ~updateStep   
                         clear H G L
                         eval(['H = T{f}.setpoint_' int2str(p-1) '_(tIND{f});'])
                         eval(['G = T{f}.gyroADC_' int2str(p-1) '_(tIND{f});'])
-                        [stepresp_A{p} tA] = PTstepcalc(H, G, A_lograte(f), guiHandlesTune.Ycorrection.Value);
+                        [stepresp_A{p} tA] = PTstepcalc(H, G, A_lograte(f), guiHandlesTune.Ycorrection.Value, guiHandlesTune.smoothFactor_select.Value);
                      %   xcorrLag(p) = finddelay(H, G) * A_lograte(f);
                     end
                 catch

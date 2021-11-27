@@ -1,4 +1,4 @@
-%% PTplotBreakout - script to save main Figs without UI control panel in new window
+%% PTsaveFig
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -9,19 +9,10 @@
 
 %% simplified figure saving
 if ~isempty(fnameMaster) 
-    
-    [filename, saveDirectory] = uiputfile('*.png')
-
-    set(gcf, 'pointer', 'watch')
-
-    figname=[saveDirectory filename];
-    try
-        saveas(gcf, figname );
-    catch
-    end
-
-    set(gcf, 'pointer', 'arrow')
-
+    figname=[];
+    [filename, saveDirectory] = uiputfile('untitled.png')
+     figname=[saveDirectory filename];
+     saveas(gcf, filename );
 else
      warndlg('Please select file(s)');
 end

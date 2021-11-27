@@ -1,5 +1,5 @@
 function [Fs spec] = PTSpec2d(Y, F, psd)
-%% [freq spec] = PTSpec2d(Y, F, psd) 
+%% [Fs spec] = PTSpec2d(Y, F, psd) 
 %   computes standard fft on input data Y. F is sample frequency in Hz.  
 
 % ----------------------------------------------------------------------------------

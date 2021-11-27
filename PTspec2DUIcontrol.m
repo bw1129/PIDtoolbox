@@ -19,7 +19,7 @@ TooltipString_sub100=['Zoom data to show sub 100Hz details',...
 
 
 %%%
-
+PTcolormap;
 % define
 smat=[];%string
 ampmat=[];%spec matrix
@@ -48,16 +48,17 @@ posInfo.TermListWindowSpec=[.898 .55 .088 .14];
 
 posInfo.computeSpec=            [.896 .52 .0455 .026];
 posInfo.resetSpec=              [.942 .52 .0455 .026];
-posInfo.spectrogramButton2=     [.896 .495 .0455 .026];
-posInfo.saveFig2=               [.942 .495 .0455 .026]; % .896 .495 .092 .026
+posInfo.spectrogramButton2=     [.896 .495 .0915 .026];
+posInfo.spectrogramButton3=    [.896 .47 .0915 .026];
+posInfo.saveFig2=               [.896 .445 .0915 .026]; % .896 .495 .092 .026
  
-posInfo.smooth_select =         [.894 .452 .096 .04];
-posInfo.checkboxPSD=            [.925 .395 .04 .02];
+posInfo.smooth_select =         [.895 .405 .0955 .04];
+posInfo.checkboxPSD=            [.925 .35 .04 .02];
 
-posInfo.climMax1_text = [.91 .44 .035 .024];
-posInfo.climMax1_input = [.915 .42 .025 .024];
-posInfo.climMax2_text = [.94 .44 .035 .024];
-posInfo.climMax2_input = [.945 .42 .025 .024];
+posInfo.climMax1_text = [.91 .395 .035 .024];
+posInfo.climMax1_input = [.915 .375 .025 .024];
+posInfo.climMax2_text = [.94 .395 .035 .024];
+posInfo.climMax2_input = [.945 .375 .025 .024];
 
 
 climScale1=[0 ; -50 ];
@@ -76,7 +77,7 @@ set(dcm_obj2,'UpdateFcn',@PTdatatip);
 
 specCrtlpanel = uipanel('Title','select files (max 10)','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.89 .39 .105 .53]);
+              'Position',[.89 .34 .105 .58]);
  
 guiHandlesSpec2.computeSpec = uicontrol(PTspecfig2,'string','Run','fontsize',fontsz,'TooltipString', [TooltipString_specRun],'units','normalized','outerposition',[posInfo.computeSpec],...
     'callback','PTplotSpec2D;');
@@ -105,9 +106,13 @@ guiHandlesSpec2.smoothFactor_select = uicontrol(PTspecfig2,'style','popupmenu','
      'callback','@selection2;updateSpec=1;PTplotSpec2D;');
 guiHandlesSpec2.smoothFactor_select.Value=3;
 
-guiHandlesSpec2.spectrogramButton2 = uicontrol(PTspecfig2,'string','Heatmaps','fontsize',fontsz,'TooltipString', [TooltipString_spec], 'units','normalized','outerposition',[posInfo.spectrogramButton2],...
+guiHandlesSpec2.spectrogramButton2 = uicontrol(PTspecfig2,'string','Freq x Throttle','fontsize',fontsz,'TooltipString', ['Opens Freq x Throttle Spectrogram in New Window'], 'units','normalized','outerposition',[posInfo.spectrogramButton2],...
     'callback','PTspecUIcontrol;');
 guiHandlesSpec2.spectrogramButton2.ForegroundColor=[colorA];
+
+ guiHandlesSpec2.spectrogramButton3 = uicontrol(PTspecfig2,'string','Freq x Time','fontsize',fontsz,'TooltipString', ['Opens Freq x Time Spectrogram in New Window'], 'units','normalized','outerposition',[posInfo.spectrogramButton3],...
+     'callback','PTfreqTimeUIcontrol;');
+ guiHandlesSpec2.spectrogramButton3.ForegroundColor=[colorB];
 
 guiHandlesSpec2.climMax1_text = uicontrol(PTspecfig2,'style','text','string','Y min','fontsize',fontsz,'TooltipString',['Y min'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.climMax1_text]);
 guiHandlesSpec2.climMax1_input = uicontrol(PTspecfig2,'style','edit','string',[num2str(climScale1(guiHandlesSpec2.checkboxPSD.Value+1, 1))],'fontsize',fontsz,'TooltipString',['Y min'],'units','normalized','outerposition',[posInfo.climMax1_input],...
