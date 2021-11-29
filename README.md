@@ -5,7 +5,7 @@
 
 * **For a detailed guide to PIDtoolbox, please visit  <a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">The Wiki Page</a>**.
 
-* **If you would like 1-on-1 tuning consultation please visit <a href="https://github.com/bw1129/PIDtoolbox/wiki/Tuning Service" target="blank">The Tuning Service Page</a>**
+* **If you would like 1-on-1 tuning consultation please visit <a href="https://github.com/bw1129/PIDtoolbox/wiki/Professional Tuning Service" target="blank">The Tuning Service Page</a>**
 
 * **If you'd just like to ask a technical question about the software, tuning or troubleshooting, or you just wanna donate to the project, drop me a donation then direct message me in Facebook messenger:**
 
