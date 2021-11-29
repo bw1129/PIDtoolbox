@@ -35,9 +35,9 @@ for c=1 : size(cols,2)
     for r=1 : size(rows,2)
         k=k+1;
         if c == 1
-            posInfo.Spec2Pos(k,:)=[cols(c) rows(r) 0.38 0.25];
+            posInfo.Spec2Pos(k,:)=[cols(c) rows(r) 0.38 0.245];
         else
-            posInfo.Spec2Pos(k,:)=[cols(c) rows(r) 0.38 0.25];
+            posInfo.Spec2Pos(k,:)=[cols(c) rows(r) 0.38 0.245];
         end
     end
 end
@@ -46,19 +46,19 @@ end
 posInfo.fileListWindowSpec=[.898 .7 .088 .20];
 posInfo.TermListWindowSpec=[.898 .55 .088 .14];
 
-posInfo.computeSpec=            [.896 .52 .0455 .026];
-posInfo.resetSpec=              [.942 .52 .0455 .026];
+posInfo.computeSpec=            [.896 .522 .0455 .026];
+posInfo.resetSpec=              [.942 .522 .0455 .026];
 posInfo.spectrogramButton2=     [.896 .495 .0915 .026];
-posInfo.spectrogramButton3=    [.896 .47 .0915 .026];
-posInfo.saveFig2=               [.896 .445 .0915 .026]; % .896 .495 .092 .026
+posInfo.spectrogramButton3=    [.896 .468 .0915 .026];
+posInfo.saveFig2=               [.896 .441 .0915 .026]; % .896 .495 .092 .026
  
-posInfo.smooth_select =         [.895 .405 .0955 .04];
-posInfo.checkboxPSD=            [.925 .35 .04 .02];
+posInfo.smooth_select =         [.895 .395 .0915 .04];
+posInfo.checkboxPSD=            [.925 .34 .04 .02];
 
-posInfo.climMax1_text = [.91 .395 .035 .024];
-posInfo.climMax1_input = [.915 .375 .025 .024];
-posInfo.climMax2_text = [.94 .395 .035 .024];
-posInfo.climMax2_input = [.945 .375 .025 .024];
+posInfo.climMax1_text = [.91 .385 .035 .024];
+posInfo.climMax1_input = [.915 .365 .025 .024];
+posInfo.climMax2_text = [.94 .385 .035 .024];
+posInfo.climMax2_input = [.945 .365 .025 .024];
 
 
 climScale1=[0 ; -50 ];
@@ -77,7 +77,7 @@ set(dcm_obj2,'UpdateFcn',@PTdatatip);
 
 specCrtlpanel = uipanel('Title','select files (max 10)','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.89 .34 .105 .58]);
+              'Position',[.89 .33 .105 .59]);
  
 guiHandlesSpec2.computeSpec = uicontrol(PTspecfig2,'string','Run','fontsize',fontsz,'TooltipString', [TooltipString_specRun],'units','normalized','outerposition',[posInfo.computeSpec],...
     'callback','PTplotSpec2D;');

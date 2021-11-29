@@ -9,6 +9,7 @@
 % ----------------------------------------------------------------------------------
 
 if ~isempty(fnameMaster) 
+   
 %% update fonts 
 prop_max_screen=(max([PTspecfig2.Position(3) PTspecfig2.Position(4)]));
 fontsz=(screensz_multiplier*prop_max_screen);
@@ -161,5 +162,6 @@ end
 set(PTspecfig2, 'pointer', 'arrow')
 updateSpec=0;
 end
+
 
 

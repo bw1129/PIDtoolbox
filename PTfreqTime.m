@@ -65,12 +65,12 @@ for i = 1 : 3
     if guiHandlesSpec3.ColormapSelect.Value==8, colormap(viridis); end
     if guiHandlesSpec3.ColormapSelect.Value==9, colormap(linearREDcmap); end 
     if guiHandlesSpec3.ColormapSelect.Value==10, colormap(linearGREYcmap); end
-    cbar = colorbar('EastOutside');
-    cbar.Label.String = 'Power Spectral density (dB)';
-  
-    if i == 3 && (strcmp(char(datSelectionString(guiHandlesSpec3.SpecList.Value)), 'axisD') || strcmp(char(datSelectionString(guiHandlesSpec3.SpecList.Value)), 'axisDpf'))
-        delete(subplot('position',posInfo.Spec3Pos(i,:))); 
-    end
+     cbar = colorbar('EastOutside');
+     cbar.Label.String = 'Power Spectral density (dB)';
+
+     if i == 3 && (strcmp(char(datSelectionString(guiHandlesSpec3.SpecList.Value)), 'axisD') || strcmp(char(datSelectionString(guiHandlesSpec3.SpecList.Value)), 'axisDpf')) 
+         delete(subplot('position',posInfo.Spec3Pos(i,:))); 
+     end
     box off
     
     catch

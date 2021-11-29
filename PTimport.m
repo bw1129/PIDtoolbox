@@ -10,7 +10,7 @@ function [DAT newFileName] = PTimport(csvFname, BBLFileName)
 % ----------------------------------------------------------------------------------
 
 newFileName=csvFname;
-T=readtable(csvFname); %'Format','%s%s'
+T=readtable(csvFname);
 
 delete(csvFname);% we r done with this-dont wanna leave junk on main directory
 
@@ -54,7 +54,7 @@ for m=1:size(s,1)
     end
 end
 
-%
+%%%%%%
 DAT.T=T;
 DAT.mainFname=BBLFileName;
 DAT.csvFname=csvFname;
@@ -65,4 +65,3 @@ catch
 end
 
 end
-

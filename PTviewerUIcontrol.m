@@ -26,14 +26,15 @@ posInfo.checkbox13=[.58 .94 .1 .025];
 posInfo.checkbox14=[.66 .965 .06 .025];
 posInfo.checkbox15=[.66 .94 .06 .025];
 
-posInfo.period2Hz=[.71 .94 .045 .024];
+
+posInfo.period2Hz=[.712 .94 .045 .024];
 
 posInfo.maxYtext = [.70 .965 .04 .025];
 posInfo.maxYinput = [.735 .965 .025 .025];
 
 checkpanel = uipanel('Title','','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
-             'Position',[.096 .932 .68 .065]);        
+             'Position',[.096 .932 .69 .064]);        
 
 guiHandles.checkbox0=uicontrol(PTfig,'Style','checkbox','String','Gyro (prefilt)','fontsize',fontsz,'ForegroundColor',[linec.col0],'BackgroundColor',bgcolor,...
     'units','normalized','outerposition',[posInfo.checkbox0],'callback','if ~isempty(fnameMaster),  PTplotLogViewer; end');
@@ -81,7 +82,6 @@ guiHandles.FileNum.Value=1;
 
 guiHandles.period2Hz = uicontrol(PTfig,'string','ms to Hz','fontsize',fontsz,'TooltipString', ['Calculates peak to peak in Hz similar to the BBE ''Mark'' tool' , newline, 'press button, position mouse over 1st peak, mouse click,' , newline, 'then position over 2nd peak, then mouse click again'], 'units','normalized','outerposition',[posInfo.period2Hz],...
      'callback','if ~isempty(filenameA) && guiHandles.period2Hz.Value, [x1 y1] = ginput(1); figure(PTfig); plot(x1,y1,''xr'');  [x2 y2] = ginput(1); plot(x2,y2,''xr''); plot([x1 x2],[y1 y2],''-r''); x3=[round(x1*1000) round(x2*1000)]; f = 1000/(x3(2)-x3(1)); text(x2, y2, [num2str(x3(2)-x3(1)) ''ms, '' num2str(f) ''Hz''],''FontSize'',fontsz, ''FontWeight'', ''Bold''), end');
-
 
 if isempty(epoch1_A(guiHandles.FileNum.Value)) || isempty(epoch2_A(guiHandles.FileNum.Value))
     epoch1_A(guiHandles.FileNum.Value)=tta{guiHandles.FileNum.Value}(1)/us2sec;

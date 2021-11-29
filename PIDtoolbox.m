@@ -11,33 +11,27 @@
 clear
 
 PtbVersion='v0.5';
-    
-executableDir = pwd;
-%addpath(executableDir)
-
-GYRO_SCALED=6;
-
-% bbd1 = 'blackbox_decode';
-% bbd2 = 'blackbox_decode_INAV';
-% source = fullfile(executableDir,bbd1);
-% destination = fullfile(filepathA,bbd1); 
-% copyfile(source,destination);
 
 t = now;
 currentDate = char(datetime(t,'ConvertFrom','datenum'));
 currentDate = currentDate(1:strfind(currentDate,' ')-1);
 
-set(0,'defaultUicontrolFontName', 'Helvetica')
+set(0,'defaultUicontrolFontName', 'Helvetica') %calibri Helvetica
 set(0,'defaultUicontrolFontSize', 10)
 
+executableDir = pwd;
+%addpath(executableDir)
 
-% try
-%     fid = fopen('logfileDir.txt');
-%     logfileDir = fscanf(fid,'%s');
-%     fclose(fid);   
-% catch
+BF=1;
+GYRO_SCALED=6;
+
+try
+    fid = fopen('logfileDir.txt');
+    logfileDir = fscanf(fid,'%s');
+    fclose(fid);   
+catch
     logfileDir=[];
-% end
+end
 
 %%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
@@ -45,9 +39,9 @@ PTfig.InvertHardcopy='off';
 bgcolor=[.95 .95 .95];
 set(PTfig,'color',bgcolor);
 
-wikipage = 'https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
+wikipage='https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide';
 
-if ~exist('filenameA','var'), filenameA={}; end
+if ~exist('filenameA','var'), filenameA=[]; end
 
 expandON=0;
 use_randsamp=0;
@@ -70,16 +64,16 @@ errmsg=[];
 
 plotall_flag=-1;
 
-colorA=[.8 .1 .2];
-colorA2=[.4 .0 .6];
-colorB=[.1 .4 .8];
+colorA=[.8 .1 .1];
+colorA2=[.48 .0 .72];
+colorB=[.12 .48 .96];
 colorC=[1 .2 .2];
-colorD=[.1 .7 .2];
+colorD=[.1 1 .2];
 
-colRun = [0 .5 0];
+colRun = [0 .6 .3];
 saveCol = [.1 .1 .1];
 setUpCol = [.1 .1 .1];
-cautionCol = [0.6    0.3    0];
+cautionCol = [0.7    0.4    0];
 %use_phsCorrErr=0;
 flightSpec=0;
 screensz = get(0,'ScreenSize');
@@ -93,32 +87,33 @@ PTfig.Name= ['PIDtoolbox (' PtbVersion ') - Log Viewer'];
 
 pause(.1)% need to wait for figure to open before extracting screen values
 
-screensz_multiplier = sqrt(screensz(4)^2) * .013; % based on vertical dimension only, to deal with for ultrawide monitors
+screensz_multiplier = sqrt(screensz(4)^2) * .01; % based on vertical dimension only, to deal with for ultrawide monitors
 prop_max_screen = PTfig.Position(4);
 fontsz = (screensz_multiplier*prop_max_screen);
 
 controlpanel = uipanel('Title','Control Panel','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
-             'Position',[.89 .67 .105 .25]); 
+             'Position',[.89 .615 .105 .305]);
 
-posInfo.firmware =[.8935 .86 .098 .04];        
-posInfo.fileA=[.896 .85 .0455 .026];
-posInfo.clr=[.942 .85 .0455 .026];
-posInfo.fnameAText = [.8935 .81 .098 .04];
+posInfo.firmware =[.8965 .86 .091 .04];          
+posInfo.fileA=[.896 .845 .0455 .026];
+posInfo.clr=[.942 .845 .0455 .026];
+posInfo.fnameAText = [.8965 .8 .091 .04];
 
-posInfo.startEndButton=[.896 .8 .095 .026];
+posInfo.startEndButton=[.896 .79 .095 .026];
 
 LogStDefault = 2;% default ignore first 2 seconds of logfile
 LogNdDefault = 1;% default ignore last 1 second of logfile
 
-posInfo.lineSmooth = [.895 .775 .046 .026];
-posInfo.linewidth = [.943 .775 .046 .026];
-posInfo.spectrogramButton = [.895 .75 .094 .026];
-posInfo.TuningButton = [.895 .725 .094 .026];
-posInfo.DispInfoButton = [.895 .7 .046 .026];
-posInfo.saveFig = [.943 .7 .046 .026];
-posInfo.wiki = [.895 .675 .046 .026];
-posInfo.donate = [.943 .675 .046 .026];
+posInfo.lineSmooth = [.895 .76 .046 .026];
+posInfo.linewidth = [.943 .76 .046 .026];
+
+posInfo.spectrogramButton=[.895 .733 .093 .026];
+posInfo.TuningButton=[.895 .705 .093 .026];
+posInfo.DispInfoButton=[.895 .678 .046 .026];
+posInfo.saveFig=[.943 .678 .046 .026];
+posInfo.wiki=[.895 .651 .093 .026];
+posInfo.PIDtuningService=[.895 .623 .093 .026];
 
 fnameMaster = {}; 
 fcnt = 0;
@@ -170,13 +165,12 @@ TooltipString_saveFig=['Saves current figure', newline,'Note: Clicking the ''Sav
 TooltipString_wiki=['Link to the PIDtoolbox wiki in Github'];
 TooltipString_selectButton = ['With box checked, position mouse over desired start position,' , newline, 'then mouse click, then desired end position, then mouse click again;' , newline, 'to escape, deselect then click anywhere'];
 
-
 %%%
 
 guiHandles.Firmware = uicontrol(PTfig,'Style','popupmenu','string',[{'Betaflight logfiles'; 'Emuflight logfiles'; 'INAV logfiles'}], 'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.firmware]);
 
 guiHandles.fileA = uicontrol(PTfig,'string','Select ','fontsize',fontsz,'TooltipString', [TooltipString_loadRun], 'units','normalized','outerposition',[posInfo.fileA],...
-     'callback','guiHandles.fileA.FontWeight=''Bold''; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT''}, ''MultiSelect'',''on''); if isstr(filenameA), filenameA={filenameA}; end; if iscell(filenameA), PTload; PTviewerUIcontrol; PTplotLogViewer; end'); 
+     'callback','guiHandles.fileA.FontWeight=''Bold''; try, if ~isempty(logfileDir), cd(logfileDir), end, catch, end; [filenameA, filepathA] = uigetfile({''*.BBL;*.BFL;*.TXT''}, ''MultiSelect'',''on''); if isstr(filenameA), filenameA={filenameA}; end; if iscell(filenameA), PTload; PTviewerUIcontrol; PTplotLogViewer; end'); 
 guiHandles.fileA.ForegroundColor=[colRun];
 
 guiHandles.clr = uicontrol(PTfig,'string','Reset','fontsize',fontsz,'TooltipString', ['clear all data'], 'units','normalized','outerposition',[posInfo.clr],...
@@ -197,7 +191,7 @@ guiHandles.linewidth = uicontrol(PTfig,'Style','popupmenu','string',{'line width
     'fontsize',fontsz, 'TooltipString', ['line thickness'], 'units','normalized','outerposition', [posInfo.linewidth],'callback','@selection; if ~isempty(filenameA), PTplotLogViewer; end');
  guiHandles.linewidth.Value = 2;
  
-guiHandles.spectrogramButton = uicontrol(PTfig,'Style', 'pushbutton','string','Spectral Analyzer','fontsize',fontsz,'TooltipString', [TooltipString_spec],'units','normalized','outerposition',[posInfo.spectrogramButton],...
+guiHandles.spectrogramButton = uicontrol(PTfig,'string','Spectral Analyzer','fontsize',fontsz,'TooltipString', [TooltipString_spec],'units','normalized','outerposition',[posInfo.spectrogramButton],...
     'callback','PTspec2DUIcontrol;');
 guiHandles.spectrogramButton.ForegroundColor=[colorA];
 
@@ -213,14 +207,14 @@ guiHandles.saveFig = uicontrol(PTfig,'string','Save Fig','fontsize',fontsz, 'Too
     'callback','guiHandles.saveFig.FontWeight=''bold'';PTsaveFig; guiHandles.saveFig.FontWeight=''normal'';'); 
 guiHandles.saveFig.ForegroundColor=[saveCol];
 
-
-guiHandles.wiki = uicontrol(PTfig,'string','wiki','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
+guiHandles.wiki = uicontrol(PTfig,'string','User Guide','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
     'callback','web(wikipage);'); 
 guiHandles.wiki.ForegroundColor=[cautionCol];
 
-guiHandles.donate = uicontrol(PTfig,'string','donate','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['If you''d like to donate to the PTB project.',newline 'this link takes you to my PayPal page.',newline 'Any contribution is greatly appreciated, Thanks!!! '],'units','normalized','outerposition',[posInfo.donate],...
-    'callback','web(''https://www.paypal.com/donate?business=EMCJRU9M7AKAA&currency_code=CAD'');'); 
-guiHandles.donate.ForegroundColor=[cautionCol];
+guiHandles.PIDtuningService = uicontrol(PTfig,'string','PID Tuning Service','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['This is a link to my Professional PID tuning Service Web Page'],'units','normalized','outerposition',[posInfo.PIDtuningService],...
+    'callback','web(''https://github.com/bw1129/PIDtoolbox/wiki/Professional-Tuning-Service'');'); 
+guiHandles.PIDtuningService.ForegroundColor=[cautionCol];
+
 
 %% functions
 

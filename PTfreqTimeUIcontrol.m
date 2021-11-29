@@ -27,30 +27,30 @@ k=0;
 for c=1 : size(cols,2)
     for r=1 : size(rows,2)
         k=k+1; 
-        posInfo.Spec3Pos(k,:)=[cols(c) rows(r) 0.77 0.255];
+        posInfo.Spec3Pos(k,:)=[cols(c) rows(r) 0.77 0.25];
     end
 end
 
 updateSpec = 0;
 clear specMat
  
-posInfo.fileListWindowSpec=[.895 .865 .096 .04];
-posInfo.TermListWindowSpec=[.895 .84 .096 .04];
+posInfo.fileListWindowSpec=[.895 .86 .0915 .04];
+posInfo.TermListWindowSpec=[.895 .83 .0915 .04];
 
-posInfo.computeSpec3=            [.896 .83 .0455 .026];
-posInfo.resetSpec3=              [.942 .83 .0455 .026]; 
-posInfo.saveFig2=               [.896 .805 .0915 .026]; % .896 .495 .092 .026
-posInfo.smooth_select3 =         [.895 .78 .096 .026];
-posInfo.subsampling_select3=     [.895 .755 .096 .026];
-posInfo.ColormapSelect2 =        [.895 .73 .096 .026];
+posInfo.computeSpec3=            [.895 .815 .0455 .026];
+posInfo.resetSpec3=              [.942 .815 .0455 .026]; 
+posInfo.saveFig2=               [.895 .785 .092 .026]; % .896 .495 .092 .026
+posInfo.smooth_select3 =         [.895 .75 .092 .026];
+posInfo.subsampling_select3=     [.895 .72 .092 .026];
+posInfo.ColormapSelect2 =        [.895 .69 .092 .026];
 
-posInfo.clim3Max1_text = [.91 .71 .035 .024];
-posInfo.clim3Max1_input = [.915 .69 .025 .024];
-posInfo.clim3Max2_text = [.94 .71 .035 .024];
-posInfo.clim3Max2_input = [.945 .69 .025 .024];
+posInfo.clim3Max1_text = [.91 .66 .035 .024];
+posInfo.clim3Max1_input = [.915 .64 .025 .024];
+posInfo.clim3Max2_text = [.94 .66 .035 .024];
+posInfo.clim3Max2_input = [.945 .64 .025 .024];
 ClimScale3 = [-30 10]; 
 
-posInfo.sub100HzfreqTime  = [.915 .665 .06 .024];
+posInfo.sub100HzfreqTime  = [.915 .615 .06 .024];
 
 PTspecfig3=figure(31);
 set(PTspecfig3, 'units','normalized','outerposition',[.1 .1 .75 .8])
@@ -65,7 +65,7 @@ set(dcm_obj2,'UpdateFcn',@PTdatatip);
 
 Spec3Crtlpanel = uipanel('Title','select file ','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.89 .66 .105 .26]);
+              'Position',[.89 .61 .105 .31]);
  
 guiHandlesSpec3.computeSpec = uicontrol(PTspecfig3,'string','Run','fontsize',fontsz,'TooltipString', [TooltipString_specRun],'units','normalized','outerposition',[posInfo.computeSpec3],...
     'callback','updateSpec = 0; clear specMat; PTfreqTime;');
