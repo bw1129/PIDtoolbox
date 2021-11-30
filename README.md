@@ -1,7 +1,7 @@
 
 # PIDtoolbox
 
-**PIDtoolbox** is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for Windows, Mac and Linux, and is tailored to work on Betaflight, Emuflight and INAV logfiles. **[Download instructions**](https://github.com/bw1129/PIDtoolbox#download). 
+**PIDtoolbox** is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for Windows, Mac and Linux, and is tailored to work on Betaflight, Emuflight and INAV logfiles. [**Download instructions**](https://github.com/bw1129/PIDtoolbox#download). 
 
 * **For a detailed guide to PIDtoolbox, please visit  <a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">The Wiki Page</a>**.
 
