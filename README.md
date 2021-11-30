@@ -8,13 +8,7 @@
 
 * **If you would like 1-on-1 tuning consultation please visit <a href="https://github.com/bw1129/PIDtoolbox/wiki/Professional Tuning Service" target="blank">The Tuning Service Page</a>**
 
-* **If you'd just like to ask a technical question about the software, tuning or troubleshooting, or you just wanna donate to the project, drop me a donation then direct message me in Facebook messenger:**
-
-    1. **<a href="https://www.paypal.com/donate/?business=EMCJRU9M7AKAA&currency_code=CAD" target="blank">PayPal Donate Page</a>** 
-    2. **<a href="https://www.facebook.com/ThePIDtoolboxGuy" target="blank">The PIDtoolbox guy on speed dial</a>** 
-
-
-
+* **If you'd just like to ask a technical question about the software, tuning or troubleshooting, or you just wanna donate to the project, drop me a [donation](https://www.paypal.com/donate/?business=EMCJRU9M7AKAA&currency_code=CAD) then direct message me in Facebook messenger [The PIDtoolbox guy on speed dial](https://www.facebook.com/ThePIDtoolboxGuy)**
 
 ![](images/PIDtoolbox_v0.32.png)
 
