@@ -4,7 +4,9 @@
 
 PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for Windows, Mac and Linux, and is tailored to work on Betaflight, Emuflight and INAV logfiles (see [**Download instructions**](https://github.com/bw1129/PIDtoolbox#download) below). For information on how to use the software, please visit the [**PIDtoolbox User Guide**](https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide) and subscribe to the [**The PIDtoolbox YouTube Channel**](https://www.youtube.com/channel/UCY2CVnWGEeRlyxOXVsHS_fA).
 
-If you would like 1-on-1 tuning consultation check out 
+**If you'd like to suppor the PIDtoolbox project, [check out my Patreon benefits](https://www.patreon.com/ThePIDtoolboxGuy)**
+
+**If you would like 1-on-1 tuning consultation check out** 
 ### **[The PIDtoolbox Professional PID Tuning Service](https://github.com/bw1129/PIDtoolbox/wiki/Professional%20Tuning%20Service)**
 
 If you'd just like to ask a technical question about the software, tuning or troubleshooting, or you just wanna donate to the project, drop me a small **[PayPal Donation](https://paypal.me/PIDtoolbox)** and direct message me in Facebook messenger **([the PIDtoolbox guy on speed dial](https://www.facebook.com/ThePIDtoolboxGuy))**. I'm really happy to provide quick useful feedback on anything you're having trouble with!
