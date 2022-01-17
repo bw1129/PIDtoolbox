@@ -10,7 +10,7 @@ PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multi
 **If you would like 1-on-1 tuning consultation check out** 
 ### **[The PIDtoolbox Professional PID Tuning Service](https://github.com/bw1129/PIDtoolbox/wiki/Professional%20Tuning%20Service)**
 
-If you'd just like to ask a technical question about the software, tuning or troubleshooting, or you just wanna donate to the project, drop me a small **[PayPal Donation](https://paypal.me/PIDtoolbox)** and direct message me in Facebook messenger **([the PIDtoolbox guy on speed dial](https://www.facebook.com/ThePIDtoolboxGuy))**. I'm really happy to provide quick useful feedback on anything you're having trouble with!
+* **If you'd just like to donate to the PIDtoolbox project, any amount is so much appreciated, and is super helpful! [PayPal Donation](https://www.paypal.com/donate/?business=EMCJRU9M7AKAA&no_recurring=0&item_name=Donate+to+the+PIDtoolbox+Project&currency_code=CAD) Thanks!**
 
 ![](images/PIDtoolbox_v0.32.png)
 
