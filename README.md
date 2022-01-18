@@ -14,7 +14,7 @@ PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multi
 ### **[Make a PayPal Donation to the PIDtoolbox project](https://www.paypal.com/donate/?business=EMCJRU9M7AKAA&no_recurring=0&item_name=Donate+to+the+PIDtoolbox+Project&currency_code=CAD)**
 
 **Also join my Discord server for ongoing discussion about tuning using PIDtoolbox**
-### **[Join the PIDtoolbox Discord](https://discord.gg/Ab8Yf87C)**
+### **[Join the PIDtoolbox Discord](https://discord.gg/rHqhwpAXJH)**
 
 ![](images/PIDtoolbox_v0.32.png)
 
