@@ -285,7 +285,7 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
         if ~isempty(amp2d{p})
             h2=subplot('position',posInfo.SpecPos(p,:)); cla
             h=plot(freq2d{p}, smooth(amp2d{p}, log10(size(amp2d{p},1)) * (guiHandlesSpec.smoothFactor_select.Value^2), 'lowess'));hold on
-            set(h, 'linewidth', guiHandles.linewidth.Value)
+            set(h, 'linewidth', guiHandles.linewidth.Value/2)
             set(h2,'fontsize',fontsz,'fontweight','bold')
             if guiHandlesSpec.specPresets.Value <= 4
                 set(h,'Color',[SpecLineCols(c1(p),:,1)])

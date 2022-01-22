@@ -9,24 +9,24 @@
 
 if ~isempty(fnameMaster) 
     if Nfiles < 2 
-        str=strings(size(dataA(guiHandles.FileNumDispA.Value).SetupInfo,1),1);
-        str(:)=':'; str2=strcat(dataA(guiHandles.FileNumDispA.Value).SetupInfo(:,1), char(str));
-        setupA=strcat(str2, string(dataA(guiHandles.FileNumDispA.Value).SetupInfo(:,2))); 
+        str=strings(size(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo,1),1);
+        str(:)=':'; str2=strcat(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo(:,1), char(str));
+        setupA=strcat(str2, string(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo(:,2))); 
     else
-        str=strings(size(dataA(guiHandles.FileNumDispA.Value).SetupInfo,1),1);
-        str(:)=':'; str2=strcat(dataA(guiHandles.FileNumDispA.Value).SetupInfo(:,1), char(str));
-        setupA=strcat(str2, string(dataA(guiHandles.FileNumDispA.Value).SetupInfo(:,2))); 
+        str=strings(size(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo,1),1);
+        str(:)=':'; str2=strcat(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo(:,1), char(str));
+        setupA=strcat(str2, string(dataA(guiHandlesInfo.FileNumDispA.Value).SetupInfo(:,2))); 
         
-        str=strings(size(dataA(guiHandles.FileNumDispB.Value).SetupInfo,1),1);
-        str(:)=':'; str2=strcat(dataA(guiHandles.FileNumDispB.Value).SetupInfo(:,1), char(str));
-        setupB=strcat(str2, string(dataA(guiHandles.FileNumDispB.Value).SetupInfo(:,2)));
+        str=strings(size(dataA(guiHandlesInfo.FileNumDispB.Value).SetupInfo,1),1);
+        str(:)=':'; str2=strcat(dataA(guiHandlesInfo.FileNumDispB.Value).SetupInfo(:,1), char(str));
+        setupB=strcat(str2, string(dataA(guiHandlesInfo.FileNumDispB.Value).SetupInfo(:,2)));
      end
 
      t = uitable('ColumnWidth',{columnWidth},'ColumnFormat',{'char'},'Data',[cellstr(char(setupA))]);
      set(t,'units','normalized','OuterPosition',[.02 .05 .45 .9],'FontSize',fontsz, 'ColumnName', [fnameMaster])
     if Nfiles > 1
           t = uitable('ColumnWidth',{columnWidth},'ColumnFormat',{'char'},'Data',[cellstr(char(setupB))]);
-          set(t,'units','normalized','OuterPosition',[.52 .05 .45 .9],'FontSize',fontsz, 'ColumnName', fnameMaster{guiHandles.FileNumDispB.Value})
+          set(t,'units','normalized','OuterPosition',[.52 .05 .45 .9],'FontSize',fontsz, 'ColumnName', fnameMaster{guiHandlesInfo.FileNumDispB.Value})
     end
 end
 

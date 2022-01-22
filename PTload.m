@@ -46,7 +46,7 @@ try
         for ii = 1 : n  
             
             clear subFiles;
-            [subFiles] = PTgetcsv(filenameA{ii}, guiHandles.Firmware.Value);
+           [filenameA{ii} subFiles] = PTgetcsv(filenameA{ii}, guiHandles.Firmware.Value);
                 
             for jj = 1 : size(subFiles,2)
                 waitbar((ii+jj)/(n+size(subFiles,2)+1) , waitbarFid,['Importing File ' int2str(ii) ', Subfile ' int2str(jj)]);
@@ -95,14 +95,16 @@ try
                  end
 
                 for k = 0 : 3
-                    try
+                     try
                         eval(['T{fcnt}.debug_' int2str(k) '_(1);'])
-                        eval(['T{fcnt}.axisF_' int2str(k) '_(1);'])
                     catch
                         eval(['T{fcnt}.(''debug_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1);']) ;
+                    end 
+                    try
+                        eval(['T{fcnt}.axisF_' int2str(k) '_(1);'])
+                    catch
                         eval(['T{fcnt}.(''axisF_' int2str(k) '_'')' '= zeros(length(T{fcnt}.loopIteration),1);']);
                     end 
-
                     eval(['T{fcnt}.motor_' int2str(k) '_ = ((T{fcnt}.motor_' int2str(k) '_ - 0) / (2000 - 0)) * 100;'])% scale motor sigs to %
                     try 
                         eval(['T{fcnt}.motor_' int2str(k+4) '_ = ((T{fcnt}.motor_' int2str(k+4) '_ - 0) / (2000 - 0)) * 100;'])% scale motor sigs 4-7 for x8 configuration %

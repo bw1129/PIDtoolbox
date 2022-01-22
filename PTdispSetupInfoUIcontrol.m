@@ -22,13 +22,13 @@ TooltipString_FileNumDispA=['List of files available. Click to view setup info f
 posInfo.FileNumDispA=[.22 .95 .1 .04];
 posInfo.FileNumDispB=[.72 .95 .1 .04];
   
-guiHandles.FileNumDispA = uicontrol(PTdisp,'Style','popupmenu','string',[fnameMaster],...
+guiHandlesInfo.FileNumDispA = uicontrol(PTdisp,'Style','popupmenu','string',[fnameMaster],...
     'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.FileNumDispA],'callback','@selection; PTdispSetupInfo;');
-guiHandles.FileNumDispA.Value=1;
+guiHandlesInfo.FileNumDispA.Value=1;
 if Nfiles > 1
-    guiHandles.FileNumDispB = uicontrol(PTdisp,'Style','popupmenu','string',[fnameMaster],...
+    guiHandlesInfo.FileNumDispB = uicontrol(PTdisp,'Style','popupmenu','string',[fnameMaster],...
         'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.FileNumDispB],'callback','@selection; PTdispSetupInfo;');
-    guiHandles.FileNumDispB.Value=2;
+    guiHandlesInfo.FileNumDispB.Value=2;
 end
 
 else

@@ -90,6 +90,7 @@ pause(.1)% need to wait for figure to open before extracting screen values
 screensz_multiplier = sqrt(screensz(4)^2) * .01; % based on vertical dimension only, to deal with for ultrawide monitors
 prop_max_screen = PTfig.Position(4);
 fontsz = (screensz_multiplier*prop_max_screen);
+markerSz = round(screensz_multiplier * 0.7);
 
 controlpanel = uipanel('Title','Control Panel','FontSize',fontsz,...
              'BackgroundColor',[.95 .95 .95],...
@@ -189,7 +190,7 @@ guiHandles.lineSmooth = uicontrol(PTfig,'Style','popupmenu','string',{'line smoo
 
 guiHandles.linewidth = uicontrol(PTfig,'Style','popupmenu','string',{'line width 1','line width 2','line width 3','line width 4','line width 5'},...
     'fontsize',fontsz, 'TooltipString', ['line thickness'], 'units','normalized','outerposition', [posInfo.linewidth],'callback','@selection; if ~isempty(filenameA), PTplotLogViewer; end');
- guiHandles.linewidth.Value = 2;
+ guiHandles.linewidth.Value = 3;
  
 guiHandles.spectrogramButton = uicontrol(PTfig,'string','Spectral Analyzer','fontsize',fontsz,'TooltipString', [TooltipString_spec],'units','normalized','outerposition',[posInfo.spectrogramButton],...
     'callback','PTspec2DUIcontrol;');
@@ -211,8 +212,8 @@ guiHandles.wiki = uicontrol(PTfig,'string','User Guide','fontsize',fontsz,'FontN
     'callback','web(wikipage);'); 
 guiHandles.wiki.ForegroundColor=[cautionCol];
 
-guiHandles.PIDtuningService = uicontrol(PTfig,'string','PID Tuning Service','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['This is a link to my Professional PID tuning Service Web Page'],'units','normalized','outerposition',[posInfo.PIDtuningService],...
-    'callback','web(''https://github.com/bw1129/PIDtoolbox/wiki/Professional-Tuning-Service'');'); 
+guiHandles.PIDtuningService = uicontrol(PTfig,'string','Donate','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['Donate to the PIDtoolbox project'],'units','normalized','outerposition',[posInfo.PIDtuningService],...
+    'callback','web(''https://www.paypal.com/paypalme/PIDtoolbox'');'); 
 guiHandles.PIDtuningService.ForegroundColor=[cautionCol];
 
 

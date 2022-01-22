@@ -1,5 +1,5 @@
-function [csvFnames] = PTgetcsv(filename, firmware_flag)
-%% [csvFnames] = PTgetcsv(filename, firmware_flag)
+function [filename csvFnames] = PTgetcsv(filename, firmware_flag)
+%% [filename csvFnames] = PTgetcsv(filename, firmware_flag)
 % Converts bbl files to csv using blackbox_decode
 
 % ----------------------------------------------------------------------------------
@@ -30,11 +30,10 @@ end
  
 mainFname=filename;
 if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl') || strcmp(filename(end-3:end),'.txt') || strcmp(filename(end-3:end),'.TXT')          
-
     if firmware_flag < 3
-        [status,result]=system(['./blackbox_decode ' filename]);  
+        [status,result]=system(['blackbox_decode.exe ' filename]);
     else
-        [status,result]=system(['./blackbox_decode_INAV ' filename]);        
+        [status,result]=system(['blackbox_decode_INAV.exe ' filename]);  
     end
     files=dir([filename(1:end-4) '*.csv']);
     
@@ -72,18 +71,24 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
     files = dir([filename(1:end-4) '*.csv']);
     
     % if more than one file
-    
     if size(files,1) > 1
         x=size(files,1);
         clear f2; m=1;
-        for k=1:x 
-            if isempty(readtable(files(k).name,'Format','%s%s','Delimiter','_'))  %((files(k).bytes)) < 1000 %isempty(readtable(files(k).name)) %((files(k).bytes)) < 1000 % delete if < 1000bytes 
+        for k=1:x, 
+            emptysubfiles = 0;
+            try
+                emptysubfiles = isempty(readtable(files(k).name,'Format','%s%s')); %faster loading strings but sometimes crashes 
+            catch
+                emptysubfiles = isempty(readtable(files(k).name));
+            end
+                                
+            if emptysubfiles  %((files(k).bytes)) < 1000  
                 delete(files(k).name)
                 files(k).name
             else
                 f2(m,:)=files(k);
                 m=m+1;
-            end
+            end          
         end 
         files=f2;clear f2   
         a=strfind(result,'duration');

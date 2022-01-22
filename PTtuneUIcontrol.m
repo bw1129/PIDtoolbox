@@ -33,7 +33,7 @@ TooltipString_clearPlot=['Clears lines from all subplots'];
 
 
 clear posInfo.TparamsPos
-cols=[0.05 0.45 0.57 0.69];
+cols=[0.05 0.45 0.56 0.71];
 rows=[0.69 0.395 0.1];
 k=0;
 for c=1 : size(cols,2)
@@ -42,7 +42,7 @@ for c=1 : size(cols,2)
         if c == 1,
             posInfo.TparamsPos(k,:)=[cols(c) rows(r) 0.37 0.24];
         else
-            posInfo.TparamsPos(k,:)=[cols(c) rows(r) 0.09 0.24];
+            posInfo.TparamsPos(k,:)=[cols(c) rows(r) 0.11 0.24];
         end
     end
 end
@@ -87,8 +87,8 @@ guiHandlesTune.Ycorrection.Value = 0;
 guiHandlesTune.chooseaxis = uicontrol(PTtunefig,'Style','popupmenu','string',{'RPY','RP','R','P','Y'}, 'fontsize',fontsz,'units','normalized','outerposition', [posInfo.chooseaxis]);
 guiHandlesTune.chooseaxis.Value = 2;
 
-guiHandles.maxYStepTxt = uicontrol(PTtunefig,'style','text','string','Y max ','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.maxYStepTxt]);
-guiHandles.maxYStepInput = uicontrol(PTtunefig,'style','edit','string','1.75','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','outerposition',[posInfo.maxYStepInput],...
+guiHandlesTune.maxYStepTxt = uicontrol(PTtunefig,'style','text','string','Y max ','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.maxYStepTxt]);
+guiHandlesTune.maxYStepInput = uicontrol(PTtunefig,'style','edit','string','1.75','fontsize',fontsz,'TooltipString', ['Y scale max'],'units','normalized','outerposition',[posInfo.maxYStepInput],...
      'callback','@textinput_call3; guiHandlesTune.clearPlots.Value=1; guiHandlesTune.clearPlots.FontWeight=''bold''; fcntSR = 0;PTtuningParams; guiHandlesTune.clearPlots.Value=0; guiHandlesTune.clearPlots.FontWeight=''normal'' ;PTtuningParams;  ');
  
 guiHandlesTune.smoothFactor_select = uicontrol(PTtunefig,'style','popupmenu','string',{'smoothing off' 'smoothing low' 'smoothing medium' 'smoothing high'},'fontsize',fontsz,'TooltipString', ['Smooth the gyro when step response traces are too noisy'], 'units','normalized','outerposition',[posInfo.smooth_tuning],...

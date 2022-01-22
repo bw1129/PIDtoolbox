@@ -7,12 +7,32 @@
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
 
-%% simplified figure saving
+%% create saveDirectory
 if ~isempty(fnameMaster) 
-    figname=[];
-    [filename, saveDirectory] = uiputfile('untitled.png')
-     figname=[saveDirectory filename];
-     saveas(gcf, filename );
+    saveDirectory='PTB_FIGS';
+    saveDirectory = [saveDirectory '_' currentDate]; % [saveDirectory '_' fnameMaster{1}(1:end-4) 'xx_' currentDate];
+ 
+if ~isfolder(saveDirectory)
+   mkdir(saveDirectory)
+end
+
+%%
+set(gcf, 'pointer', 'watch')
+cd(filepath)
+cd(saveDirectory)
+FigDoesNotExist=1;
+n=0;
+while FigDoesNotExist,
+    n=n+1;
+    FigDoesNotExist=isfile([saveDirectory '-' int2str(n) '.png']);
+end
+figname=[saveDirectory '-' int2str(n)];
+saveas(gcf, [figname '.png'] );
+print(figname,'-dpng','-r200')
+
+set(gcf, 'pointer', 'arrow')
+cd(filepath)
+
 else
      warndlg('Please select file(s)');
 end

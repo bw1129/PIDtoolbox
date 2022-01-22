@@ -90,7 +90,7 @@ for k = 1 : length(guiHandlesSpec2.SpecList.Value)
                     h2=subplot('position',posInfo.Spec2Pos(a,:)); 
                     eval(['h=plot(freq2d2{p}.f' int2str(f) ', smooth(amp2d2{p}.f' int2str(f) ', log10(size(amp2d2{p}.f' int2str(f) ',1)) * (guiHandlesSpec2.smoothFactor_select.Value^2), ''lowess''));hold on'])
                     hold on
-                    set(h, 'linewidth', guiHandles.linewidth.Value,'linestyle',multilineStyle{k})
+                    set(h, 'linewidth', guiHandles.linewidth.Value/2,'linestyle',multilineStyle{k})
                     set(h2,'fontsize',fontsz)
                     set(h,'Color',[multiLineCols(f,:)]) 
                     eval(['m = (A_lograte(guiHandlesSpec2.FileSelect.Value(f)) * 1000) / 2;'])
@@ -114,7 +114,7 @@ for k = 1 : length(guiHandlesSpec2.SpecList.Value)
                     h2=subplot('position',posInfo.Spec2Pos(a+3,:)); 
                     eval(['h=plot(freq2d2{p}.f' int2str(f) ', smooth(amp2d2{p}.f' int2str(f) ', log10(size(amp2d2{p}.f' int2str(f) ',1)) * (guiHandlesSpec2.smoothFactor_select.Value^2), ''lowess''));hold on'])
                     hold on
-                    set(h, 'linewidth', guiHandles.linewidth.Value,'linestyle',multilineStyle{k})
+                    set(h, 'linewidth', guiHandles.linewidth.Value/2,'linestyle',multilineStyle{k})
                     set(h2,'fontsize',fontsz)
                     set(h,'Color',[multiLineCols(f,:)]) 
                     eval(['m = (A_lograte(guiHandlesSpec2.FileSelect.Value(f)) * 1000) / 2;'])
