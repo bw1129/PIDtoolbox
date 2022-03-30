@@ -29,23 +29,6 @@ There have been reports of PIDtoolbox hanging at different stages. If it hangs a
 * For more advanced users, if you have Matlab and all the required toolboxes you can simply download the source code (download from the zip file on the **<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">releases</a>** page for the most up to date and platform-specific source code), and run from the command window. 
 
 
-# Quick Guide
-
-For a detailed guide to PIDtoolbox, please visit the **<a href="https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide" target="blank">PIDtoolbox Wiki page</a>**.
-
-For a quick guide, follow the steps below:
-
-**(i)** **<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">PIDtoolbox</a>** reads **`.bbl`** or **`.bfl`** files directly by decoding them using **`blackbox_decode`** <a href="https://github.com/betaflight/blackbox-tools" target="blank">(Betaflight/Cleanflight Blackbox Tools)</a>, which is conveniently packaged within the PIDtoolbox download. Just place your **`.bbl`** or **`.bfl`** files right in the main folder where the **`PIDtoolbox`** and **`blackbox_decode`** program files are already located. Start the program, select the file(s) you wish to load by clicking the **`select file(s)`** button. NOTE: the Mac version does not show a "splash screen" when you run the program (an issue with Matlab for Mac), so it may seem like nothing is happening, but please be patient while it to loads.
-
-**(ii)** It is recommended to log at 2k (unless you're running 1k loop rate in which case log at 1k), because the spectrograms only go to 1k. It is not recommended to log higher than 4k. It'll run, but much slower.
-
-**(iii)** It is recommended that you set debug mode to **`GYRO_SCALED`** for PIDtoolbox. This is because the program expects the debug variables to contain the unfiltered gyro data, which is used to plot the filtered vs unfiltered gyro spectrograms, and compute gyro phase latency online. Be aware that the debug mode you choose will result in different data contained in the 'gyro unfiltered' variable. For a list of debug modes and the data contained in the debug variable, see the **<a href="https://github.com/betaflight/betaflight/wiki/Debug-Modes" target="blank">Betaflight debug modes wiki</a>**.
-
-If you have issues installing Matlab Runtime, or running PIDtoolbox, please post **<a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">feedback here</a>**, or post a response in the **<a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">Betaflight BlackBox Log Review Facebook group</a>**.
-
-* ***Linux users:*** 
-The latest working version for Linux users is v0.392. In most cases you'll have to run PTB from the command terminal, so navigate to the `main` PIDtoolbox folder from the command prompt and execute **`./run_PIDtoolbox.sh`**. You can try double clicking the **'run_PIDtoolbox.sh'** icon directly in the `main` folder (not the PIDtoolbox icon). If it doesn't work, run via the command prompt AND provide the path of the runtime installation as an argument:	e.g. **`[[./run_PIDtoolbox.sh]] /opt/matlab/matlab_runtime/v93`**. (Many thanks to **<a href="https://github.com/ghostface" target="blank">Christoph Herndler (Ghostface)</a>** for helping get PTB for Linux working and providing these details!). 
-
 # Acknowledgments
 
 Huge shout out to several people who contributed to this project outside GitHub. 
