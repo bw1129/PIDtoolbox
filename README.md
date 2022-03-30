@@ -7,7 +7,7 @@ PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multi
 **If you use PIDtoolbox, please consider becoming a Patreon**
 ### **[The PIDtoolbox Patreon page](https://www.patreon.com/ThePIDtoolboxGuy)**    
 
-**For a one time donation
+**For a one time donation**
 ### **[Make a PayPal donation](https://www.paypal.com/paypalme/PIDtoolbox)**
 
 **If you would like 1-on-1 tuning consultation check out** 
