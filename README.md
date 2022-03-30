@@ -25,13 +25,3 @@ Once the installation is complete, the **`PIDtoolbox`** program is automatically
 * PIDtoolbox has been confirmed to run on Windows7/8/10 64bit machines, and Mac 10.11 (El capitan), 10.13 (Sierra) and 10.14 (Mojave), and Linux. If you have issues installing Matlab runtime, or running PIDtoolbox, please post **<a href="https://github.com/bw1129/PIDtoolbox/issues" target="blank">feedback here</a>**, or post a response in the **<a href="https://www.facebook.com/groups/291745494678694/?ref=bookmarks" target="blank">Betaflight BlackBox Log Review Facebook group</a>** for Betaflight specific issues.
 
 * For more advanced users, if you have Matlab and all the required toolboxes you can simply download the source code (download from the zip file on the **<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">releases</a>** page for the most up to date and platform-specific source code), and run from the command window. 
-
-
-# Acknowledgments
-
-Huge shout out to several people who contributed to this project outside GitHub. 
-**Mark Spatz (UAVtech), Chris Thompson (ctzsnooze), Hugo Chiang (DusKing1), Qopter, Qratz, Zach Young, Zak Smiley, Stephen Wright, McGiverGim, Bizmar, Martin Hapl, Ken Kammerer, Paweł Spychalski, Christoph Herndler.** Thanks for your help!
-
- I hope you find PIDtoolbox useful, and I welcome feedback from the FPV community.
-
-Cheers! -Brian
