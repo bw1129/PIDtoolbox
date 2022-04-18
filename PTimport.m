@@ -10,7 +10,13 @@ function [DAT newFileName] = PTimport(csvFname, BBLFileName)
 % ----------------------------------------------------------------------------------
 
 newFileName=csvFname;
-T=readtable(csvFname);
+try % speed things up a bit with this method
+    hdr=detectImportOptions(csvFname);
+    T=readtable(csvFname, 'HeaderLines', 2); 
+    T.Properties.VariableNames=hdr.VariableNames;
+catch
+    T=readtable(csvFname);
+end
 
 delete(csvFname);% we r done with this-dont wanna leave junk on main directory
 
@@ -54,7 +60,7 @@ for m=1:size(s,1)
     end
 end
 
-%%%%%%
+%
 DAT.T=T;
 DAT.mainFname=BBLFileName;
 DAT.csvFname=csvFname;
@@ -65,3 +71,4 @@ catch
 end
 
 end
+

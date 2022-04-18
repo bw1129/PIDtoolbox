@@ -1,4 +1,4 @@
-%% PTdispSetupInfo - script to 
+%% PTdispSetupInfo 
 
 % ----------------------------------------------------------------------------------
 % "THE BEER-WARE LICENSE" (Revision 42):
@@ -6,6 +6,7 @@
 % can do whatever you want with this stuff. If we meet some day, and you think
 % this stuff is worth it, you can buy me a beer in return. -Brian White
 % ----------------------------------------------------------------------------------
+
     
 if ~isempty(fnameMaster)
     
@@ -21,6 +22,7 @@ columnWidth=55*round(screensz_multiplier*prop_max_screen);
 TooltipString_FileNumDispA=['List of files available. Click to view setup info for each']; 
 posInfo.FileNumDispA=[.22 .95 .1 .04];
 posInfo.FileNumDispB=[.72 .95 .1 .04];
+posInfo.checkboxDIFF=[.04 .96 .1 .04];
   
 guiHandlesInfo.FileNumDispA = uicontrol(PTdisp,'Style','popupmenu','string',[fnameMaster],...
     'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.FileNumDispA],'callback','@selection; PTdispSetupInfo;');
@@ -30,6 +32,9 @@ if Nfiles > 1
         'fontsize',fontsz, 'units','normalized','outerposition', [posInfo.FileNumDispB],'callback','@selection; PTdispSetupInfo;');
     guiHandlesInfo.FileNumDispB.Value=2;
 end
+
+guiHandlesInfo.checkboxDIFF =uicontrol(PTdisp,'Style','checkbox','String','Show Differences Only','fontsize',fontsz,'TooltipString', [''],...
+    'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.checkboxDIFF],'callback', 'PTdispSetupInfo;');
 
 else
      warndlg('Please select file(s)');

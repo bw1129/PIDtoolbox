@@ -30,10 +30,11 @@ end
  
 mainFname=filename;
 if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || strcmp(filename(end-3:end),'.bfl') || strcmp(filename(end-3:end),'.bbl') || strcmp(filename(end-3:end),'.txt') || strcmp(filename(end-3:end),'.TXT')          
+
     if firmware_flag < 3
-        [status,result]=system(['blackbox_decode.exe ' filename]);
+        [status,result]=system(['./blackbox_decode ' filename]);  
     else
-        [status,result]=system(['blackbox_decode_INAV.exe ' filename]);  
+        [status,result]=system(['./blackbox_decode_INAV ' filename]);        
     end
     files=dir([filename(1:end-4) '*.csv']);
     
@@ -50,7 +51,6 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
         files=f2;clear f2;
     catch % report blackbox_decode error to user
         set(gcf, 'pointer', 'arrow')
-        errordlg('Please ensure your log files are in the ''main'' folder along with blackbox_decode and PIDtoolbox! ', 'blackbox_decode error');
     end
     
     % get rid of all event files and gps.gpx files 
@@ -74,17 +74,17 @@ if strcmp(filename(end-3:end),'.BFL') || strcmp(filename(end-3:end),'.BBL') || s
     if size(files,1) > 1
         x=size(files,1);
         clear f2; m=1;
-        for k=1:x, 
+        for k=1:x 
             emptysubfiles = 0;
             try
                 emptysubfiles = isempty(readtable(files(k).name,'Format','%s%s')); %faster loading strings but sometimes crashes 
             catch
-                emptysubfiles = isempty(readtable(files(k).name));
+                emptysubfiles = isempty(readtable(files(k).name,'HeaderLines', 2));
             end
                                 
             if emptysubfiles  %((files(k).bytes)) < 1000  
                 delete(files(k).name)
-                files(k).name
+                files(k).name;
             else
                 f2(m,:)=files(k);
                 m=m+1;

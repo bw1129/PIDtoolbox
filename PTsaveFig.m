@@ -9,6 +9,7 @@
 
 %% create saveDirectory
 if ~isempty(fnameMaster) 
+    cd(logfile_directory)
     saveDirectory='PTB_FIGS';
     saveDirectory = [saveDirectory '_' currentDate]; % [saveDirectory '_' fnameMaster{1}(1:end-4) 'xx_' currentDate];
  
@@ -18,7 +19,7 @@ end
 
 %%
 set(gcf, 'pointer', 'watch')
-cd(filepath)
+cd(logfile_directory)
 cd(saveDirectory)
 FigDoesNotExist=1;
 n=0;
@@ -31,7 +32,7 @@ saveas(gcf, [figname '.png'] );
 print(figname,'-dpng','-r200')
 
 set(gcf, 'pointer', 'arrow')
-cd(filepath)
+cd(main_directory)
 
 else
      warndlg('Please select file(s)');

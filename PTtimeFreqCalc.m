@@ -16,7 +16,7 @@ function [Tm freq specMat] = PTtimeFreqCalc(Y, F, smoothFactor, subsampleFactor)
     segment_length = F * 1000 * multiplier; % 300ms segments
     halfSegment = round(segment_length/2);
     fileDurSec = length(Y) / (F*1000);   
-
+    
     stepsz = round(segment_length/subsampleFactor);
   
     smpls = (1 : stepsz : size(Y,1) - segment_length);

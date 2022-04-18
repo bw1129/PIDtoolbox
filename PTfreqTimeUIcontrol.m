@@ -27,30 +27,31 @@ k=0;
 for c=1 : size(cols,2)
     for r=1 : size(rows,2)
         k=k+1; 
-        posInfo.Spec3Pos(k,:)=[cols(c) rows(r) 0.77 0.25];
+        posInfo.Spec3Pos(k,:)=[cols(c) rows(r) 0.77 0.255];
     end
 end
 
 updateSpec = 0;
 clear specMat
  
-posInfo.fileListWindowSpec=[.895 .86 .0915 .04];
-posInfo.TermListWindowSpec=[.895 .83 .0915 .04];
+posInfo.fileListWindowSpec=[.895 .865 .096 .04];
+posInfo.TermListWindowSpec=[.895 .84 .096 .04];
 
-posInfo.computeSpec3=            [.895 .815 .0455 .026];
-posInfo.resetSpec3=              [.942 .815 .0455 .026]; 
-posInfo.saveFig2=               [.895 .785 .092 .026]; % .896 .495 .092 .026
-posInfo.smooth_select3 =         [.895 .75 .092 .026];
-posInfo.subsampling_select3=     [.895 .72 .092 .026];
-posInfo.ColormapSelect2 =        [.895 .69 .092 .026];
+posInfo.computeSpec3=            [.896 .83 .0455 .026];
+posInfo.resetSpec3=              [.942 .83 .0455 .026]; 
+posInfo.saveFig3=               [.896 .805 .0455 .026]; % .896 .495 .092 .026
+posInfo.saveSettings3=           [.942 .805 .0455 .026];
+posInfo.smooth_select3 =         [.895 .78 .096 .026];
+posInfo.subsampling_select3=     [.895 .755 .096 .026];
+posInfo.ColormapSelect2 =        [.895 .73 .096 .026];
 
-posInfo.clim3Max1_text = [.91 .66 .035 .024];
-posInfo.clim3Max1_input = [.915 .64 .025 .024];
-posInfo.clim3Max2_text = [.94 .66 .035 .024];
-posInfo.clim3Max2_input = [.945 .64 .025 .024];
+posInfo.clim3Max1_text = [.91 .71 .035 .024];
+posInfo.clim3Max1_input = [.915 .69 .025 .024];
+posInfo.clim3Max2_text = [.94 .71 .035 .024];
+posInfo.clim3Max2_input = [.945 .69 .025 .024];
 ClimScale3 = [-30 10]; 
 
-posInfo.sub100HzfreqTime  = [.915 .615 .06 .024];
+posInfo.sub100HzfreqTime  = [.915 .665 .06 .024];
 
 PTspecfig3=figure(31);
 set(PTspecfig3, 'units','normalized','outerposition',[.1 .1 .75 .8])
@@ -65,7 +66,7 @@ set(dcm_obj2,'UpdateFcn',@PTdatatip);
 
 Spec3Crtlpanel = uipanel('Title','select file ','FontSize',fontsz,...
               'BackgroundColor',[.95 .95 .95],...
-              'Position',[.89 .61 .105 .31]);
+              'Position',[.89 .66 .105 .26]);
  
 guiHandlesSpec3.computeSpec = uicontrol(PTspecfig3,'string','Run','fontsize',fontsz,'TooltipString', [TooltipString_specRun],'units','normalized','outerposition',[posInfo.computeSpec3],...
     'callback','updateSpec = 0; clear specMat; PTfreqTime;');
@@ -75,14 +76,17 @@ guiHandlesSpec3.resetSpec = uicontrol(PTspecfig3,'string','Reset','fontsize',fon
     'callback','updateSpec = 0; clear specMat; for k = 1 : 3, delete(subplot(''position'',posInfo.Spec3Pos(k,:))), end; set(PTspecfig3, ''pointer'', ''arrow'');');
 guiHandlesSpec3.resetSpec.ForegroundColor=[cautionCol];
 
-guiHandlesSpec3.saveFig2 = uicontrol(PTspecfig3,'string','Save Fig','fontsize',fontsz,'TooltipString',[TooltipString_saveFig],'units','normalized','ForegroundColor',[saveCol],'outerposition',[posInfo.saveFig2],...
-    'callback','guiHandlesSpec3.saveFig2.FontWeight=''bold'';PTsaveFig;guiHandlesSpec3.saveFig2.FontWeight=''normal'';'); 
+guiHandlesSpec3.saveFig3 = uicontrol(PTspecfig3,'string','Save Fig','fontsize',fontsz,'TooltipString',[TooltipString_saveFig],'units','normalized','ForegroundColor',[saveCol],'outerposition',[posInfo.saveFig3],...
+    'callback','guiHandlesSpec3.saveFig3.FontWeight=''bold'';PTsaveFig;guiHandlesSpec3.saveFig3.FontWeight=''normal'';'); 
+
+guiHandlesSpec3.saveSettings3 = uicontrol(PTspecfig3,'string','Save Settings','fontsize',fontsz, 'TooltipString',['Save current settings to PTB defaults' ], 'units','normalized','outerposition',[posInfo.saveSettings3],...
+    'callback','guiHandlesSpec3.saveSettings3.FontWeight=''bold'';PTsaveSettings; guiHandlesSpec3.saveSettings3.FontWeight=''normal'';'); 
+guiHandlesSpec3.saveSettings3.ForegroundColor=[saveCol];
 
 % create string list for SpecSelect
 sA={'Gyro','Gyro prefilt','Dterm','Dterm prefilt','Pterm','PID error','Set point','PIDsum'};
 
 guiHandlesSpec3.SpecList = uicontrol(PTspecfig3,'Style','popupmenu','string',[sA], 'fontsize',fontsz, 'TooltipString',[TooltipString_user],'units','normalized','outerposition', [posInfo.TermListWindowSpec]);
-guiHandlesSpec3.SpecList.Value =1;
  
 guiHandlesSpec3.FileSelect = uicontrol(PTspecfig3,'Style','popupmenu','string',[fnameMaster], 'fontsize',fontsz,'TooltipString',[TooltipString_user],'units','normalized','outerposition', [posInfo.fileListWindowSpec]);
 guiHandlesSpec3.FileSelect.Value = 1;
@@ -97,7 +101,6 @@ guiHandlesSpec3.subsampleFactor_select.Value=2;
 
  guiHandlesSpec3.ColormapSelect = uicontrol(PTspecfig3,'Style','popupmenu','string',{'parula','jet','hot','cool','gray','bone','copper','viridis','linear-RED','linear-GREY'},...
     'fontsize',fontsz,'TooltipString', [TooltipString_cmap], 'units','normalized','outerposition',[posInfo.ColormapSelect2],'callback','@selection2;updateSpec=1; PTfreqTime;');
-guiHandlesSpec3.ColormapSelect.Value=3;% jet 2 hot 3 viridis 8
 
 guiHandlesSpec3.climMax1_text = uicontrol(PTspecfig3,'style','text','string','Z min','fontsize',fontsz,'TooltipString',['adjusts the color limits'],'units','normalized','BackgroundColor',bgcolor,'outerposition',[posInfo.clim3Max1_text]);
 guiHandlesSpec3.climMax1_input = uicontrol(PTspecfig3,'style','edit','string',[num2str(ClimScale3(1))],'fontsize',fontsz,'TooltipString',['adjusts the color limits'],'units','normalized','outerposition',[posInfo.clim3Max1_input],...
@@ -110,6 +113,13 @@ guiHandlesSpec3.climMax2_input = uicontrol(PTspecfig3,'style','edit','string',[n
  guiHandlesSpec3.sub100HzfreqTime = uicontrol(PTspecfig3,'Style','checkbox','String','sub 100Hz','fontsize',fontsz,'ForegroundColor',[.2 .2 .2],'BackgroundColor',bgcolor,...
     'units','normalized','outerposition',[posInfo.sub100HzfreqTime],'callback','@selection2;updateSpec=1; PTfreqTime;');
  
+
+try guiHandlesSpec3.SpecList.Value = defaults.Values(find(strcmp(defaults.Parameters, 'FreqxTime-Preset'))), catch, guiHandlesSpec3.SpecList.Value = 1, end
+try guiHandlesSpec3.smoothFactor_select.Value = defaults.Values(find(strcmp(defaults.Parameters, 'FreqxTime-FreqSmoothing'))), catch, guiHandlesSpec3.smoothFactor_select.Value = 2, end
+try guiHandlesSpec3.subsampleFactor_select.Value = defaults.Values(find(strcmp(defaults.Parameters, 'FreqxTime-TimeSmoothing'))), catch, guiHandlesSpec3.subsampleFactor_select.Value = 2, end
+try guiHandlesSpec3.ColormapSelect.Value = defaults.Values(find(strcmp(defaults.Parameters, 'FreqxTime-Colormap'))), catch, guiHandlesSpec3.ColormapSelect.Value = 3, end
+
+
 else
      warndlg('Please select file(s)');
 end
