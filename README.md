@@ -4,20 +4,13 @@
 
 PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multirotors. It is available as a standalone program for Windows, Mac and Linux, and is tailored to work on Betaflight, Emuflight and INAV logfiles (see [**Download instructions**](https://github.com/bw1129/PIDtoolbox#download) below). For information on how to use the software, please visit the [**PIDtoolbox User Guide**](https://github.com/bw1129/PIDtoolbox/wiki/PIDtoolbox-user-guide) and subscribe to the [**The PIDtoolbox YouTube Channel**](https://www.youtube.com/channel/UCY2CVnWGEeRlyxOXVsHS_fA).
 
-**If you use PIDtoolbox, please consider becoming a Patreon:** 
-## **[The PIDtoolbox Patreon page](https://www.patreon.com/ThePIDtoolboxGuy)**    
+### **If you use PIDtoolbox and wish to support its continued development, please consider making a [PayPal donation](https://www.paypal.com/paypalme/PIDtoolbox) or [becoming a Patreon](https://www.patreon.com/ThePIDtoolboxGuy)**    
 
-**For a one time donation:**
-## **[Make a PayPal donation](https://www.paypal.com/paypalme/PIDtoolbox)**
+### **If you would like 1-on-1 tuning consultation check out [The PIDtoolbox Professional PID Tuning Service](https://pidtoolbox.com/)**
 
-**If you would like 1-on-1 tuning consultation check out** 
-## **[The PIDtoolbox Professional PID Tuning Service](https://pidtoolbox.com/)**
+### **[Join the PIDtoolbox Discord](https://discord.gg/rHqhwpAXJH) for ongoing PID tuning discussion and help**
 
-**Join the PTB Discord for ongoing discussions and help:**
-## **[Join the PIDtoolbox Discord](https://discord.gg/rHqhwpAXJH)**
-
-**Check out the PIDtoolbox YouTube Channel:**
-## **[The PIDtoolbox YouTube Channel](https://www.youtube.com/c/PIDtoolbox)** 
+### **Check out the [The PIDtoolbox YouTube Channel](https://www.youtube.com/c/PIDtoolbox)** 
 
 # Download
 
