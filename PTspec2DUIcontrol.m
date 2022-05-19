@@ -187,32 +187,37 @@ for k = 1 : Nfiles
     s3 = smooth(T{k}.setpoint_2_(tIND{k}),50);
 
 
-    d = finddelay(pg ,g1, maxlag); % pre vs post filt gyro
+    [c,lags] = xcorr(g1,pg,maxlag);
+    d = lags(find(c==max(c)));
     d = d * (Fs / 1000);
     if d<.1,  Debug01{k} = ' '; else Debug01{k} = num2str(d);end 
 
-    
-    d = finddelay(pg ,s1, maxlag); % pre vs post filt set point
+    [c,lags] = xcorr(s1,pg,maxlag);
+    d = lags(find(c==max(c)));
     d = d * (Fs / 1000);
     if d<.1,  Debug02{k} = ' '; else Debug02{k} = num2str(d);end 
   
 
-    d = finddelay(s1 ,g1, maxlag); % set point to gyro
+    [c,lags] = xcorr(g1,s1,maxlag);
+    d = lags(find(c==max(c)));
     d = d * (Fs / 1000);
     SPGyroDelay(k,1) = d; 
     
-    d = finddelay(s2 ,g2, maxlag); % set point to gyro
+    [c,lags] = xcorr(g2,s2,maxlag);
+    d = lags(find(c==max(c)));
     d = d * (Fs / 1000);
     SPGyroDelay(k,2) = d; 
     
-    d = finddelay(s3 ,g3, maxlag); % set point to gyro
+    [c,lags] = xcorr(g3,s3,maxlag);
+    d = lags(find(c==max(c)));
     d = d * (Fs / 1000);
     SPGyroDelay(k,3) = d; 
 
     clear d d1 d2
     d1 = smooth(T{k}.axisDpf_0_(tIND{k}),50);
     d2 = smooth(T{k}.axisD_0_(tIND{k}),50);
-    d=finddelay(d1, d2, maxlag) ; % pre vs post filt dterm
+    [c,lags] = xcorr(d2,d1,maxlag);
+    d = lags(find(c==max(c)));
     d=d * (Fs / 1000);
     if d<.1, FilterDelayDterm{k} = ' '; else FilterDelayDterm{k} = num2str(d); end
 end
