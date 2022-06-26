@@ -120,96 +120,50 @@ if guiHandlesSpec.checkbox2d.Value==0 && ~isempty(ampmat)
              axLabel={'roll';'pitch';'yaw'};
             
             if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
-            hold on;h=plot([0 100],[size(ampmat{p},2)-round(Flim1/3.33) size(ampmat{p},2)-round(Flim1/3.33)],'y--');set(h,'linewidth',2) 
-            hold on;h=plot([0 100],[size(ampmat{p},2)-round(Flim2/3.33) size(ampmat{p},2)-round(Flim2/3.33)],'y--');set(h,'linewidth',2)
-                % sub100Hz scaling
-                if lograte>1
-                    xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
-                    yticks=[size(ampmat{p},2)-size(ampmat{p},2)/10:size(ampmat{p},2)/50:size(ampmat{p},2)];
-                    set(h1,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmat{p},2)-size(ampmat{p},2)/10 size(ampmat{p},2)])  
-                    set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
-                    a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
-                    a2 = a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)));
-                    meanspec=nanmean(a2(:));
-                    peakspec=max(max(a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)))));              
-                    if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10
-                        h=text(64,size(ampmat{p},2)*.904,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.912,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                    else
-                        h=text(64,size(ampmat{p},2)*.904,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.912,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                    end
-                    h=text(xticks(1)+1,size(ampmat{p},2)*.904,axLabel{c2(p)});
-                    set(h,'Color',[1 1 1],'fontsize',fontsz,'fontweight','bold') 
+                hold on;h=plot([0 100],[size(ampmat{p},2)-round(Flim1/3.33) size(ampmat{p},2)-round(Flim1/3.33)],'y--');set(h,'linewidth',2) 
+                hold on;h=plot([0 100],[size(ampmat{p},2)-round(Flim2/3.33) size(ampmat{p},2)-round(Flim2/3.33)],'y--');set(h,'linewidth',2)
+                % sub100Hz scaling           
+                xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
+                yticks=[(size(ampmat{p},2)-30):6:size(ampmat{p},2)];
+                set(h1,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmat{p},2)-30 size(ampmat{p},2)])
+                set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
+                a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
+                a2 = a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)));
+                meanspec=nanmean(a2(:));
+                peakspec=max(max(a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)))));
+                if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10          
+                    h=text(64,(size(ampmat{p},2)-30)+3,['mean=' num2str(meanspec,3)]);
+                    set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
+                    h=text(64,(size(ampmat{p},2)-30)+1,['peak=' num2str(peakspec,3)]);
+                    set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
                 else
-                    xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
-                    yticks=[size(ampmat{p},2)-size(ampmat{p},2)/5:size(ampmat{p},2)/25:size(ampmat{p},2)];
-                    set(h1,'PlotBoxAspectRatioMode','auto','ylim',[size(ampmat{p},2)-size(ampmat{p},2)/5 size(ampmat{p},2)])
-                    set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{100} {80} {60} {40} {20} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
-                    a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
-                    a2 = a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)));
-                    meanspec=nanmean(a2(:));
-                    peakspec=max(max(a(:,(round(Flim1/3.33))+1:(round(Flim2/3.33)))));
-                    if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10          
-                        h=text(64,size(ampmat{p},2)*.808,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.825,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                    else
-                        h=text(64,size(ampmat{p},2)*.808,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.825,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                    end  
-                    h=text(xticks(1)+1,size(ampmat{p},2)*.808,axLabel{c2(p)});
-                    set(h,'Color',[1 1 1],'fontsize',fontsz,'fontweight','bold')   
-                end                      
-            else % full scaling
-                if lograte>1
-                    xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
-                    yticks=[1:(size(ampmat{p},2))/10:size(ampmat{p},2) size(ampmat{p},2)];
-                    set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{1000} {''} {800} {''} {600} {''} {400} {''} {200} {''} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
-                    set(h1,'PlotBoxAspectRatioMode','auto','ylim',[1 size(ampmat{p},2)])
-                    a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
-                    a2 = a(:,30:300);
-                    meanspec=nanmean(a2(:));
-                    peakspec=max(max(a(:,30:300)));
-                    if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10
-                        h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                    else
-                        h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                    end
+                    h=text(64,(size(ampmat{p},2)-30)+3,['mean=' num2str(meanspec,3)]);
+                    set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
+                    h=text(64,(size(ampmat{p},2)-30)+1,['peak=' num2str(peakspec,3)]);
+                    set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
+                end  
+                h=text(xticks(1)+1,(size(ampmat{p},2)-30)+1,axLabel{c2(p)});
+                set(h,'Color',[1 1 1],'fontsize',fontsz,'fontweight','bold')                       
+            else % full scaling 
+                xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
+                yticks=[1:(size(ampmat{p},2))/10:size(ampmat{p},2) size(ampmat{p},2)];
+                set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{(max(round(yticks * 3.333))/1)-(max(round(yticks * 3.333))/5)*0} {''} {(max(round(yticks * 3.333))/1)-(max(round(yticks * 3.333))/5)*1} {''} {(max(round(yticks * 3.333))/1)-(max(round(yticks * 3.333))/5)*2} {''} {(max(round(yticks * 3.333))/1)-(max(round(yticks * 3.333))/5)*3} {''} {(max(round(yticks * 3.333))/1)-(max(round(yticks * 3.333))/5)*4} {''} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
+                set(h1,'PlotBoxAspectRatioMode','auto','ylim',[1 size(ampmat{p},2)])  
+                a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
+                a2 = a(:,(size(ampmat{p},2)/10):size(ampmat{p},2));
+                meanspec=nanmean(a2(:));
+                peakspec=max(max(a(:,(size(ampmat{p},2)/10):size(ampmat{p},2))));
+                if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10
+                    h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
+                    set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
+                    h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
+                    set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
                 else
-                    xticks=[1 size(ampmat{p},1)/5:size(ampmat{p},1)/5:size(ampmat{p},1)];
-                    yticks=[1:(size(ampmat{p},2))/10:size(ampmat{p},2) size(ampmat{p},2)];
-                    set(h1,'fontsize',fontsz,'CLim',[baselineY(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'YTick',[yticks],'yticklabels',[{500} {''} {400} {''} {300} {''} {200} {''} {100} {''} {0}],'XTick',[xticks],'xticklabels',{'0';'20';'40';'60';'80';'100'},'tickdir','out','xminortick','on','yminortick','on');
-                    set(h1,'PlotBoxAspectRatioMode','auto','ylim',[1 size(ampmat{p},2)])  
-                    a=[];a2=[];a=filter2(ftr, ampmat{p}) + baselineY(guiHandlesSpec.checkboxPSD.Value+1);
-                    a2 = a(:,30:150);
-                    meanspec=nanmean(a2(:));
-                    peakspec=max(max(a(:,30:150)));
-                    if guiHandlesSpec.ColormapSelect.Value==9 | guiHandlesSpec.ColormapSelect.Value==10
-                        h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','k','fontsize',fontsz,'fontweight','bold');
-                    else
-                        h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                        h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
-                        set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
-                    end
-                end      
+                    h=text(64,size(ampmat{p},2)*.04,['mean=' num2str(meanspec,3)]);
+                    set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
+                    h=text(64,size(ampmat{p},2)*.13,['peak=' num2str(peakspec,3)]);
+                    set(h,'Color','w','fontsize',fontsz,'fontweight','bold');
+                end    
                 h=text(xticks(1)+1,size(ampmat{p},2)*.04,axLabel{c2(p)});
                 set(h,'Color',[1 1 1],'fontsize',fontsz,'fontweight','bold')   
             end
@@ -293,31 +247,19 @@ if guiHandlesSpec.checkbox2d.Value==1 && ~isempty(amp2d)
             if guiHandlesSpec.specPresets.Value > 6
                 set(h,'Color',[SpecLineCols(c1(p),:,3)])
             end
-            if max(freq2d{p})<=500,
-                if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
-                    set(h2,'xtick',[0 20 40 60 80 100],'yminortick','on')
-                    axis([0 100 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+3, c1(p))])
-                    h=plot([round(Flim1) round(Flim1)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
-                    set(h,'linewidth',1)
-                    h=plot([round(Flim2) round(Flim2)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
-                    set(h,'linewidth',1)
-                else    
-                    set(h2,'xtick',[0 100 200 300 400 500], 'yminortick','on')
-                    axis([0 500 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
-                end
-            else
-                if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
-                    set(h2,'xtick',[0 20 40 60 80 100], 'yminortick','on')
-                    axis([0 100 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
-                    h=plot([round(Flim1) round(Flim1)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
-                    set(h,'linewidth',1)
-                    h=plot([round(Flim2) round(Flim2)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
-                    set(h,'linewidth',1)
-                else    
-                    set(h2,'xtick',[0 200 400 600 800 1000],'yminortick','on')
-                    axis([0 1000 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
-                end
-            end 
+            
+            if guiHandlesSpec.Sub100HzCheck{c1(p)}.Value==1
+                set(h2,'xtick',[0 20 40 60 80 100], 'yminortick','on')
+                axis([0 100 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
+                h=plot([round(Flim1) round(Flim1)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
+                set(h,'linewidth',1)
+                h=plot([round(Flim2) round(Flim2)],[baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))],'k--');
+                set(h,'linewidth',1)
+            else    
+                set(h2,'xtick',[0 : ((A_lograte(guiHandlesSpec.FileSelect{k}.Value) / 2) * 1000 / 5) : (A_lograte(guiHandlesSpec.FileSelect{k}.Value) / 2) * 1000],'yminortick','on')
+                axis([0 (A_lograte(guiHandlesSpec.FileSelect{k}.Value) / 2) * 1000 baselineYlines(guiHandlesSpec.checkboxPSD.Value+1) climScale(guiHandlesSpec.checkboxPSD.Value+1, c1(p))])
+            end
+
             xlabel('Frequency (Hz)')
             if guiHandlesSpec.checkboxPSD.Value
                 ylabel(['PSD (dB)'])

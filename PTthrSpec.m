@@ -80,10 +80,10 @@ function [freq ampMat] = PTthrSpec(X, Y, F, psd)
             freq(i,:) = Fs;
         end
      end
-   clear tmp
-   tmp = ampMat;
-    clear ampMat
-    if F>2, ampMat=tmp(:,1:floor(size(tmp,2)*(1/F)*2)); end 
-    if F<=2, ampMat=tmp; end
+%    clear tmp
+%    tmp = ampMat;
+%     clear ampMat
+%     if F>2, ampMat=tmp(:,1:floor(size(tmp,2)*(1/F)*2)); end 
+%     if F<=2, ampMat=tmp; end
 end
             

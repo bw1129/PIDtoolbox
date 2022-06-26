@@ -84,11 +84,8 @@ try
                 T{fcnt}=dataA(fcnt).T;
 
                 tta{fcnt}=T{fcnt}.time_us_-T{fcnt}.time_us_(1);
-                if round(1000/median(diff(tta{fcnt}))) < 1
-                    A_lograte(fcnt)=round((1000/median(diff(tta{fcnt}))) * 100) / 100;
-                else  
-                    A_lograte(fcnt)=round(1000/median(diff(tta{fcnt})));
-                end
+                A_lograte(fcnt)=round((1000/median(diff(tta{fcnt}))) * 10) / 10;
+               
                 epoch1_A(fcnt)=round(((tta{fcnt}(1)/us2sec)+LogStDefault)*10) / 10;
                 epoch2_A(fcnt)=round(((tta{fcnt}(end)/us2sec)-LogNdDefault)*10) / 10;
 
@@ -185,6 +182,6 @@ try
   
     try close(waitbarFid), catch, end
 catch  ME
-     errmsg.PTload=PTerrorMessages('PTload', ME); 
+   %  errmsg.PTload=PTerrorMessages('PTload', ME); 
 end
 
