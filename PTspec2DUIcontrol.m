@@ -188,30 +188,29 @@ for k = 1 : Nfiles
 
 
     [c,lags] = xcorr(g1,pg,maxlag);
-    d = lags(find(c==max(c)));
+    d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
     if d<.1,  Debug01{k} = ' '; else Debug01{k} = num2str(d);end 
 
     [c,lags] = xcorr(s1,pg,maxlag);
-    d = lags(find(c==max(c)));
+    d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
     if d<.1,  Debug02{k} = ' '; else Debug02{k} = num2str(d);end 
   
-
     [c,lags] = xcorr(g1,s1,maxlag);
-    d = lags(find(c==max(c)));
+    d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
-    SPGyroDelay(k,1) = d; 
+    if d<.1, SPGyroDelay(k,1) = 0, else, SPGyroDelay(k,1) = d; end
     
     [c,lags] = xcorr(g2,s2,maxlag);
-    d = lags(find(c==max(c)));
+    d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
-    SPGyroDelay(k,2) = d; 
+    if d<.1, SPGyroDelay(k,2) = 0, else, SPGyroDelay(k,2) = d; end 
     
     [c,lags] = xcorr(g3,s3,maxlag);
-    d = lags(find(c==max(c)));
+    d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
-    SPGyroDelay(k,3) = d; 
+    if d<.1, SPGyroDelay(k,3) = 0, else, SPGyroDelay(k,3) = d; end 
 
     clear d d1 d2
     d1 = smooth(T{k}.axisDpf_0_(tIND{k}),50);

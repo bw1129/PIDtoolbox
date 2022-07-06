@@ -9,7 +9,7 @@
 % ----------------------------------------------------------------------------------
   
 
-PtbVersion='v0.56';
+PtbVersion='v0.57';
 
 if exist('/Users/Shared', 'dir')
     cd('/Users/Shared')
