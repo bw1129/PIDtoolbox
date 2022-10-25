@@ -124,7 +124,7 @@ guiHandlesSpec2.spectrogramButton2.ForegroundColor=[colorA];
      'callback','PTfreqTimeUIcontrol;');
  guiHandlesSpec2.spectrogramButton3.ForegroundColor=[colorB];
  
- guiHandlesSpec2.Delay = uicontrol(PTspecfig2,'style','popupmenu','string',{'filter delay', 'SP-gyro delay', 'SP smoothing delay'},'fontsize',fontsz,'TooltipString', ['Select which Delay Display'], 'units','normalized','outerposition',[posInfo.Delay],...
+ guiHandlesSpec2.Delay = uicontrol(PTspecfig2,'style','popupmenu','string',{'filter delay', 'SP-gyro delay', 'SP smoothing delay', 'phase shift'},'fontsize',fontsz,'TooltipString', ['Select which Delay Display'], 'units','normalized','outerposition',[posInfo.Delay],...
      'callback','PTplotSpec2D;');
 
 guiHandlesSpec2.plotR =uicontrol(PTspecfig2,'Style','checkbox','String','R','fontsize',fontsz,'TooltipString', ['Plot Roll '],...
@@ -165,12 +165,13 @@ FilterDelayDterm={};
 SPGyroDelay=[];
 Debug01={};
 Debug02={};
-
+gyro_phase_shift_deg=[];
+dterm_phase_shift_deg=[];
 for k = 1 : Nfiles
     Fs=1000/A_lograte(k);% yields more consistent results (mode(diff(tta)));
     maxlag=int8(round(30000/Fs)); %~30ms delay
-
-
+ 
+ 
     clear d pg g1 g1 s1 g2 s2  g3 s3 
     try
         pg = smooth(T{k}.debug_0_(tIND{k}),50);
@@ -185,13 +186,13 @@ for k = 1 : Nfiles
     
     g3 = smooth(T{k}.gyroADC_2_(tIND{k}),50);
     s3 = smooth(T{k}.setpoint_2_(tIND{k}),50);
-
-
+ 
+ 
     [c,lags] = xcorr(g1,pg,maxlag);
     d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
     if d<.1,  Debug01{k} = ' '; else Debug01{k} = num2str(d);end 
-
+ 
     [c,lags] = xcorr(s1,pg,maxlag);
     d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
@@ -211,7 +212,7 @@ for k = 1 : Nfiles
     d = lags(find(c==max(c),1));
     d = d * (Fs / 1000);
     if d<.1, SPGyroDelay(k,3) = 0, else, SPGyroDelay(k,3) = d; end 
-
+ 
     clear d d1 d2
     d1 = smooth(T{k}.axisDpf_0_(tIND{k}),50);
     d2 = smooth(T{k}.axisD_0_(tIND{k}),50);
@@ -219,7 +220,16 @@ for k = 1 : Nfiles
     d = lags(find(c==max(c)));
     d=d * (Fs / 1000);
     if d<.1, FilterDelayDterm{k} = ' '; else FilterDelayDterm{k} = num2str(d); end
+    
+    if ~isempty(str2num(Debug01{k})) && ~isempty(SPGyroDelay(k,1))
+        [gyro_phase_shift_deg(k,1)] = round(PTphaseShiftDeg(str2num(Debug01{k}), 1000/(SPGyroDelay(k,1)) ));
+    end
+    if ~isempty(str2num(FilterDelayDterm{k})) && ~isempty(SPGyroDelay(k,1))
+        [dterm_phase_shift_deg(k,1)] = round(PTphaseShiftDeg(str2num(FilterDelayDterm{k}), 1000/(SPGyroDelay(k,1)) ));
+    end
 end
+
+
 
 else
      warndlg('Please select file(s)');

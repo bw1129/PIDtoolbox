@@ -167,6 +167,16 @@ for k = 1 : length(guiHandlesSpec2.SpecList.Value)
                                 set(h,'Color',[multiLineCols(f,:)],'fontsize',fontsz);
                             end    
                         end
+                         if guiHandlesSpec2.Delay.Value == 4 && a == 1
+                            if debugmode(guiHandlesSpec2.FileSelect.Value(f)) == GYRO_SCALED || debugmode(guiHandlesSpec2.FileSelect.Value(f)) == 1 || debugmode(guiHandlesSpec2.FileSelect.Value(f)) == 0 
+                                h=text(65, climScale2(guiHandlesSpec2.checkboxPSD.Value+1)-(f*4), ['Gyro Phase: ' num2str(gyro_phase_shift_deg(guiHandlesSpec2.FileSelect.Value(f))) 'deg | Dterm Phase: ' num2str(dterm_phase_shift_deg(guiHandlesSpec2.FileSelect.Value(f))) 'deg']);
+                                set(h,'Color',[multiLineCols(f,:)],'fontsize',fontsz);
+                            else
+                                h=text(65, climScale2(guiHandlesSpec2.checkboxPSD.Value+1)-(f*4), ['Gyro Phase: ' 'deg | Dterm Phase: ' num2str(dterm_phase_shift_deg(uiHandlesSpec2.FileSelect.Value(f))) 'deg']);
+                                set(h,'Color',[multiLineCols(f,:)],'fontsize',fontsz);
+                            end
+                        end
+
                     
                     else
                         % combine R P Y

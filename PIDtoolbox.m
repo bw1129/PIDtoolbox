@@ -9,18 +9,24 @@
 % ----------------------------------------------------------------------------------
   
 
-PtbVersion='v0.57';
+PtbVersion='v0.58';
+
+executableDir = cd('/');
+
+setupStr = {'SET UP WORKING DIRECTORY!', ' ', 'Before running PIDtoolbox, we have to determine the location of your ''main'' directory. After you click ''OK'', a navigator window will pop up.' , ['Simply Navigate to the location of your downloaded ''PIDtoolbox_' PtbVersion '_osx\main\'' folder'], 'NOTE: Ideally, that folder and all of its contents should be placed on your desktop to avoid any issues!'}
+resetupStr = {'RE-SET WORKING DIRECTORY!', ' ','Once you click ''OK'', a navigator window will pop up.' , ['Simply Navigate to the location of your downloaded ''PIDtoolbox_' PtbVersion '_osx\main\'' folder'], 'NOTE: Ideally, that folder and all of its contents should be placed on your desktop to avoid any issues!'}
 
 if exist('/Users/Shared', 'dir')
     cd('/Users/Shared')
-    if ~exist(['mainDir-PTB' PtbVersion '.txt'],'file')
+    if isempty(dir(['mainDir-PTB' PtbVersion '.txt']))
+        uiwait(helpdlg(setupStr))
         main_directory = uigetdir('Navigate to Main folder');
         fid = fopen(['mainDir-PTB' PtbVersion '.txt'],'w');
         fprintf(fid,'%s\n',main_directory);
         fclose(fid);
     end
 end
-executableDir = [pwd '/'];
+
 
 %%%%%%%%%% used debug modes %%%%%%% - must consider emu and INAV
 GYRO_SCALED = 6;
@@ -34,6 +40,9 @@ currentDate = currentDate(1:strfind(currentDate,' ')-1);
 
 set(0,'defaultUicontrolFontName', 'Helvetica')
 set(0,'defaultUicontrolFontSize', 10)
+% set(0,'defaultUicontrolFontName', 'Arial')
+% set(0,'defaultUicontrolFontSize', 9)
+% set(0,'defaultUicontrolFontWeight', 'bold')
 
 %%%% assign main figure handle and define some UI variables 
 PTfig = figure(1);
@@ -90,7 +99,7 @@ PTfig.Name= ['PIDtoolbox (' PtbVersion ') - Log Viewer'];
 
 pause(.1)% need to wait for figure to open before extracting screen values
 
-screensz_multiplier = sqrt(screensz(4)^2) * .013; % based on vertical dimension only, to deal with for ultrawide monitors
+screensz_multiplier = sqrt(screensz(4)^2) * .011; % based on vertical dimension only, to deal with for ultrawide monitors
 prop_max_screen = PTfig.Position(4);
 fontsz = (screensz_multiplier*prop_max_screen);
 markerSz = round(screensz_multiplier * 0.75);
@@ -125,8 +134,9 @@ posInfo.DispInfoButton = [.943 vPos-0.225 .046 .026];
 
 posInfo.saveFig = [.895 vPos-0.25 .046 .026];
 posInfo.saveSettings = [.943 vPos-0.25 .046 .026];
-posInfo.wiki = [.895 vPos-0.275 .046 .026];
-posInfo.PIDtuningService = [.943 vPos-0.275 .046 .026];
+%posInfo.wiki = [.895 vPos-0.275 .046 .026];
+posInfo.PIDtuningService = [.895 vPos-0.275 .094 .026];
+posInfo.resetMain = [.895 vPos-0.85 .094 .026];
 
 
 fnameMaster = {}; 
@@ -180,7 +190,7 @@ guiHandles.fileA = uicontrol(PTfig,'string','Select ','fontsize',fontsz,'Tooltip
 guiHandles.fileA.ForegroundColor=[colRun];
 
 guiHandles.clr = uicontrol(PTfig,'string','Reset','fontsize',fontsz,'TooltipString', ['clear all data'], 'units','normalized','outerposition',[posInfo.clr],...
-     'callback','clear T dataA tta A_lograte epoch1_A epoch2_A SetupInfo rollPIDF pitchPIDF yawPIDF filenameA fnameMaster; fcnt = 0; filenameA={};fnameMaster = {}; try, delete(subplot(''position'',posInfo.linepos1)); delete(subplot(''position'',posInfo.linepos2)); delete(subplot(''position'',posInfo.linepos3)); catch, end; guiHandles.FileNum.String='' ''; guiHandles.Epoch1_A_Input.String='' ''; guiHandles.Epoch2_A_Input.String='' '';'); 
+     'callback','delete *.bbl, delete *.bfl, delete *.csv, clear T dataA tta A_lograte epoch1_A epoch2_A SetupInfo rollPIDF pitchPIDF yawPIDF filenameA fnameMaster; fcnt = 0; filenameA={};fnameMaster = {}; try, delete(subplot(''position'',posInfo.linepos1)); delete(subplot(''position'',posInfo.linepos2)); delete(subplot(''position'',posInfo.linepos3)); delete(subplot(''position'',posInfo.linepos4)); catch, end; guiHandles.FileNum.String='' ''; guiHandles.Epoch1_A_Input.String='' ''; guiHandles.Epoch2_A_Input.String='' '';'); 
 guiHandles.clr.ForegroundColor=[cautionCol];
 
 guiHandles.startEndButton = uicontrol(PTfig,'style','checkbox', 'string','Trim ','fontsize',fontsz,'TooltipString', [TooltipString_selectButton], 'units','normalized','outerposition',[posInfo.startEndButton],...
@@ -230,16 +240,22 @@ guiHandles.saveSettings = uicontrol(PTfig,'string','Save Settings','fontsize',fo
     'callback','guiHandles.saveSettings.FontWeight=''bold'';PTsaveSettings; guiHandles.saveSettings.FontWeight=''normal'';'); 
 guiHandles.saveSettings.ForegroundColor=[saveCol];
 
-guiHandles.wiki = uicontrol(PTfig,'string','User Guide','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
-    'callback','web(wikipage);'); 
-guiHandles.wiki.ForegroundColor=[cautionCol];
+% guiHandles.wiki = uicontrol(PTfig,'string','User Guide','fontsize',fontsz,'FontName','arial','FontAngle','normal','TooltipString', [TooltipString_wiki],'units','normalized','outerposition',[posInfo.wiki],...
+%     'callback','web(wikipage);'); 
+% guiHandles.wiki.ForegroundColor=[cautionCol];
 
-guiHandles.PIDtuningService = uicontrol(PTfig,'string','Donate','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['Donate to the PIDtoolbox project'],'units','normalized','outerposition',[posInfo.PIDtuningService],...
-    'callback','web(''https://www.paypal.com/paypalme/PIDtoolbox'');'); 
+guiHandles.PIDtuningService = uicontrol(PTfig,'string','www.pidtoolbox.com','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['www.pidtoolbox.com'],'units','normalized','outerposition',[posInfo.PIDtuningService],...
+    'callback','web(''www.pidtoolbox.com'');'); 
 guiHandles.PIDtuningService.ForegroundColor=[cautionCol];
+
+
+guiHandles.resetMain = uicontrol(PTfig,'string','Reset main directory','fontsize',fontsz ,'FontName','arial','FontAngle','normal','TooltipString', ['Donate to the PIDtoolbox project'],'units','normalized','outerposition',[posInfo.resetMain],...
+    'callback','uiwait(helpdlg(resetupStr)), cd(''/Users/Shared''),  main_directory = uigetdir(''Navigate to Main folder''); fid = fopen([''mainDir-PTB'' PtbVersion ''.txt''],''w''); fprintf(fid,''%s\n'',main_directory); fclose(fid);  PIDtoolbox');
+guiHandles.resetMain.ForegroundColor=[cautionCol];
+ 
  
 
-rdr = ['rootDirectory: ' executableDir ];
+rdr = ['rootDirectory: ' executableDir];
 try
     fid = fopen(['mainDir-PTB' PtbVersion '.txt'],'r');
     main_directory = fscanf(fid, '%s');
@@ -253,8 +269,11 @@ try
     fid = fopen('logfileDir.txt','r');
     logfile_directory = fscanf(fid, '%c');
     fclose(fid);
+    delete('*.bbl');
+    delete('*.bfl');
+    delete('*.csv');
 catch
-    logfile_directory = [pwd '/'];
+    logfile_directory = [executableDir];
 end
     
 mdr = ['mainDirectory: ' main_directory ];

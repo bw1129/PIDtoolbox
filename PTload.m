@@ -174,9 +174,9 @@ try
                 end
             end
             % delete bbl from main directory only if not same as logfile_directory
-            if ~strcmp(main_directory, logfile_directory)
-                delete(filenameA{ii})
-            end
+           if ~strcmp(main_directory, logfile_directory)
+              delete(filenameA{ii})
+           end
         end
     end
   

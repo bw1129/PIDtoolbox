@@ -35,11 +35,13 @@ posInfo.nCols_input = [.735 .94 .025 .025];
 posInfo.YTstick = [.892 vPos-0.39 .045 .085];
 posInfo.RPstick = [.948 vPos-0.39 .045 .085];
 
-posInfo.linepos1=[0.095 0.665 0.77 0.261];
-posInfo.linepos2=[0.095 0.395 0.77 0.261];
-posInfo.linepos3=[0.095 0.125 0.77 0.261];
+posInfo.linepos1=[0.095 0.685 0.77 0.21];
+posInfo.linepos2=[0.095 0.47 0.77 0.21];
+posInfo.linepos3=[0.095 0.255 0.77 0.21];
 
-fullszPlot = [0.095 0.07 0.77 0.855];
+posInfo.linepos4=[0.095 0.1 0.77 0.11];%
+
+fullszPlot = [0.095 0.255 0.77 0.63];
 
 
 checkpanel = uipanel('Title','','FontSize',fontsz,...
@@ -79,6 +81,10 @@ guiHandles.checkbox14=uicontrol(PTfig,'Style','checkbox','String','Throttle','fo
 
 guiHandles.checkbox1.Value=1;
 guiHandles.checkbox7.Value=1;
+guiHandles.checkbox10.Value=1;
+guiHandles.checkbox11.Value=1;
+guiHandles.checkbox12.Value=1;
+guiHandles.checkbox13.Value=1;
 guiHandles.checkbox14.Value=1;
 
 guiHandles.checkbox15=uicontrol(PTfig,'Style','checkbox','String','All','fontsize',fontsz,'TooltipString', ['Plot or clear all lines '],'ForegroundColor',[linec.col15],'BackgroundColor',bgcolor,...
