@@ -17,7 +17,7 @@ PIDtoolbox is a set of graphical tools for analyzing blackbox log data for multi
 
 # Download
 
-**<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">Download the latest version of PIDtoolbox.</a>** Unzip and place entire folder in a preferred location on your computer. For first time installation, use the **`MyAppInstaller_web`** file included in the package (under **`PIDtoolbox\installer\`**). This will install Matlab Runtime, which contains the standalone set of libraries that enables the execution of compiled MATLAB application. It's a fairly big download so hang in there :-) 
+**<a href="https://github.com/bw1129/PIDtoolbox/releases" target="blank">Download the latest version of PIDtoolbox.</a>** Unzip and place entire folder in a preferred location on your computer. For first time installation, use the **`MyAppInstaller_web`** file included in the package (under **`PIDtoolbox\installer\`**). This will install Matlab Runtime, which contains the standalone set of libraries that enables the execution of compiled MATLAB application. As newer version are released, there may be new and different installation steps, and these will be placed in the release notes for that version, as well as links to YouTube vids to help the process, so pay attention to that. 
 
 Once the installation is complete, the **`PIDtoolbox`** program is automatically placed under the program files or apps directory, but a copy of the program file can also be found in the folder you downloaded **`PIDtoolbox\main\`**, and you should use the one in this 'main' folder.
 
